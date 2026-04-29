@@ -8,8 +8,13 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
   vite: {
+    server: {
+      // EasyPanel/reverse proxy can send requests with a Host header that
+      // differs from local dev; allow our domains to avoid blocked requests.
+      allowedHosts: ["all", "ensinoplus-lp.n697dr.easypanel.host", "lp.ensinoplus.com.br"],
+    },
     preview: {
-      allowedHosts: ["all", "ensinoplus-lp.n697dr.easypanel.host"],
+      allowedHosts: ["all", "ensinoplus-lp.n697dr.easypanel.host", "lp.ensinoplus.com.br"],
     },
   },
 });
