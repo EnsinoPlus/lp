@@ -22,6 +22,5 @@ COPY --from=builder /app/wrangler.jsonc ./wrangler.jsonc
 EXPOSE 80
 
 ENV NODE_ENV=production
-ENV PORT=80
 
-CMD ["bun", "run", "preview"]
+CMD ["bunx", "vite", "preview", "--port", "80", "--host"]
