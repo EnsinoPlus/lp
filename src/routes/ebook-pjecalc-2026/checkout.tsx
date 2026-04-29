@@ -1,7 +1,7 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import ebookCover from "@/assets/ebook-cover.png";
-import { ShieldCheck, Lock, CreditCard, QrCode, FileText, ArrowLeft, Zap } from "lucide-react";
+import { ShieldCheck, Lock, CreditCard, QrCode, FileText, ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/ebook-pjecalc-2026/checkout")({
   head: () => ({
@@ -16,15 +16,32 @@ export const Route = createFileRoute("/ebook-pjecalc-2026/checkout")({
 type Method = "card" | "pix" | "boleto";
 
 function Checkout() {
-  const nav = useNavigate();
   const [method, setMethod] = useState<Method>("pix");
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setTimeout(() => nav({ to: "/ebook-pjecalc-2026/obrigado" }), 1200);
-  };
+  useEffect(() => {
+    // Hotmart checkout inject: load widget + stylesheet once (client-side only).
+    const widgetSrc = "https://static.hotmart.com/checkout/widget.min.js";
+    const cssHref = "https://static.hotmart.com/css/hotmart-fb.min.css";
+
+    if (typeof document === "undefined") return;
+
+    const existingScript = document.querySelector(`script[src="${widgetSrc}"]`);
+    if (!existingScript) {
+      const imported = document.createElement("script");
+      imported.src = widgetSrc;
+      imported.async = true;
+      document.head.appendChild(imported);
+    }
+
+    const existingLink = document.querySelector(`link[href="${cssHref}"]`);
+    if (!existingLink) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.type = "text/css";
+      link.href = cssHref;
+      document.head.appendChild(link);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-secondary">
@@ -45,7 +62,7 @@ function Checkout() {
 
         <div className="grid lg:grid-cols-[1fr_400px] gap-8">
           {/* FORM */}
-          <form onSubmit={handleSubmit} className="bg-card rounded-2xl shadow-card border border-border p-6 md:p-8 space-y-8">
+          <form onSubmit={(e) => e.preventDefault()} className="bg-card rounded-2xl shadow-card border border-border p-6 md:p-8 space-y-8">
             <section>
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
                 <span className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm">1</span>
@@ -91,14 +108,15 @@ function Checkout() {
               )}
             </section>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full inline-flex items-center justify-center gap-2 bg-gradient-cta text-primary-foreground font-bold uppercase tracking-wide rounded-xl py-5 text-lg shadow-cta hover:brightness-110 transition disabled:opacity-70"
-            >
-              <Zap className="w-5 h-5" />
-              {loading ? "Processando..." : "Finalizar compra — R$ 57"}
-            </button>
+            <div className="flex justify-center">
+              <a
+                onClick={(e) => e.preventDefault()}
+                href="https://pay.hotmart.com/R105606128X?checkoutMode=2"
+                className="hotmart-fb hotmart__button-checkout"
+              >
+                <img src="https://static.hotmart.com/img/btn-buy-green.png" alt="Comprar" />
+              </a>
+            </div>
 
             <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-2">
               <Lock className="w-3 h-3" /> Seus dados estão protegidos com criptografia SSL.
