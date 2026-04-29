@@ -23,4 +23,4 @@ EXPOSE 80
 
 ENV NODE_ENV=production
 
-CMD ["bunx", "vite", "preview", "--port", "80", "--host"]
+CMD ["bunx", "vite", "preview", "--port", "80", "--host", "--allowed-hosts", "all"]
