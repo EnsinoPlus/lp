@@ -9,23 +9,16 @@ RUN bun install --frozen-lockfile
 COPY . .
 RUN bun run build
 
-# ── Runtime (EasyPanel) ────────────────────────────────────────────────────────
-FROM nginx:1.27-alpine
+# ── Runtime ────────────────────────────────────────────────────────────────────
+FROM oven/bun:1-slim
 
-COPY --from=builder /app/dist/client /usr/share/nginx/html
+WORKDIR /app
 
-# SPA fallback for client-side routes
-RUN printf "server {\n\
-  listen 80;\n\
-  server_name _;\n\
-  root /usr/share/nginx/html;\n\
-  index index.html;\n\
-\n\
-  location / {\n\
-    try_files \$uri \$uri/ /index.html;\n\
-  }\n\
-}\n" > /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package.json ./package.json
 
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+ENV NODE_ENV=production
+
+CMD ["bunx", "wrangler", "dev", "--config", "dist/server/wrangler.json", "--port", "80", "--host", "0.0.0.0", "--local"]
