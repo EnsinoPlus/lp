@@ -9,72 +9,83 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ObrigadoRouteImport } from './routes/obrigado'
-import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EbookPjecalc2026IndexRouteImport } from './routes/ebook-pjecalc-2026/index'
+import { Route as EbookPjecalc2026ObrigadoRouteImport } from './routes/ebook-pjecalc-2026/obrigado'
+import { Route as EbookPjecalc2026CheckoutRouteImport } from './routes/ebook-pjecalc-2026/checkout'
 
-const ObrigadoRoute = ObrigadoRouteImport.update({
-  id: '/obrigado',
-  path: '/obrigado',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CheckoutRoute = CheckoutRouteImport.update({
-  id: '/checkout',
-  path: '/checkout',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EbookPjecalc2026IndexRoute = EbookPjecalc2026IndexRouteImport.update({
+  id: '/ebook-pjecalc-2026/',
+  path: '/ebook-pjecalc-2026/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EbookPjecalc2026ObrigadoRoute =
+  EbookPjecalc2026ObrigadoRouteImport.update({
+    id: '/ebook-pjecalc-2026/obrigado',
+    path: '/ebook-pjecalc-2026/obrigado',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const EbookPjecalc2026CheckoutRoute =
+  EbookPjecalc2026CheckoutRouteImport.update({
+    id: '/ebook-pjecalc-2026/checkout',
+    path: '/ebook-pjecalc-2026/checkout',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/checkout': typeof CheckoutRoute
-  '/obrigado': typeof ObrigadoRoute
+  '/ebook-pjecalc-2026/checkout': typeof EbookPjecalc2026CheckoutRoute
+  '/ebook-pjecalc-2026/obrigado': typeof EbookPjecalc2026ObrigadoRoute
+  '/ebook-pjecalc-2026/': typeof EbookPjecalc2026IndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/checkout': typeof CheckoutRoute
-  '/obrigado': typeof ObrigadoRoute
+  '/ebook-pjecalc-2026/checkout': typeof EbookPjecalc2026CheckoutRoute
+  '/ebook-pjecalc-2026/obrigado': typeof EbookPjecalc2026ObrigadoRoute
+  '/ebook-pjecalc-2026': typeof EbookPjecalc2026IndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/checkout': typeof CheckoutRoute
-  '/obrigado': typeof ObrigadoRoute
+  '/ebook-pjecalc-2026/checkout': typeof EbookPjecalc2026CheckoutRoute
+  '/ebook-pjecalc-2026/obrigado': typeof EbookPjecalc2026ObrigadoRoute
+  '/ebook-pjecalc-2026/': typeof EbookPjecalc2026IndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/checkout' | '/obrigado'
+  fullPaths:
+    | '/'
+    | '/ebook-pjecalc-2026/checkout'
+    | '/ebook-pjecalc-2026/obrigado'
+    | '/ebook-pjecalc-2026/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/checkout' | '/obrigado'
-  id: '__root__' | '/' | '/checkout' | '/obrigado'
+  to:
+    | '/'
+    | '/ebook-pjecalc-2026/checkout'
+    | '/ebook-pjecalc-2026/obrigado'
+    | '/ebook-pjecalc-2026'
+  id:
+    | '__root__'
+    | '/'
+    | '/ebook-pjecalc-2026/checkout'
+    | '/ebook-pjecalc-2026/obrigado'
+    | '/ebook-pjecalc-2026/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CheckoutRoute: typeof CheckoutRoute
-  ObrigadoRoute: typeof ObrigadoRoute
+  EbookPjecalc2026CheckoutRoute: typeof EbookPjecalc2026CheckoutRoute
+  EbookPjecalc2026ObrigadoRoute: typeof EbookPjecalc2026ObrigadoRoute
+  EbookPjecalc2026IndexRoute: typeof EbookPjecalc2026IndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/obrigado': {
-      id: '/obrigado'
-      path: '/obrigado'
-      fullPath: '/obrigado'
-      preLoaderRoute: typeof ObrigadoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/checkout': {
-      id: '/checkout'
-      path: '/checkout'
-      fullPath: '/checkout'
-      preLoaderRoute: typeof CheckoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -82,13 +93,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ebook-pjecalc-2026/': {
+      id: '/ebook-pjecalc-2026/'
+      path: '/ebook-pjecalc-2026'
+      fullPath: '/ebook-pjecalc-2026/'
+      preLoaderRoute: typeof EbookPjecalc2026IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ebook-pjecalc-2026/obrigado': {
+      id: '/ebook-pjecalc-2026/obrigado'
+      path: '/ebook-pjecalc-2026/obrigado'
+      fullPath: '/ebook-pjecalc-2026/obrigado'
+      preLoaderRoute: typeof EbookPjecalc2026ObrigadoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ebook-pjecalc-2026/checkout': {
+      id: '/ebook-pjecalc-2026/checkout'
+      path: '/ebook-pjecalc-2026/checkout'
+      fullPath: '/ebook-pjecalc-2026/checkout'
+      preLoaderRoute: typeof EbookPjecalc2026CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CheckoutRoute: CheckoutRoute,
-  ObrigadoRoute: ObrigadoRoute,
+  EbookPjecalc2026CheckoutRoute: EbookPjecalc2026CheckoutRoute,
+  EbookPjecalc2026ObrigadoRoute: EbookPjecalc2026ObrigadoRoute,
+  EbookPjecalc2026IndexRoute: EbookPjecalc2026IndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

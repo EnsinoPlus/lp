@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import ebookCover from "@/assets/ebook-cover.png";
 import { CheckCircle2, Download, Mail, Gift, MessageCircle, Star, BookOpen } from "lucide-react";
 
-export const Route = createFileRoute("/obrigado")({
+export const Route = createFileRoute("/ebook-pjecalc-2026/obrigado")({
   head: () => ({
     meta: [
       { title: "Obrigado pela compra — Pje-Calc 2026" },

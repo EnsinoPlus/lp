@@ -3,7 +3,7 @@ import { useState } from "react";
 import ebookCover from "@/assets/ebook-cover.png";
 import { ShieldCheck, Lock, CreditCard, QrCode, FileText, ArrowLeft, Zap } from "lucide-react";
 
-export const Route = createFileRoute("/checkout")({
+export const Route = createFileRoute("/ebook-pjecalc-2026/checkout")({
   head: () => ({
     meta: [
       { title: "Checkout — E-book Pje-Calc 2026" },
@@ -23,14 +23,14 @@ function Checkout() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => nav({ to: "/obrigado" }), 1200);
+    setTimeout(() => nav({ to: "/ebook-pjecalc-2026/obrigado" }), 1200);
   };
 
   return (
     <div className="min-h-screen bg-secondary">
       <header className="bg-dark text-dark-foreground py-4">
         <div className="container mx-auto px-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-sm hover:text-primary transition">
+          <Link to="/ebook-pjecalc-2026/" className="flex items-center gap-2 text-sm hover:text-primary transition">
             <ArrowLeft className="w-4 h-4" /> Voltar
           </Link>
           <div className="flex items-center gap-2 text-sm text-white/70">
