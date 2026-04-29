@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { UrgencyBar } from "@/components/UrgencyBar";
 import heroImg from "@/assets/hero-ebook.jpg";
@@ -19,16 +19,19 @@ export const Route = createFileRoute("/ebook-pjecalc-2026/")({
 });
 
 function CTAButton({ children, large = false }: { children: React.ReactNode; large?: boolean }) {
+  const href = "https://pay.hotmart.com/R105606128X";
   return (
-    <Link
-      to="/ebook-pjecalc-2026/checkout"
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
       className={`inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-cta text-primary-foreground font-bold uppercase tracking-wide shadow-cta hover:brightness-110 transition-all animate-pulse-cta ${
         large ? "px-8 py-5 text-lg md:text-xl" : "px-6 py-4 text-base"
       }`}
     >
       <Zap className="w-5 h-5" />
       {children}
-    </Link>
+    </a>
   );
 }
 
