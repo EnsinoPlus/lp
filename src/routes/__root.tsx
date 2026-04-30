@@ -1,6 +1,8 @@
 import { Outlet, createRootRoute, HeadContent, Scripts, Navigate } from "@tanstack/react-router";
 import appCss from "../styles.css?url";
 
+const gaMeasurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+
 function NotFoundComponent() {
   return <Navigate to="/" />;
 }
@@ -28,7 +30,24 @@ export const Route = createRootRoute({
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR">
-      <head><HeadContent /></head>
+      <head>
+        <HeadContent />
+        {gaMeasurementId ? (
+          <>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`} />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${gaMeasurementId}');
+`,
+              }}
+            />
+          </>
+        ) : null}
+      </head>
       <body>
         {children}
         <Scripts />
