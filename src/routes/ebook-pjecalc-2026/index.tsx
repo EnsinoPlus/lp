@@ -19,7 +19,7 @@ export const Route = createFileRoute("/ebook-pjecalc-2026/")({
 });
 
 function CTAButton({ children, large = false }: { children: React.ReactNode; large?: boolean }) {
-  const href = "https://pay.hotmart.com/R105606128X";
+  const href = import.meta.env.VITE_CHECKOUT_URL || "https://pay.hotmart.com/R105606128X";
   return (
     <a
       href={href}

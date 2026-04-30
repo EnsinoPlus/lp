@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import ebookCover from "@/assets/ebook-cover.png";
 import { ShieldCheck, Lock, CreditCard, QrCode, FileText, ArrowLeft, Zap } from "lucide-react";
@@ -16,14 +16,16 @@ export const Route = createFileRoute("/ebook-pjecalc-2026/checkout")({
 type Method = "card" | "pix" | "boleto";
 
 function Checkout() {
-  const nav = useNavigate();
   const [method, setMethod] = useState<Method>("pix");
   const [loading, setLoading] = useState(false);
+  const checkoutUrl = import.meta.env.VITE_CHECKOUT_URL || "https://pay.hotmart.com/R105606128X";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => nav({ to: "/ebook-pjecalc-2026/obrigado" }), 1200);
+    setTimeout(() => {
+      window.location.assign(checkoutUrl);
+    }, 400);
   };
 
   return (
