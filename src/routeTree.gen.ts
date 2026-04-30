@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EbookPjecalc2026IndexRouteImport } from './routes/ebook-pjecalc-2026/index'
+import { Route as EbookPjecalc2026ObrigadoAnaliseCreditoRouteImport } from './routes/ebook-pjecalc-2026/obrigado-analise-credito'
+import { Route as EbookPjecalc2026ObrigadoAguardandoPagamentoRouteImport } from './routes/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
 import { Route as EbookPjecalc2026ObrigadoRouteImport } from './routes/ebook-pjecalc-2026/obrigado'
 import { Route as EbookPjecalc2026CheckoutRouteImport } from './routes/ebook-pjecalc-2026/checkout'
 
@@ -24,6 +26,18 @@ const EbookPjecalc2026IndexRoute = EbookPjecalc2026IndexRouteImport.update({
   path: '/ebook-pjecalc-2026/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EbookPjecalc2026ObrigadoAnaliseCreditoRoute =
+  EbookPjecalc2026ObrigadoAnaliseCreditoRouteImport.update({
+    id: '/ebook-pjecalc-2026/obrigado-analise-credito',
+    path: '/ebook-pjecalc-2026/obrigado-analise-credito',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const EbookPjecalc2026ObrigadoAguardandoPagamentoRoute =
+  EbookPjecalc2026ObrigadoAguardandoPagamentoRouteImport.update({
+    id: '/ebook-pjecalc-2026/obrigado-aguardando-pagamento',
+    path: '/ebook-pjecalc-2026/obrigado-aguardando-pagamento',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const EbookPjecalc2026ObrigadoRoute =
   EbookPjecalc2026ObrigadoRouteImport.update({
     id: '/ebook-pjecalc-2026/obrigado',
@@ -41,12 +55,16 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ebook-pjecalc-2026/checkout': typeof EbookPjecalc2026CheckoutRoute
   '/ebook-pjecalc-2026/obrigado': typeof EbookPjecalc2026ObrigadoRoute
+  '/ebook-pjecalc-2026/obrigado-aguardando-pagamento': typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
+  '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
   '/ebook-pjecalc-2026/': typeof EbookPjecalc2026IndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ebook-pjecalc-2026/checkout': typeof EbookPjecalc2026CheckoutRoute
   '/ebook-pjecalc-2026/obrigado': typeof EbookPjecalc2026ObrigadoRoute
+  '/ebook-pjecalc-2026/obrigado-aguardando-pagamento': typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
+  '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
   '/ebook-pjecalc-2026': typeof EbookPjecalc2026IndexRoute
 }
 export interface FileRoutesById {
@@ -54,6 +72,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/ebook-pjecalc-2026/checkout': typeof EbookPjecalc2026CheckoutRoute
   '/ebook-pjecalc-2026/obrigado': typeof EbookPjecalc2026ObrigadoRoute
+  '/ebook-pjecalc-2026/obrigado-aguardando-pagamento': typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
+  '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
   '/ebook-pjecalc-2026/': typeof EbookPjecalc2026IndexRoute
 }
 export interface FileRouteTypes {
@@ -62,18 +82,24 @@ export interface FileRouteTypes {
     | '/'
     | '/ebook-pjecalc-2026/checkout'
     | '/ebook-pjecalc-2026/obrigado'
+    | '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
+    | '/ebook-pjecalc-2026/obrigado-analise-credito'
     | '/ebook-pjecalc-2026/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/ebook-pjecalc-2026/checkout'
     | '/ebook-pjecalc-2026/obrigado'
+    | '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
+    | '/ebook-pjecalc-2026/obrigado-analise-credito'
     | '/ebook-pjecalc-2026'
   id:
     | '__root__'
     | '/'
     | '/ebook-pjecalc-2026/checkout'
     | '/ebook-pjecalc-2026/obrigado'
+    | '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
+    | '/ebook-pjecalc-2026/obrigado-analise-credito'
     | '/ebook-pjecalc-2026/'
   fileRoutesById: FileRoutesById
 }
@@ -81,6 +107,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EbookPjecalc2026CheckoutRoute: typeof EbookPjecalc2026CheckoutRoute
   EbookPjecalc2026ObrigadoRoute: typeof EbookPjecalc2026ObrigadoRoute
+  EbookPjecalc2026ObrigadoAguardandoPagamentoRoute: typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
+  EbookPjecalc2026ObrigadoAnaliseCreditoRoute: typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
   EbookPjecalc2026IndexRoute: typeof EbookPjecalc2026IndexRoute
 }
 
@@ -98,6 +126,20 @@ declare module '@tanstack/react-router' {
       path: '/ebook-pjecalc-2026'
       fullPath: '/ebook-pjecalc-2026/'
       preLoaderRoute: typeof EbookPjecalc2026IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ebook-pjecalc-2026/obrigado-analise-credito': {
+      id: '/ebook-pjecalc-2026/obrigado-analise-credito'
+      path: '/ebook-pjecalc-2026/obrigado-analise-credito'
+      fullPath: '/ebook-pjecalc-2026/obrigado-analise-credito'
+      preLoaderRoute: typeof EbookPjecalc2026ObrigadoAnaliseCreditoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ebook-pjecalc-2026/obrigado-aguardando-pagamento': {
+      id: '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
+      path: '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
+      fullPath: '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
+      preLoaderRoute: typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ebook-pjecalc-2026/obrigado': {
@@ -121,6 +163,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EbookPjecalc2026CheckoutRoute: EbookPjecalc2026CheckoutRoute,
   EbookPjecalc2026ObrigadoRoute: EbookPjecalc2026ObrigadoRoute,
+  EbookPjecalc2026ObrigadoAguardandoPagamentoRoute:
+    EbookPjecalc2026ObrigadoAguardandoPagamentoRoute,
+  EbookPjecalc2026ObrigadoAnaliseCreditoRoute:
+    EbookPjecalc2026ObrigadoAnaliseCreditoRoute,
   EbookPjecalc2026IndexRoute: EbookPjecalc2026IndexRoute,
 }
 export const routeTree = rootRouteImport
