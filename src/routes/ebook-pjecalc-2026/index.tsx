@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { UrgencyBar } from "@/components/UrgencyBar";
 import heroImg from "@/assets/hero-ebook.jpg";
-import ebookCover from "@/assets/ebook-cover.png";
+import catalogoCover from "@/assets/catalogo-capa-pjecalc-vicelmo.png";
 import sumarioPdf from "@/assets/pjecalc-sumario.pdf";
 import { CheckCircle2, ChevronDown, Clock, ShieldCheck, Star, Zap, BookOpen, Calculator, Scale, FileCheck } from "lucide-react";
 
@@ -45,8 +45,8 @@ function Landing() {
       <section className="bg-gradient-hero text-dark-foreground relative overflow-hidden">
         <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, oklch(0.7 0.19 38 / 0.4), transparent 50%)" }} />
         <div className="container mx-auto px-4 py-12 md:py-20 relative">
-          <div className="grid md:grid-cols-2 gap-10 items-center">
-            <div>
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center">
               <div className="inline-flex items-center gap-2 bg-primary/20 text-primary border border-primary/40 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider mb-6">
                 <Star className="w-4 h-4 fill-primary" /> Edição 2026 — Atualizada
               </div>
@@ -59,7 +59,7 @@ function Landing() {
               </p>
 
               <div className="w-full mb-8">
-                <div className="aspect-video rounded-2xl overflow-hidden shadow-card border border-border bg-black max-w-xl">
+                <div className="aspect-video rounded-2xl overflow-hidden shadow-card border border-border bg-black max-w-3xl mx-auto">
                   <iframe
                     src="https://www.youtube-nocookie.com/embed/eKro92yXXTk?rel=0&modestbranding=1"
                     title="Apresentação do E-book Pje-Calc 2026"
@@ -80,22 +80,11 @@ function Landing() {
 
               <CTAButton large>Quero a versão 2026 do E-book</CTAButton>
 
-              <div className="flex flex-wrap gap-5 mt-8 text-sm text-white/70">
+              <div className="flex flex-wrap gap-5 mt-8 text-sm text-white/70 justify-center">
                 <div className="flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-success" /> Garantia 7 dias</div>
                 <div className="flex items-center gap-2"><Clock className="w-5 h-5 text-primary" /> Acesso imediato</div>
                 <div className="flex items-center gap-2"><FileCheck className="w-5 h-5 text-success" /> PDF + Bônus</div>
               </div>
-            </div>
-
-            <div className="relative flex justify-center md:justify-end">
-              <div className="absolute inset-0 bg-primary/30 blur-3xl rounded-full" />
-              <img
-                src={ebookCover}
-                alt="Capa do e-book Pje-Calc 2026"
-                width={500}
-                height={500}
-                className="relative w-72 md:w-96 animate-float drop-shadow-2xl"
-              />
             </div>
           </div>
         </div>
@@ -106,11 +95,11 @@ function Landing() {
         <div className="container mx-auto px-4 max-w-5xl">
           <div className="grid md:grid-cols-[220px_1fr] gap-8 items-center bg-card border border-border rounded-2xl p-6 md:p-10 shadow-card">
             <img
-              src={ebookCover}
+              src={catalogoCover}
               alt="Capa do e-book Pje-Calc 2026"
               width={220}
               height={220}
-              className="w-44 md:w-52 mx-auto drop-shadow-2xl"
+              className="w-44 md:w-52 mx-auto rounded-lg drop-shadow-2xl"
             />
             <div>
               <span className="text-primary font-bold uppercase text-sm tracking-wider">Sumário do e-book</span>
