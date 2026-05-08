@@ -72,7 +72,7 @@ function Landing() {
                 </div>
               </div>
 
-              <div className="flex items-baseline gap-4 mb-6">
+              <div className="flex items-baseline justify-center text-center gap-4 mb-6">
                 <span className="text-white/50 line-through text-2xl">R$ 97</span>
                 <span className="text-5xl md:text-6xl font-black text-primary">R$ 57</span>
                 <span className="text-sm text-white/60">à vista</span>
