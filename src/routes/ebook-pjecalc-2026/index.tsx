@@ -81,6 +81,20 @@ function Landing() {
                 height={500}
                 className="relative w-72 md:w-96 animate-float drop-shadow-2xl"
               />
+
+              <div className="relative z-10 w-full max-w-md md:max-w-sm mt-8">
+                <div className="aspect-video rounded-2xl overflow-hidden shadow-card border border-border bg-black">
+                  <iframe
+                    src="https://www.youtube-nocookie.com/embed/eKro92yXXTk?rel=0&modestbranding=1"
+                    title="Apresentação do E-book Pje-Calc 2026"
+                    className="w-full h-full"
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
