@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { UrgencyBar } from "@/components/UrgencyBar";
-import heroImg from "@/assets/hero-ebook.jpg";
+import heroImg from "@/assets/hero-ebook-pjecalc-vicelmo-2026.jpg";
 import catalogoCover from "@/assets/catalogo-capa-pjecalc-vicelmo.png";
 import sumarioPdf from "@/assets/pjecalc-sumario.pdf";
 import { CheckCircle2, ChevronDown, Clock, ShieldCheck, Star, Zap, BookOpen, Calculator, Scale, FileCheck } from "lucide-react";
