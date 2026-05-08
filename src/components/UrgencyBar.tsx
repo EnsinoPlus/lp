@@ -3,16 +3,18 @@ import { useEffect, useState } from "react";
 function pad(n: number) { return n.toString().padStart(2, "0"); }
 
 export function UrgencyBar() {
-  const [time, setTime] = useState({ h: 47, m: 59, s: 59 });
+  // Start at 10 minutes
+  const [time, setTime] = useState({ h: 0, m: 10, s: 0 });
 
   useEffect(() => {
     const t = setInterval(() => {
       setTime((prev) => {
         let { h, m, s } = prev;
+        if (h === 0 && m === 0 && s === 0) return prev;
         s--;
         if (s < 0) { s = 59; m--; }
         if (m < 0) { m = 59; h--; }
-        if (h < 0) { h = 47; m = 59; s = 59; }
+        if (h < 0) { h = 0; m = 0; s = 0; }
         return { h, m, s };
       });
     }, 1000);

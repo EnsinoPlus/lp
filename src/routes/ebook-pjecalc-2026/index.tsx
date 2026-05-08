@@ -3,6 +3,7 @@ import { useState } from "react";
 import { UrgencyBar } from "@/components/UrgencyBar";
 import heroImg from "@/assets/hero-ebook.jpg";
 import ebookCover from "@/assets/ebook-cover.png";
+import sumarioPdf from "@/assets/pjecalc-sumario.pdf";
 import { CheckCircle2, ChevronDown, Clock, ShieldCheck, Star, Zap, BookOpen, Calculator, Scale, FileCheck } from "lucide-react";
 
 export const Route = createFileRoute("/ebook-pjecalc-2026/")({
@@ -57,16 +58,8 @@ function Landing() {
                 O guia prático e definitivo do <strong className="text-white">Prof. Vicelmo Alencar</strong> para liquidar sentenças com precisão, evitar o enriquecimento ilícito e dominar o sistema oficial da Justiça do Trabalho.
               </p>
 
-              <div className="flex items-baseline gap-4 mb-6">
-                <span className="text-white/50 line-through text-2xl">R$ 97</span>
-                <span className="text-5xl md:text-6xl font-black text-primary">R$ 57</span>
-                <span className="text-sm text-white/60">à vista</span>
-              </div>
-
-              <CTAButton large>Quero a versão 2026 do E-book</CTAButton>
-
-              <div className="mt-8 w-full">
-                <div className="aspect-video rounded-2xl overflow-hidden shadow-card border border-border bg-black max-w-xl mx-auto">
+              <div className="w-full mb-8">
+                <div className="aspect-video rounded-2xl overflow-hidden shadow-card border border-border bg-black max-w-xl">
                   <iframe
                     src="https://www.youtube-nocookie.com/embed/eKro92yXXTk?rel=0&modestbranding=1"
                     title="Apresentação do E-book Pje-Calc 2026"
@@ -78,6 +71,14 @@ function Landing() {
                   />
                 </div>
               </div>
+
+              <div className="flex items-baseline gap-4 mb-6">
+                <span className="text-white/50 line-through text-2xl">R$ 97</span>
+                <span className="text-5xl md:text-6xl font-black text-primary">R$ 57</span>
+                <span className="text-sm text-white/60">à vista</span>
+              </div>
+
+              <CTAButton large>Quero a versão 2026 do E-book</CTAButton>
 
               <div className="flex flex-wrap gap-5 mt-8 text-sm text-white/70">
                 <div className="flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-success" /> Garantia 7 dias</div>
@@ -95,6 +96,36 @@ function Landing() {
                 height={500}
                 className="relative w-72 md:w-96 animate-float drop-shadow-2xl"
               />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CATALOG DOWNLOAD */}
+      <section className="py-12 md:py-16 bg-secondary">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="grid md:grid-cols-[220px_1fr] gap-8 items-center bg-card border border-border rounded-2xl p-6 md:p-10 shadow-card">
+            <img
+              src={ebookCover}
+              alt="Capa do e-book Pje-Calc 2026"
+              width={220}
+              height={220}
+              className="w-44 md:w-52 mx-auto drop-shadow-2xl"
+            />
+            <div>
+              <span className="text-primary font-bold uppercase text-sm tracking-wider">Sumário do e-book</span>
+              <h2 className="text-2xl md:text-4xl font-black mt-2 mb-3">Baixe o catálogo completo (PDF)</h2>
+              <p className="text-muted-foreground text-lg mb-6">
+                Veja todos os tópicos e unidades antes de comprar. Download imediato.
+              </p>
+
+              <a
+                href={sumarioPdf}
+                download="Calculos-Trabalhistas-Aplicados-ao-Pje-Calc-Sumario.pdf"
+                className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-bold rounded-xl px-6 py-4 hover:brightness-110 transition shadow-cta"
+              >
+                Baixar sumário em PDF
+              </a>
             </div>
           </div>
         </div>
