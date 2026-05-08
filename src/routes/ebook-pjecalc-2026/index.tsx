@@ -65,6 +65,20 @@ function Landing() {
 
               <CTAButton large>Quero a versão 2026 do E-book</CTAButton>
 
+              <div className="mt-8 w-full">
+                <div className="aspect-video rounded-2xl overflow-hidden shadow-card border border-border bg-black max-w-xl mx-auto">
+                  <iframe
+                    src="https://www.youtube-nocookie.com/embed/eKro92yXXTk?rel=0&modestbranding=1"
+                    title="Apresentação do E-book Pje-Calc 2026"
+                    className="w-full h-full"
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                  />
+                </div>
+              </div>
+
               <div className="flex flex-wrap gap-5 mt-8 text-sm text-white/70">
                 <div className="flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-success" /> Garantia 7 dias</div>
                 <div className="flex items-center gap-2"><Clock className="w-5 h-5 text-primary" /> Acesso imediato</div>
@@ -81,20 +95,6 @@ function Landing() {
                 height={500}
                 className="relative w-72 md:w-96 animate-float drop-shadow-2xl"
               />
-
-              <div className="relative z-10 w-full max-w-md md:max-w-sm mt-8">
-                <div className="aspect-video rounded-2xl overflow-hidden shadow-card border border-border bg-black">
-                  <iframe
-                    src="https://www.youtube-nocookie.com/embed/eKro92yXXTk?rel=0&modestbranding=1"
-                    title="Apresentação do E-book Pje-Calc 2026"
-                    className="w-full h-full"
-                    loading="lazy"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    referrerPolicy="strict-origin-when-cross-origin"
-                    allowFullScreen
-                  />
-                </div>
-              </div>
             </div>
           </div>
         </div>
