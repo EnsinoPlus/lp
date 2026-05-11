@@ -1,4 +1,7 @@
-FROM node:20-alpine
+# Easypanel / Docker: build injeta VITE_* no bundle; o runtime é o worker TanStack Start via Wrangler.
+# No painel, defina as mesmas variáveis no passo de build (Build Args / env do build), não só em runtime.
+
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
@@ -7,10 +10,26 @@ RUN npm ci
 
 COPY . .
 
+ARG VITE_CHECKOUT_URL
+ARG VITE_GTM_ID
+ENV VITE_CHECKOUT_URL=$VITE_CHECKOUT_URL
+ENV VITE_GTM_ID=$VITE_GTM_ID
+
+RUN npm run build
+
+FROM node:22-alpine
+
+WORKDIR /app
+
+RUN npm install -g wrangler@4
+
+COPY --from=builder /app/dist ./dist
+
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
-ENV PORT=80
+ENV PORT=8787
 
-EXPOSE 80
+EXPOSE 8787
 
-CMD ["sh", "-c", "npm run dev -- --host ${HOST} --port ${PORT} --strictPort"]
+# Easypanel costuma definir PORT; mapeie a porta publicada para a mesma.
+CMD ["sh", "-c", "exec wrangler dev --config dist/server/wrangler.json --ip \"${HOST}\" --port \"${PORT}\""]
