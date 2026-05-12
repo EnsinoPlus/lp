@@ -1,14 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  CheckCircle2,
-  ChevronDown,
-  ExternalLink,
-  Mail,
-  Gift,
-  MessageCircle,
-  Star,
-  BookOpen,
-} from "lucide-react";
+import { CheckCircle2, ChevronDown, ExternalLink, Mail, BookOpen } from "lucide-react";
 
 export const Route = createFileRoute("/ebook-pjecalc-2026/obrigado")({
   head: () => ({
@@ -88,60 +79,6 @@ function ThankYou() {
                 <p className="text-sm text-muted-foreground">{s.desc}</p>
               </div>
             ))}
-          </div>
-        </section>
-
-        {/* BONUS */}
-        <section className="bg-gradient-hero text-dark-foreground rounded-2xl p-8 md:p-10 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/30 rounded-full blur-3xl" />
-          <div className="relative">
-            <div className="inline-flex items-center gap-2 bg-primary/20 text-primary border border-primary/40 rounded-full px-3 py-1 text-xs font-bold uppercase mb-4">
-              <Gift className="w-4 h-4" /> Bônus exclusivos
-            </div>
-            <h2 className="text-3xl md:text-4xl font-black mb-6">Liberados com sua compra</h2>
-            <ul className="space-y-3 text-white/90">
-              {[
-                "Planilha de modelos de cálculo (XLSX) pronta para uso",
-                "Checklist de impugnação fundamentada — art. 884 da CLT",
-                "Tabela atualizada de juros e correção monetária 2026",
-                "Acesso ao grupo VIP de leitores no Telegram",
-              ].map((b) => (
-                <li key={b} className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
-                  <span>{b}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        {/* ENGAGEMENT */}
-        <section className="grid md:grid-cols-2 gap-5">
-          <div className="bg-card rounded-xl border border-border p-6 shadow-card">
-            <MessageCircle className="w-10 h-10 text-primary mb-3" />
-            <h3 className="font-bold text-lg mb-2">Entre no grupo VIP</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Tire dúvidas direto com o Prof. Vicelmo e outros leitores.
-            </p>
-            <a
-              href="#"
-              className="inline-flex items-center gap-2 text-primary font-bold hover:underline"
-            >
-              Entrar no Telegram →
-            </a>
-          </div>
-          <div className="bg-card rounded-xl border border-border p-6 shadow-card">
-            <Star className="w-10 h-10 text-primary mb-3 fill-primary" />
-            <h3 className="font-bold text-lg mb-2">Avalie sua experiência</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Sua opinião ajuda outros profissionais a evoluírem.
-            </p>
-            <a
-              href="#"
-              className="inline-flex items-center gap-2 text-primary font-bold hover:underline"
-            >
-              Deixar avaliação →
-            </a>
           </div>
         </section>
 
