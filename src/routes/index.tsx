@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import ebookCover from "@/assets/ebook-cover.png";
+import catalogoCover from "@/assets/catalogo-capa-pjecalc-vicelmo.png";
 import { BookOpen, ShoppingCart } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -20,7 +20,7 @@ const products = [
     description: "Domine o Pje-Calc e a Lei 14.905/2024. Do cálculo de horas extras à liquidação completa de sentença.",
     price: "R$ 57",
     oldPrice: "R$ 97",
-    cover: ebookCover,
+    cover: catalogoCover,
     href: "/ebook-pjecalc-2026/" as const,
   },
 ];
