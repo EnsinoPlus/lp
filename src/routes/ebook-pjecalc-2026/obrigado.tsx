@@ -1,6 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import ebookCover from "@/assets/ebook-cover.png";
-import { CheckCircle2, Download, Mail, Gift, MessageCircle, Star, BookOpen } from "lucide-react";
+import {
+  CheckCircle2,
+  ChevronDown,
+  ExternalLink,
+  Mail,
+  Gift,
+  MessageCircle,
+  Star,
+  BookOpen,
+} from "lucide-react";
 
 export const Route = createFileRoute("/ebook-pjecalc-2026/obrigado")({
   head: () => ({
@@ -8,7 +16,7 @@ export const Route = createFileRoute("/ebook-pjecalc-2026/obrigado")({
       { title: "Obrigado pela compra — Pje-Calc 2026" },
       {
         name: "description",
-        content: "Sua compra foi confirmada. Acesse agora o E-book Pje-Calc 2026.",
+        content: "Sua compra foi confirmada. A Hotmart envia o acesso ao material no e-mail da compra.",
       },
     ],
   }),
@@ -36,62 +44,29 @@ function ThankYou() {
             Bem-vindo, futuro especialista em Pje-Calc. Sua jornada começa agora.
           </p>
           <a
-            href="#download"
+            href="#next-steps"
             className="inline-flex items-center gap-2 bg-gradient-cta text-primary-foreground font-bold uppercase tracking-wide rounded-xl px-8 py-4 shadow-cta hover:brightness-110 transition"
           >
-            <Download className="w-5 h-5" /> Acessar meu e-book
+            <ChevronDown className="w-5 h-5" /> Próximos passos
           </a>
         </div>
       </section>
 
       <div className="container mx-auto px-4 py-12 max-w-5xl space-y-10">
-        {/* DOWNLOAD */}
-        <section
-          id="download"
-          className="bg-card rounded-2xl shadow-card border-2 border-primary p-6 md:p-10"
-        >
-          <div className="grid md:grid-cols-[180px_1fr] gap-6 items-center">
-            <img src={ebookCover} alt="E-book" width={180} height={180} className="w-40 mx-auto" />
-            <div>
-              <span className="text-primary font-bold uppercase text-xs tracking-wider">
-                Seu acesso
-              </span>
-              <h2 className="text-2xl md:text-3xl font-black mt-1 mb-3">E-book Pje-Calc 2026</h2>
-              <p className="text-muted-foreground mb-5">
-                Versão atualizada com a Lei 14.905/2024. Disponível em PDF.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <a
-                  href="#"
-                  className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-bold rounded-lg px-5 py-3 hover:brightness-110 transition"
-                >
-                  <Download className="w-4 h-4" /> Baixar PDF
-                </a>
-                <a
-                  href="#"
-                  className="inline-flex items-center gap-2 bg-secondary text-foreground font-bold rounded-lg px-5 py-3 hover:bg-accent transition"
-                >
-                  <BookOpen className="w-4 h-4" /> Ler online
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* NEXT STEPS */}
-        <section>
+        <section id="next-steps">
           <h2 className="text-2xl md:text-3xl font-black mb-6 text-center">Próximos passos</h2>
           <div className="grid md:grid-cols-3 gap-5">
             {[
               {
                 icon: Mail,
                 title: "Confira seu e-mail",
-                desc: "Enviamos os dados de acesso e o link de download para você.",
+                desc: "A Hotmart envia a confirmação da compra e o link para acessar o material no endereço informado no checkout.",
               },
               {
-                icon: Download,
-                title: "Baixe o e-book",
-                desc: "Faça o download e comece pela Unidade I — Sistema Pje-Calc.",
+                icon: ExternalLink,
+                title: "Acesse na Hotmart",
+                desc: "O link e o material são enviados pela Hotmart no e-mail da compra. Use o botão do e-mail ou acesse sua conta na plataforma.",
               },
               {
                 icon: BookOpen,
