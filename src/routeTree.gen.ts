@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PontoMagicoIndexRouteImport } from './routes/ponto-magico/index'
 import { Route as EbookPjecalc2026IndexRouteImport } from './routes/ebook-pjecalc-2026/index'
 import { Route as EbookPjecalc2026ObrigadoAnaliseCreditoRouteImport } from './routes/ebook-pjecalc-2026/obrigado-analise-credito'
 import { Route as EbookPjecalc2026ObrigadoAguardandoPagamentoRouteImport } from './routes/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
@@ -18,6 +19,11 @@ import { Route as EbookPjecalc2026ObrigadoRouteImport } from './routes/ebook-pje
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PontoMagicoIndexRoute = PontoMagicoIndexRouteImport.update({
+  id: '/ponto-magico/',
+  path: '/ponto-magico/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EbookPjecalc2026IndexRoute = EbookPjecalc2026IndexRouteImport.update({
@@ -50,6 +56,7 @@ export interface FileRoutesByFullPath {
   '/ebook-pjecalc-2026/obrigado-aguardando-pagamento': typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
   '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
   '/ebook-pjecalc-2026/': typeof EbookPjecalc2026IndexRoute
+  '/ponto-magico/': typeof PontoMagicoIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -57,6 +64,7 @@ export interface FileRoutesByTo {
   '/ebook-pjecalc-2026/obrigado-aguardando-pagamento': typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
   '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
   '/ebook-pjecalc-2026': typeof EbookPjecalc2026IndexRoute
+  '/ponto-magico': typeof PontoMagicoIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -65,6 +73,7 @@ export interface FileRoutesById {
   '/ebook-pjecalc-2026/obrigado-aguardando-pagamento': typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
   '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
   '/ebook-pjecalc-2026/': typeof EbookPjecalc2026IndexRoute
+  '/ponto-magico/': typeof PontoMagicoIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -74,6 +83,7 @@ export interface FileRouteTypes {
     | '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
     | '/ebook-pjecalc-2026/obrigado-analise-credito'
     | '/ebook-pjecalc-2026/'
+    | '/ponto-magico/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -81,6 +91,7 @@ export interface FileRouteTypes {
     | '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
     | '/ebook-pjecalc-2026/obrigado-analise-credito'
     | '/ebook-pjecalc-2026'
+    | '/ponto-magico'
   id:
     | '__root__'
     | '/'
@@ -88,6 +99,7 @@ export interface FileRouteTypes {
     | '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
     | '/ebook-pjecalc-2026/obrigado-analise-credito'
     | '/ebook-pjecalc-2026/'
+    | '/ponto-magico/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -96,6 +108,7 @@ export interface RootRouteChildren {
   EbookPjecalc2026ObrigadoAguardandoPagamentoRoute: typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
   EbookPjecalc2026ObrigadoAnaliseCreditoRoute: typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
   EbookPjecalc2026IndexRoute: typeof EbookPjecalc2026IndexRoute
+  PontoMagicoIndexRoute: typeof PontoMagicoIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -105,6 +118,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ponto-magico/': {
+      id: '/ponto-magico/'
+      path: '/ponto-magico'
+      fullPath: '/ponto-magico/'
+      preLoaderRoute: typeof PontoMagicoIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ebook-pjecalc-2026/': {
@@ -146,6 +166,7 @@ const rootRouteChildren: RootRouteChildren = {
   EbookPjecalc2026ObrigadoAnaliseCreditoRoute:
     EbookPjecalc2026ObrigadoAnaliseCreditoRoute,
   EbookPjecalc2026IndexRoute: EbookPjecalc2026IndexRoute,
+  PontoMagicoIndexRoute: PontoMagicoIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
