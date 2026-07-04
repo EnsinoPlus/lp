@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SuiteplusPromo0707IndexRouteImport } from './routes/suiteplus-promo-0707/index'
 import { Route as PontoMagicoIndexRouteImport } from './routes/ponto-magico/index'
 import { Route as EbookPjecalc2026IndexRouteImport } from './routes/ebook-pjecalc-2026/index'
 import { Route as EbookPjecalc2026ObrigadoAnaliseCreditoRouteImport } from './routes/ebook-pjecalc-2026/obrigado-analise-credito'
@@ -19,6 +20,11 @@ import { Route as EbookPjecalc2026ObrigadoRouteImport } from './routes/ebook-pje
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SuiteplusPromo0707IndexRoute = SuiteplusPromo0707IndexRouteImport.update({
+  id: '/suiteplus-promo-0707/',
+  path: '/suiteplus-promo-0707/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PontoMagicoIndexRoute = PontoMagicoIndexRouteImport.update({
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
   '/ebook-pjecalc-2026/': typeof EbookPjecalc2026IndexRoute
   '/ponto-magico/': typeof PontoMagicoIndexRoute
+  '/suiteplus-promo-0707/': typeof SuiteplusPromo0707IndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -65,6 +72,7 @@ export interface FileRoutesByTo {
   '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
   '/ebook-pjecalc-2026': typeof EbookPjecalc2026IndexRoute
   '/ponto-magico': typeof PontoMagicoIndexRoute
+  '/suiteplus-promo-0707': typeof SuiteplusPromo0707IndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -74,6 +82,7 @@ export interface FileRoutesById {
   '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
   '/ebook-pjecalc-2026/': typeof EbookPjecalc2026IndexRoute
   '/ponto-magico/': typeof PontoMagicoIndexRoute
+  '/suiteplus-promo-0707/': typeof SuiteplusPromo0707IndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -84,6 +93,7 @@ export interface FileRouteTypes {
     | '/ebook-pjecalc-2026/obrigado-analise-credito'
     | '/ebook-pjecalc-2026/'
     | '/ponto-magico/'
+    | '/suiteplus-promo-0707/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -92,6 +102,7 @@ export interface FileRouteTypes {
     | '/ebook-pjecalc-2026/obrigado-analise-credito'
     | '/ebook-pjecalc-2026'
     | '/ponto-magico'
+    | '/suiteplus-promo-0707'
   id:
     | '__root__'
     | '/'
@@ -100,6 +111,7 @@ export interface FileRouteTypes {
     | '/ebook-pjecalc-2026/obrigado-analise-credito'
     | '/ebook-pjecalc-2026/'
     | '/ponto-magico/'
+    | '/suiteplus-promo-0707/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -109,6 +121,7 @@ export interface RootRouteChildren {
   EbookPjecalc2026ObrigadoAnaliseCreditoRoute: typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
   EbookPjecalc2026IndexRoute: typeof EbookPjecalc2026IndexRoute
   PontoMagicoIndexRoute: typeof PontoMagicoIndexRoute
+  SuiteplusPromo0707IndexRoute: typeof SuiteplusPromo0707IndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -118,6 +131,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/suiteplus-promo-0707/': {
+      id: '/suiteplus-promo-0707/'
+      path: '/suiteplus-promo-0707'
+      fullPath: '/suiteplus-promo-0707/'
+      preLoaderRoute: typeof SuiteplusPromo0707IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ponto-magico/': {
@@ -167,6 +187,7 @@ const rootRouteChildren: RootRouteChildren = {
     EbookPjecalc2026ObrigadoAnaliseCreditoRoute,
   EbookPjecalc2026IndexRoute: EbookPjecalc2026IndexRoute,
   PontoMagicoIndexRoute: PontoMagicoIndexRoute,
+  SuiteplusPromo0707IndexRoute: SuiteplusPromo0707IndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

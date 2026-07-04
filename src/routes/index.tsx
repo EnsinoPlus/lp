@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import catalogoCover from "@/assets/catalogo-capa-pjecalc-vicelmo.png";
-import { BookOpen, Clock, ShoppingCart } from "lucide-react";
+import { BookOpen, Clock, Coins, ShoppingCart } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -13,6 +13,18 @@ export const Route = createFileRoute("/")({
 });
 
 const products = [
+  {
+    slug: "suiteplus-promo-0707",
+    title: "SuitePlus — Promo 07/07",
+    subtitle: "PlusCoin · Recarga",
+    description:
+      "1.000 créditos por R$ 200,00. Bônus exclusivo 07/07 — somente 1 dia. Calc Machine, Ponto Mágico e mais.",
+    price: "R$ 200",
+    oldPrice: null as string | null,
+    cover: null as string | null,
+    icon: Coins,
+    href: "/suiteplus-promo-0707/" as const,
+  },
   {
     slug: "ponto-magico",
     title: "Ponto Mágico",
