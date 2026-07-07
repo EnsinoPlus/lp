@@ -36,8 +36,7 @@ export const Route = createFileRoute("/suiteplus-promo-0707/")({
 
 const CHECKOUT_URL =
   import.meta.env.VITE_SUITEPLUS_CREDITS_CHECKOUT_URL?.trim() ||
-  import.meta.env.VITE_PONTO_MAGICO_SIGNUP_URL?.trim() ||
-  "https://suiteplus.ensinoplus.com.br/";
+  "https://suiteplus.ensinoplus.com.br/promo77";
 
 const TOOLS = [
   {
