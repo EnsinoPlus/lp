@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { UrgencyBar } from "@/components/UrgencyBar";
 import {
   Calculator,
@@ -12,22 +12,22 @@ import {
   Zap,
 } from "lucide-react";
 
-export const Route = createFileRoute("/suiteplus-promo-0707/")({
+export const Route = createFileRoute("/suiteplus-promo-0808/")({
   head: () => ({
     meta: [
       {
-        title: "SuitePlus — 1.000 Créditos por R$ 200 | Promoção 07/07",
+        title: "SuitePlus — 1.000 Créditos por R$ 200 | Promoção 08/08",
       },
       {
         name: "description",
         content:
-          "Promoção exclusiva 07/07: recarregue no SuitePlus e ganhe 1.000 créditos PlusCoin por apenas R$ 200. Somente 1 dia!",
+          "Promoção exclusiva 08/08: recarregue no SuitePlus e ganhe 1.000 créditos PlusCoin por apenas R$ 200. Somente 1 dia!",
       },
       { property: "og:title", content: "SuitePlus — Recarregue e Ganhe Mais | PlusCoin" },
       {
         property: "og:description",
         content:
-          "1.000 créditos por R$ 200,00. Bônus exclusivo 07/07. Calc Machine, Ponto Mágico e mais ferramentas de IA.",
+          "1.000 créditos por R$ 200,00. Bônus exclusivo 08/08. Calc Machine, Ponto Mágico e mais ferramentas de IA.",
       },
     ],
   }),
@@ -36,33 +36,38 @@ export const Route = createFileRoute("/suiteplus-promo-0707/")({
 
 const CHECKOUT_URL =
   import.meta.env.VITE_SUITEPLUS_CREDITS_CHECKOUT_URL?.trim() ||
-  "https://suiteplus.ensinoplus.com.br/promo77";
+  "https://suiteplus.ensinoplus.com.br/promo88";
 
 const TOOLS = [
   {
     icon: Calculator,
     title: "CALC MACHINE",
     desc: "Cálculos trabalhistas com IA integrada ao fluxo do calculista.",
+    href: "/calc-machine/" as const,
   },
   {
     icon: Clock,
     title: "PONTO MÁGICO",
     desc: "Converta cartão de ponto em CSV para o PJe-Calc em segundos.",
+    href: "/ponto-magico/" as const,
   },
   {
     icon: FileText,
     title: "CONTRACHEQUE TRANSPARENTE",
     desc: "Analise holerites e verbas com clareza e precisão.",
+    href: "/contracheque-transparente/" as const,
   },
   {
     icon: CalendarX,
     title: "EXTRATOR DE AUSÊNCIAS",
     desc: "Extraia e organize ausências e faltas automaticamente.",
+    href: "/extrator-de-ausencias/" as const,
   },
   {
     icon: Wallet,
     title: "FGTS FÁCIL",
     desc: "Simplifique cálculos e consultas relacionadas ao FGTS.",
+    href: "/fgts-facil/" as const,
   },
 ] as const;
 
@@ -85,7 +90,7 @@ function CTAButton({ children, large = false }: { children: React.ReactNode; lar
 function Landing() {
   return (
     <div className="min-h-screen bg-background">
-      <UrgencyBar message="PROMOÇÃO 07/07 — SOMENTE 1 DIA! TERMINA EM:" />
+      <UrgencyBar message="PROMOÇÃO 08/08 — SOMENTE 1 DIA! TERMINA EM:" />
 
       {/* HERO */}
       <section className="bg-gradient-hero text-dark-foreground relative overflow-hidden">
@@ -99,7 +104,7 @@ function Landing() {
         <div className="container mx-auto px-4 py-12 md:py-20 relative">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-urgency/25 text-urgency-foreground border border-urgency/50 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider mb-4">
-              <Sparkles className="w-4 h-4" /> Promoção · 07/07 · Somente 1 dia
+              <Sparkles className="w-4 h-4" /> Promoção · 08/08 · Somente 1 dia
             </div>
 
             <p className="text-sm md:text-base font-bold uppercase tracking-[0.2em] text-white/60 mb-3">
@@ -132,7 +137,7 @@ function Landing() {
               <p className="text-sm uppercase tracking-wider text-white/60 mb-2">Por apenas</p>
               <p className="text-5xl md:text-6xl font-black text-primary mb-4">R$ 200,00</p>
               <div className="inline-flex items-center gap-2 bg-primary/20 text-primary border border-primary/40 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider">
-                Bônus exclusivo 07/07
+                Bônus exclusivo 08/08
               </div>
             </div>
 
@@ -140,7 +145,7 @@ function Landing() {
 
             <div className="flex flex-wrap gap-5 mt-8 text-sm text-white/70 justify-center">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-success" /> Oferta válida somente em 07/07
+                <ShieldCheck className="w-5 h-5 text-success" /> Oferta válida somente em 08/08
               </div>
               <div className="flex items-center gap-2">
                 <Coins className="w-5 h-5 text-amber-400" /> Créditos PlusCoin na plataforma
@@ -157,7 +162,7 @@ function Landing() {
             {[
               { n: "1.000", l: "Créditos PlusCoin" },
               { n: "R$ 200", l: "Investimento único" },
-              { n: "07/07", l: "Somente 1 dia" },
+              { n: "08/08", l: "Somente 1 dia" },
               { n: "5+", l: "Ferramentas SuitePlus" },
             ].map((s) => (
               <div key={s.l}>
@@ -184,8 +189,9 @@ function Landing() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {TOOLS.map((tool) => (
-              <div
+              <Link
                 key={tool.title}
+                to={tool.href}
                 className="group bg-card border-2 border-border rounded-2xl p-7 hover:border-primary hover:shadow-card transition-all text-center sm:text-left"
               >
                 <div className="w-14 h-14 rounded-xl bg-gradient-cta flex items-center justify-center text-primary-foreground mb-4 mx-auto sm:mx-0 group-hover:scale-110 transition">
@@ -193,7 +199,8 @@ function Landing() {
                 </div>
                 <h3 className="text-lg font-black uppercase tracking-wide mb-2">{tool.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{tool.desc}</p>
-              </div>
+                <p className="mt-4 text-xs font-bold uppercase tracking-wider text-primary">Conhecer ferramenta →</p>
+              </Link>
             ))}
 
             <div className="sm:col-span-2 lg:col-span-3 bg-gradient-hero text-dark-foreground rounded-2xl p-8 md:p-10 text-center border-2 border-primary/30">
@@ -219,7 +226,7 @@ function Landing() {
         />
         <div className="container mx-auto px-4 relative text-center max-w-3xl">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-urgency-foreground bg-urgency/30 inline-block rounded-full px-4 py-1 mb-6">
-            Última chance — 07/07
+            Última chance — 08/08
           </p>
           <h2 className="text-3xl md:text-5xl font-black mb-5 leading-tight">
             <span className="text-primary">1.000 créditos</span> por R$ 200,00
@@ -231,7 +238,7 @@ function Landing() {
           <CTAButton large>Garantir meus 1.000 créditos</CTAButton>
 
           <p className="text-sm text-white/60 mt-6">
-            Promoção exclusiva válida em 07/07/2026 · Somente 1 dia
+            Promoção exclusiva válida em 08/08/2026 · Somente 1 dia
           </p>
         </div>
       </section>

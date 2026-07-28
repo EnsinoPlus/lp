@@ -10,9 +10,15 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as SuiteplusPromo0707IndexRouteImport } from './routes/suiteplus-promo-0707/index'
+import { Route as SuiteplusPromo0808IndexRouteImport } from './routes/suiteplus-promo-0808/index'
 import { Route as PontoMagicoIndexRouteImport } from './routes/ponto-magico/index'
+import { Route as ImpugnadorIndexRouteImport } from './routes/impugnador/index'
+import { Route as FgtsFacilIndexRouteImport } from './routes/fgts-facil/index'
+import { Route as ExtratorDeAusenciasIndexRouteImport } from './routes/extrator-de-ausencias/index'
 import { Route as EbookPjecalc2026IndexRouteImport } from './routes/ebook-pjecalc-2026/index'
+import { Route as ContrachequeTransparenteIndexRouteImport } from './routes/contracheque-transparente/index'
+import { Route as ChatCctIndexRouteImport } from './routes/chat-cct/index'
+import { Route as CalcMachineIndexRouteImport } from './routes/calc-machine/index'
 import { Route as EbookPjecalc2026ObrigadoAnaliseCreditoRouteImport } from './routes/ebook-pjecalc-2026/obrigado-analise-credito'
 import { Route as EbookPjecalc2026ObrigadoAguardandoPagamentoRouteImport } from './routes/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
 import { Route as EbookPjecalc2026ObrigadoRouteImport } from './routes/ebook-pjecalc-2026/obrigado'
@@ -22,9 +28,9 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SuiteplusPromo0707IndexRoute = SuiteplusPromo0707IndexRouteImport.update({
-  id: '/suiteplus-promo-0707/',
-  path: '/suiteplus-promo-0707/',
+const SuiteplusPromo0808IndexRoute = SuiteplusPromo0808IndexRouteImport.update({
+  id: '/suiteplus-promo-0808/',
+  path: '/suiteplus-promo-0808/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PontoMagicoIndexRoute = PontoMagicoIndexRouteImport.update({
@@ -32,9 +38,41 @@ const PontoMagicoIndexRoute = PontoMagicoIndexRouteImport.update({
   path: '/ponto-magico/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ImpugnadorIndexRoute = ImpugnadorIndexRouteImport.update({
+  id: '/impugnador/',
+  path: '/impugnador/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FgtsFacilIndexRoute = FgtsFacilIndexRouteImport.update({
+  id: '/fgts-facil/',
+  path: '/fgts-facil/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExtratorDeAusenciasIndexRoute =
+  ExtratorDeAusenciasIndexRouteImport.update({
+    id: '/extrator-de-ausencias/',
+    path: '/extrator-de-ausencias/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const EbookPjecalc2026IndexRoute = EbookPjecalc2026IndexRouteImport.update({
   id: '/ebook-pjecalc-2026/',
   path: '/ebook-pjecalc-2026/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContrachequeTransparenteIndexRoute =
+  ContrachequeTransparenteIndexRouteImport.update({
+    id: '/contracheque-transparente/',
+    path: '/contracheque-transparente/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ChatCctIndexRoute = ChatCctIndexRouteImport.update({
+  id: '/chat-cct/',
+  path: '/chat-cct/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CalcMachineIndexRoute = CalcMachineIndexRouteImport.update({
+  id: '/calc-machine/',
+  path: '/calc-machine/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EbookPjecalc2026ObrigadoAnaliseCreditoRoute =
@@ -61,18 +99,30 @@ export interface FileRoutesByFullPath {
   '/ebook-pjecalc-2026/obrigado': typeof EbookPjecalc2026ObrigadoRoute
   '/ebook-pjecalc-2026/obrigado-aguardando-pagamento': typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
   '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
+  '/calc-machine/': typeof CalcMachineIndexRoute
+  '/chat-cct/': typeof ChatCctIndexRoute
+  '/contracheque-transparente/': typeof ContrachequeTransparenteIndexRoute
   '/ebook-pjecalc-2026/': typeof EbookPjecalc2026IndexRoute
+  '/extrator-de-ausencias/': typeof ExtratorDeAusenciasIndexRoute
+  '/fgts-facil/': typeof FgtsFacilIndexRoute
+  '/impugnador/': typeof ImpugnadorIndexRoute
   '/ponto-magico/': typeof PontoMagicoIndexRoute
-  '/suiteplus-promo-0707/': typeof SuiteplusPromo0707IndexRoute
+  '/suiteplus-promo-0808/': typeof SuiteplusPromo0808IndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ebook-pjecalc-2026/obrigado': typeof EbookPjecalc2026ObrigadoRoute
   '/ebook-pjecalc-2026/obrigado-aguardando-pagamento': typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
   '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
+  '/calc-machine': typeof CalcMachineIndexRoute
+  '/chat-cct': typeof ChatCctIndexRoute
+  '/contracheque-transparente': typeof ContrachequeTransparenteIndexRoute
   '/ebook-pjecalc-2026': typeof EbookPjecalc2026IndexRoute
+  '/extrator-de-ausencias': typeof ExtratorDeAusenciasIndexRoute
+  '/fgts-facil': typeof FgtsFacilIndexRoute
+  '/impugnador': typeof ImpugnadorIndexRoute
   '/ponto-magico': typeof PontoMagicoIndexRoute
-  '/suiteplus-promo-0707': typeof SuiteplusPromo0707IndexRoute
+  '/suiteplus-promo-0808': typeof SuiteplusPromo0808IndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,9 +130,15 @@ export interface FileRoutesById {
   '/ebook-pjecalc-2026/obrigado': typeof EbookPjecalc2026ObrigadoRoute
   '/ebook-pjecalc-2026/obrigado-aguardando-pagamento': typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
   '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
+  '/calc-machine/': typeof CalcMachineIndexRoute
+  '/chat-cct/': typeof ChatCctIndexRoute
+  '/contracheque-transparente/': typeof ContrachequeTransparenteIndexRoute
   '/ebook-pjecalc-2026/': typeof EbookPjecalc2026IndexRoute
+  '/extrator-de-ausencias/': typeof ExtratorDeAusenciasIndexRoute
+  '/fgts-facil/': typeof FgtsFacilIndexRoute
+  '/impugnador/': typeof ImpugnadorIndexRoute
   '/ponto-magico/': typeof PontoMagicoIndexRoute
-  '/suiteplus-promo-0707/': typeof SuiteplusPromo0707IndexRoute
+  '/suiteplus-promo-0808/': typeof SuiteplusPromo0808IndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,27 +147,45 @@ export interface FileRouteTypes {
     | '/ebook-pjecalc-2026/obrigado'
     | '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
     | '/ebook-pjecalc-2026/obrigado-analise-credito'
+    | '/calc-machine/'
+    | '/chat-cct/'
+    | '/contracheque-transparente/'
     | '/ebook-pjecalc-2026/'
+    | '/extrator-de-ausencias/'
+    | '/fgts-facil/'
+    | '/impugnador/'
     | '/ponto-magico/'
-    | '/suiteplus-promo-0707/'
+    | '/suiteplus-promo-0808/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/ebook-pjecalc-2026/obrigado'
     | '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
     | '/ebook-pjecalc-2026/obrigado-analise-credito'
+    | '/calc-machine'
+    | '/chat-cct'
+    | '/contracheque-transparente'
     | '/ebook-pjecalc-2026'
+    | '/extrator-de-ausencias'
+    | '/fgts-facil'
+    | '/impugnador'
     | '/ponto-magico'
-    | '/suiteplus-promo-0707'
+    | '/suiteplus-promo-0808'
   id:
     | '__root__'
     | '/'
     | '/ebook-pjecalc-2026/obrigado'
     | '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
     | '/ebook-pjecalc-2026/obrigado-analise-credito'
+    | '/calc-machine/'
+    | '/chat-cct/'
+    | '/contracheque-transparente/'
     | '/ebook-pjecalc-2026/'
+    | '/extrator-de-ausencias/'
+    | '/fgts-facil/'
+    | '/impugnador/'
     | '/ponto-magico/'
-    | '/suiteplus-promo-0707/'
+    | '/suiteplus-promo-0808/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -119,9 +193,15 @@ export interface RootRouteChildren {
   EbookPjecalc2026ObrigadoRoute: typeof EbookPjecalc2026ObrigadoRoute
   EbookPjecalc2026ObrigadoAguardandoPagamentoRoute: typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
   EbookPjecalc2026ObrigadoAnaliseCreditoRoute: typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
+  CalcMachineIndexRoute: typeof CalcMachineIndexRoute
+  ChatCctIndexRoute: typeof ChatCctIndexRoute
+  ContrachequeTransparenteIndexRoute: typeof ContrachequeTransparenteIndexRoute
   EbookPjecalc2026IndexRoute: typeof EbookPjecalc2026IndexRoute
+  ExtratorDeAusenciasIndexRoute: typeof ExtratorDeAusenciasIndexRoute
+  FgtsFacilIndexRoute: typeof FgtsFacilIndexRoute
+  ImpugnadorIndexRoute: typeof ImpugnadorIndexRoute
   PontoMagicoIndexRoute: typeof PontoMagicoIndexRoute
-  SuiteplusPromo0707IndexRoute: typeof SuiteplusPromo0707IndexRoute
+  SuiteplusPromo0808IndexRoute: typeof SuiteplusPromo0808IndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -133,11 +213,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/suiteplus-promo-0707/': {
-      id: '/suiteplus-promo-0707/'
-      path: '/suiteplus-promo-0707'
-      fullPath: '/suiteplus-promo-0707/'
-      preLoaderRoute: typeof SuiteplusPromo0707IndexRouteImport
+    '/suiteplus-promo-0808/': {
+      id: '/suiteplus-promo-0808/'
+      path: '/suiteplus-promo-0808'
+      fullPath: '/suiteplus-promo-0808/'
+      preLoaderRoute: typeof SuiteplusPromo0808IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ponto-magico/': {
@@ -147,11 +227,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PontoMagicoIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/impugnador/': {
+      id: '/impugnador/'
+      path: '/impugnador'
+      fullPath: '/impugnador/'
+      preLoaderRoute: typeof ImpugnadorIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fgts-facil/': {
+      id: '/fgts-facil/'
+      path: '/fgts-facil'
+      fullPath: '/fgts-facil/'
+      preLoaderRoute: typeof FgtsFacilIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/extrator-de-ausencias/': {
+      id: '/extrator-de-ausencias/'
+      path: '/extrator-de-ausencias'
+      fullPath: '/extrator-de-ausencias/'
+      preLoaderRoute: typeof ExtratorDeAusenciasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ebook-pjecalc-2026/': {
       id: '/ebook-pjecalc-2026/'
       path: '/ebook-pjecalc-2026'
       fullPath: '/ebook-pjecalc-2026/'
       preLoaderRoute: typeof EbookPjecalc2026IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contracheque-transparente/': {
+      id: '/contracheque-transparente/'
+      path: '/contracheque-transparente'
+      fullPath: '/contracheque-transparente/'
+      preLoaderRoute: typeof ContrachequeTransparenteIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat-cct/': {
+      id: '/chat-cct/'
+      path: '/chat-cct'
+      fullPath: '/chat-cct/'
+      preLoaderRoute: typeof ChatCctIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calc-machine/': {
+      id: '/calc-machine/'
+      path: '/calc-machine'
+      fullPath: '/calc-machine/'
+      preLoaderRoute: typeof CalcMachineIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ebook-pjecalc-2026/obrigado-analise-credito': {
@@ -185,9 +307,15 @@ const rootRouteChildren: RootRouteChildren = {
     EbookPjecalc2026ObrigadoAguardandoPagamentoRoute,
   EbookPjecalc2026ObrigadoAnaliseCreditoRoute:
     EbookPjecalc2026ObrigadoAnaliseCreditoRoute,
+  CalcMachineIndexRoute: CalcMachineIndexRoute,
+  ChatCctIndexRoute: ChatCctIndexRoute,
+  ContrachequeTransparenteIndexRoute: ContrachequeTransparenteIndexRoute,
   EbookPjecalc2026IndexRoute: EbookPjecalc2026IndexRoute,
+  ExtratorDeAusenciasIndexRoute: ExtratorDeAusenciasIndexRoute,
+  FgtsFacilIndexRoute: FgtsFacilIndexRoute,
+  ImpugnadorIndexRoute: ImpugnadorIndexRoute,
   PontoMagicoIndexRoute: PontoMagicoIndexRoute,
-  SuiteplusPromo0707IndexRoute: SuiteplusPromo0707IndexRoute,
+  SuiteplusPromo0808IndexRoute: SuiteplusPromo0808IndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,6 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import catalogoCover from "@/assets/catalogo-capa-pjecalc-vicelmo.png";
-import { BookOpen, Clock, Coins, ShoppingCart } from "lucide-react";
+import {
+  BookOpen,
+  Bot,
+  Calculator,
+  CalendarX,
+  Clock,
+  Coins,
+  FileText,
+  MessageSquare,
+  ShoppingCart,
+  Wallet,
+} from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -14,16 +25,28 @@ export const Route = createFileRoute("/")({
 
 const products = [
   {
-    slug: "suiteplus-promo-0707",
-    title: "SuitePlus — Promo 07/07",
+    slug: "suiteplus-promo-0808",
+    title: "SuitePlus — Promo 08/08",
     subtitle: "PlusCoin · Recarga",
     description:
-      "1.000 créditos por R$ 200,00. Bônus exclusivo 07/07 — somente 1 dia. Calc Machine, Ponto Mágico e mais.",
+      "1.000 créditos por R$ 200,00. Bônus exclusivo 08/08 — somente 1 dia. Calc Machine, Ponto Mágico e mais.",
     price: "R$ 200",
     oldPrice: null as string | null,
     cover: null as string | null,
     icon: Coins,
-    href: "/suiteplus-promo-0707/" as const,
+    href: "/suiteplus-promo-0808/" as const,
+  },
+  {
+    slug: "calc-machine",
+    title: "CalcMachine",
+    subtitle: "SuitePlus · IA",
+    description:
+      "Cole a sentença trabalhista e receba .PJC e JSON prontos para o PJe-Calc. Teste grátis com 20 créditos.",
+    price: "20 créditos grátis",
+    oldPrice: null as string | null,
+    cover: null as string | null,
+    icon: Calculator,
+    href: "/calc-machine/" as const,
   },
   {
     slug: "ponto-magico",
@@ -36,6 +59,66 @@ const products = [
     cover: null as string | null,
     icon: Clock,
     href: "/ponto-magico/" as const,
+  },
+  {
+    slug: "chat-cct",
+    title: "Chat CCT",
+    subtitle: "SuitePlus · IA",
+    description:
+      "Tire dúvidas de cálculos trabalhistas com IA e fontes exclusivas rastreáveis. 20 créditos ao cadastrar.",
+    price: "20 créditos grátis",
+    oldPrice: null as string | null,
+    cover: null as string | null,
+    icon: MessageSquare,
+    href: "/chat-cct/" as const,
+  },
+  {
+    slug: "contracheque-transparente",
+    title: "ContraCheque Transparente",
+    subtitle: "SuitePlus · IA",
+    description:
+      "PDF de contracheques em planilha por rubricas, pronta para o PJe-Calc. Teste grátis no SuitePlus.",
+    price: "20 créditos grátis",
+    oldPrice: null as string | null,
+    cover: null as string | null,
+    icon: FileText,
+    href: "/contracheque-transparente/" as const,
+  },
+  {
+    slug: "extrator-de-ausencias",
+    title: "Extrator de Ausências",
+    subtitle: "SuitePlus · IA",
+    description:
+      "Extraia férias e faltas de PDFs e gere CSV para o PJe-Calc. Teste grátis com 20 créditos.",
+    price: "20 créditos grátis",
+    oldPrice: null as string | null,
+    cover: null as string | null,
+    icon: CalendarX,
+    href: "/extrator-de-ausencias/" as const,
+  },
+  {
+    slug: "fgts-facil",
+    title: "FGTS Fácil",
+    subtitle: "SuitePlus · IA",
+    description:
+      "Analise extrato de FGTS, meses sem depósito e bases por período. CSV pronto para o PJe-Calc.",
+    price: "20 créditos grátis",
+    oldPrice: null as string | null,
+    cover: null as string | null,
+    icon: Wallet,
+    href: "/fgts-facil/" as const,
+  },
+  {
+    slug: "impugnador",
+    title: "Impugnador",
+    subtitle: "SuitePlus · IA",
+    description:
+      "Valide sentença contra cálculos com agentes de IA e relatório persistente. 20 créditos ao cadastrar.",
+    price: "20 créditos grátis",
+    oldPrice: null as string | null,
+    cover: null as string | null,
+    icon: Bot,
+    href: "/impugnador/" as const,
   },
   {
     slug: "ebook-pjecalc-2026",
@@ -115,4 +198,3 @@ function Home() {
     </div>
   );
 }
-
