@@ -1,5 +1,6 @@
 import { useState, type ComponentType } from "react";
 import { UrgencyBar } from "@/components/UrgencyBar";
+import { useTrackedUrl } from "@/hooks/useSignupOrigin";
 import { CheckCircle2, ChevronDown, ShieldCheck, Sparkles, Star, Zap } from "lucide-react";
 
 export type SuiteToolIcon = ComponentType<{ className?: string }>;
@@ -114,6 +115,8 @@ export function SuiteToolLanding(props: SuiteToolLandingProps) {
     footerLabel,
   } = props;
 
+  const trackedSignupUrl = useTrackedUrl(signupUrl);
+
   return (
     <div className="min-h-screen bg-background">
       <UrgencyBar message={urgencyMessage} />
@@ -162,7 +165,7 @@ export function SuiteToolLanding(props: SuiteToolLandingProps) {
               <p className="text-sm text-white/60">{freeCreditsNote}</p>
             </div>
 
-            <CTAButton href={signupUrl} large>
+            <CTAButton href={trackedSignupUrl} large>
               {ctaLabel}
             </CTAButton>
 
@@ -288,7 +291,7 @@ export function SuiteToolLanding(props: SuiteToolLandingProps) {
           <h2 className="text-3xl md:text-5xl font-black mb-5 leading-tight">{finalTitle}</h2>
           <p className="text-lg md:text-xl text-white/80 mb-10">{finalText}</p>
           <p className="text-4xl md:text-5xl font-black text-primary mb-8">20 créditos grátis</p>
-          <CTAButton href={signupUrl} large>
+          <CTAButton href={trackedSignupUrl} large>
             {finalCtaLabel}
           </CTAButton>
           <p className="text-sm text-white/60 mt-6 flex items-center justify-center gap-2 flex-wrap">

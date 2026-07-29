@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { UrgencyBar } from "@/components/UrgencyBar";
+import { useTrackedUrl } from "@/hooks/useSignupOrigin";
 import {
   Calculator,
   CalendarX,
@@ -72,9 +73,10 @@ const TOOLS = [
 ] as const;
 
 function CTAButton({ children, large = false }: { children: React.ReactNode; large?: boolean }) {
+  const checkoutHref = useTrackedUrl(CHECKOUT_URL);
   return (
     <a
-      href={CHECKOUT_URL}
+      href={checkoutHref}
       target="_blank"
       rel="noreferrer"
       className={`inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-cta text-primary-foreground font-bold uppercase tracking-wide shadow-cta hover:brightness-110 transition-all animate-pulse-cta ${

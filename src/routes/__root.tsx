@@ -1,6 +1,7 @@
 import { Outlet, createRootRoute, HeadContent, Scripts, Navigate } from "@tanstack/react-router";
 import appCss from "../styles.css?url";
 import { buildGtmHeadScript } from "@/lib/gtm";
+import { SignupOriginTracker } from "@/components/SignupOriginTracker";
 
 const gtmId = import.meta.env.VITE_GTM_ID?.trim() || undefined;
 const gtmHeadScript = gtmId ? buildGtmHeadScript(gtmId) : null;
@@ -32,9 +33,18 @@ export const Route = createRootRoute({
     ],
   }),
   shellComponent: RootShell,
-  component: () => <Outlet />,
+  component: RootComponent,
   notFoundComponent: NotFoundComponent,
 });
+
+function RootComponent() {
+  return (
+    <>
+      <SignupOriginTracker />
+      <Outlet />
+    </>
+  );
+}
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (

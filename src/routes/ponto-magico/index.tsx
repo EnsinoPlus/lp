@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { UrgencyBar } from "@/components/UrgencyBar";
+import { useTrackedUrl } from "@/hooks/useSignupOrigin";
 import {
   CheckCircle2,
   ChevronDown,
@@ -54,9 +55,10 @@ const TESTE_PARAMETROS = {
 };
 
 function CTAButton({ children, large = false }: { children: React.ReactNode; large?: boolean }) {
+  const signupHref = useTrackedUrl(SIGNUP_URL);
   return (
     <a
-      href={SIGNUP_URL}
+      href={signupHref}
       target="_blank"
       rel="noreferrer"
       className={`inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-cta text-primary-foreground font-bold uppercase tracking-wide shadow-cta hover:brightness-110 transition-all animate-pulse-cta ${
