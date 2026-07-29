@@ -1,7 +1,7 @@
 const STORAGE_KEY = "suiteplus_signup_origem";
 
 function normalizeOriginCode(raw: string | null | undefined): string {
-  return (raw ?? "").toString().trim().toUpperCase().replace(/[^A-Z0-9_-]/g, "");
+  return (raw ?? "").toString().trim().replace(/[^a-zA-Z0-9_-]/g, "");
 }
 
 export function getStoredSignupOrigin(): string {
