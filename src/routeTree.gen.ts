@@ -15,6 +15,7 @@ import { Route as PontoMagicoIndexRouteImport } from './routes/ponto-magico/inde
 import { Route as ImpugnadorIndexRouteImport } from './routes/impugnador/index'
 import { Route as FgtsFacilIndexRouteImport } from './routes/fgts-facil/index'
 import { Route as ExtratorDeAusenciasIndexRouteImport } from './routes/extrator-de-ausencias/index'
+import { Route as EbookPjecalcSuiteplusIndexRouteImport } from './routes/ebook-pjecalc-suiteplus/index'
 import { Route as EbookPjecalc2026IndexRouteImport } from './routes/ebook-pjecalc-2026/index'
 import { Route as ContrachequeTransparenteIndexRouteImport } from './routes/contracheque-transparente/index'
 import { Route as ChatCctIndexRouteImport } from './routes/chat-cct/index'
@@ -52,6 +53,12 @@ const ExtratorDeAusenciasIndexRoute =
   ExtratorDeAusenciasIndexRouteImport.update({
     id: '/extrator-de-ausencias/',
     path: '/extrator-de-ausencias/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const EbookPjecalcSuiteplusIndexRoute =
+  EbookPjecalcSuiteplusIndexRouteImport.update({
+    id: '/ebook-pjecalc-suiteplus/',
+    path: '/ebook-pjecalc-suiteplus/',
     getParentRoute: () => rootRouteImport,
   } as any)
 const EbookPjecalc2026IndexRoute = EbookPjecalc2026IndexRouteImport.update({
@@ -103,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/chat-cct/': typeof ChatCctIndexRoute
   '/contracheque-transparente/': typeof ContrachequeTransparenteIndexRoute
   '/ebook-pjecalc-2026/': typeof EbookPjecalc2026IndexRoute
+  '/ebook-pjecalc-suiteplus/': typeof EbookPjecalcSuiteplusIndexRoute
   '/extrator-de-ausencias/': typeof ExtratorDeAusenciasIndexRoute
   '/fgts-facil/': typeof FgtsFacilIndexRoute
   '/impugnador/': typeof ImpugnadorIndexRoute
@@ -118,6 +126,7 @@ export interface FileRoutesByTo {
   '/chat-cct': typeof ChatCctIndexRoute
   '/contracheque-transparente': typeof ContrachequeTransparenteIndexRoute
   '/ebook-pjecalc-2026': typeof EbookPjecalc2026IndexRoute
+  '/ebook-pjecalc-suiteplus': typeof EbookPjecalcSuiteplusIndexRoute
   '/extrator-de-ausencias': typeof ExtratorDeAusenciasIndexRoute
   '/fgts-facil': typeof FgtsFacilIndexRoute
   '/impugnador': typeof ImpugnadorIndexRoute
@@ -134,6 +143,7 @@ export interface FileRoutesById {
   '/chat-cct/': typeof ChatCctIndexRoute
   '/contracheque-transparente/': typeof ContrachequeTransparenteIndexRoute
   '/ebook-pjecalc-2026/': typeof EbookPjecalc2026IndexRoute
+  '/ebook-pjecalc-suiteplus/': typeof EbookPjecalcSuiteplusIndexRoute
   '/extrator-de-ausencias/': typeof ExtratorDeAusenciasIndexRoute
   '/fgts-facil/': typeof FgtsFacilIndexRoute
   '/impugnador/': typeof ImpugnadorIndexRoute
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
     | '/chat-cct/'
     | '/contracheque-transparente/'
     | '/ebook-pjecalc-2026/'
+    | '/ebook-pjecalc-suiteplus/'
     | '/extrator-de-ausencias/'
     | '/fgts-facil/'
     | '/impugnador/'
@@ -166,6 +177,7 @@ export interface FileRouteTypes {
     | '/chat-cct'
     | '/contracheque-transparente'
     | '/ebook-pjecalc-2026'
+    | '/ebook-pjecalc-suiteplus'
     | '/extrator-de-ausencias'
     | '/fgts-facil'
     | '/impugnador'
@@ -181,6 +193,7 @@ export interface FileRouteTypes {
     | '/chat-cct/'
     | '/contracheque-transparente/'
     | '/ebook-pjecalc-2026/'
+    | '/ebook-pjecalc-suiteplus/'
     | '/extrator-de-ausencias/'
     | '/fgts-facil/'
     | '/impugnador/'
@@ -197,6 +210,7 @@ export interface RootRouteChildren {
   ChatCctIndexRoute: typeof ChatCctIndexRoute
   ContrachequeTransparenteIndexRoute: typeof ContrachequeTransparenteIndexRoute
   EbookPjecalc2026IndexRoute: typeof EbookPjecalc2026IndexRoute
+  EbookPjecalcSuiteplusIndexRoute: typeof EbookPjecalcSuiteplusIndexRoute
   ExtratorDeAusenciasIndexRoute: typeof ExtratorDeAusenciasIndexRoute
   FgtsFacilIndexRoute: typeof FgtsFacilIndexRoute
   ImpugnadorIndexRoute: typeof ImpugnadorIndexRoute
@@ -246,6 +260,13 @@ declare module '@tanstack/react-router' {
       path: '/extrator-de-ausencias'
       fullPath: '/extrator-de-ausencias/'
       preLoaderRoute: typeof ExtratorDeAusenciasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ebook-pjecalc-suiteplus/': {
+      id: '/ebook-pjecalc-suiteplus/'
+      path: '/ebook-pjecalc-suiteplus'
+      fullPath: '/ebook-pjecalc-suiteplus/'
+      preLoaderRoute: typeof EbookPjecalcSuiteplusIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ebook-pjecalc-2026/': {
@@ -311,6 +332,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChatCctIndexRoute: ChatCctIndexRoute,
   ContrachequeTransparenteIndexRoute: ContrachequeTransparenteIndexRoute,
   EbookPjecalc2026IndexRoute: EbookPjecalc2026IndexRoute,
+  EbookPjecalcSuiteplusIndexRoute: EbookPjecalcSuiteplusIndexRoute,
   ExtratorDeAusenciasIndexRoute: ExtratorDeAusenciasIndexRoute,
   FgtsFacilIndexRoute: FgtsFacilIndexRoute,
   ImpugnadorIndexRoute: ImpugnadorIndexRoute,

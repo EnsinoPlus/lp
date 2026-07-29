@@ -25,6 +25,18 @@ export const Route = createFileRoute("/")({
 
 const products = [
   {
+    slug: "ebook-pjecalc-suiteplus",
+    title: "E-book Pje-Calc 2026 (SuitePlus)",
+    subtitle: "Cadastro + créditos",
+    description:
+      "Crie conta no SuitePlus (20 créditos), recarregue R$ 50 (120 créditos) e compre o e-book na plataforma — sem Hotmart.",
+    price: "R$ 50 em créditos",
+    oldPrice: null as string | null,
+    cover: catalogoCover,
+    icon: null,
+    href: "/ebook-pjecalc-suiteplus/" as const,
+  },
+  {
     slug: "suiteplus-promo-0808",
     title: "SuitePlus — Promo 08/08",
     subtitle: "PlusCoin · Recarga",
