@@ -29,9 +29,9 @@ const products = [
     title: "E-book Pje-Calc 2026 (SuitePlus)",
     subtitle: "Cadastro + créditos",
     description:
-      "Crie conta no SuitePlus (20 créditos), recarregue R$ 50 (120 créditos) e compre o e-book na plataforma — sem Hotmart.",
-    price: "R$ 50 em créditos",
-    oldPrice: null as string | null,
+      "E-book de R$ 97 por R$ 50 no SuitePlus: cadastro (+20), complete o perfil (+10) e recarregue R$ 50 (120 créditos).",
+    price: "R$ 50",
+    oldPrice: "R$ 97" as string | null,
     cover: catalogoCover,
     icon: null,
     href: "/ebook-pjecalc-suiteplus/" as const,

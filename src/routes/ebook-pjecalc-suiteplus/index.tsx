@@ -19,6 +19,7 @@ import {
   Sparkles,
   Star,
   UserPlus,
+  UserRound,
   Wallet,
   Zap,
 } from "lucide-react";
@@ -27,21 +28,21 @@ export const Route = createFileRoute("/ebook-pjecalc-suiteplus/")({
   head: () => ({
     meta: [
       {
-        title: "E-book Pje-Calc 2026 no SuitePlus — Cadastre-se e compre com créditos",
+        title: "E-book Pje-Calc 2026 por R$ 50 no SuitePlus — de R$ 97",
       },
       {
         name: "description",
         content:
-          "Crie sua conta no SuitePlus, ganhe 20 créditos, recarregue R$ 50 (120 créditos) e compre o E-book Pje-Calc 2026 dentro da plataforma.",
+          "O e-book de R$ 97 sai por apenas R$ 50 no SuitePlus. Cadastre-se (+20 créditos), complete o perfil (+10) e recarregue R$ 50 (120 créditos).",
       },
       {
         property: "og:title",
-        content: "E-book Pje-Calc 2026 — compre no SuitePlus",
+        content: "E-book Pje-Calc 2026 — de R$ 97 por R$ 50 no SuitePlus",
       },
       {
         property: "og:description",
         content:
-          "Cadastro grátis com 20 créditos. Recarregue R$ 50 e leve o guia do Prof. Vicelmo Alencar pelo SuitePlus.",
+          "Cadastro grátis (+20 créditos), complete o perfil (+10) e recarregue R$ 50 (120 créditos) para levar o guia do Prof. Vicelmo.",
       },
       { property: "og:image", content: heroImg },
     ],
@@ -55,6 +56,9 @@ const SIGNUP_URL =
 const RECHARGE_URL =
   import.meta.env.VITE_SUITEPLUS_RECHARGE_URL?.trim() ||
   "https://suiteplus.ensinoplus.com.br/recarregar";
+const PROFILE_URL =
+  import.meta.env.VITE_SUITEPLUS_PROFILE_URL?.trim() ||
+  "https://suiteplus.ensinoplus.com.br/perfil";
 const SUITEPLUS_URL =
   import.meta.env.VITE_SUITEPLUS_HOME_URL?.trim() ||
   "https://suiteplus.ensinoplus.com.br/";
@@ -102,10 +106,30 @@ function SecondaryLink({
   );
 }
 
+function TrackedTextLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
+  const tracked = useTrackedUrl(href);
+  return (
+    <a
+      href={tracked}
+      target="_blank"
+      rel="noreferrer"
+      className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-primary hover:underline"
+    >
+      {children}
+    </a>
+  );
+}
+
 function Landing() {
   return (
     <div className="min-h-screen bg-background">
-      <UrgencyBar message="E-BOOK VIA SUITEPLUS — CADASTRO GRÁTIS + 20 CRÉDITOS:" />
+      <UrgencyBar message="OFERTA SUITEPLUS — E-BOOK DE R$ 97 POR APENAS R$ 50:" />
 
       {/* HERO */}
       <section className="bg-gradient-hero text-dark-foreground relative overflow-hidden">
@@ -121,7 +145,7 @@ function Landing() {
             <div className="inline-flex items-center gap-2 bg-primary/20 text-primary border border-primary/40 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider mb-4">
               <Sparkles className="w-4 h-4 fill-primary" /> Via SuitePlus · Sem Hotmart
             </div>
-            <div className="inline-flex items-center gap-2 bg-white/10 text-white/80 border border-white/20 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider mb-6 ml-0 md:ml-2">
+            <div className="inline-flex items-center gap-2 bg-white/10 text-white/80 border border-white/20 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider mb-6">
               <Star className="w-4 h-4 fill-primary text-primary" /> Edição 2026 — Atualizada
             </div>
 
@@ -131,11 +155,22 @@ function Landing() {
                 (Lei 14.905/2024)
               </span>
             </h1>
-            <p className="text-lg md:text-xl text-white/80 mb-8 leading-relaxed">
+            <p className="text-lg md:text-xl text-white/80 mb-6 leading-relaxed">
               O guia prático do <strong className="text-white">Prof. Vicelmo Alencar</strong>.
-              Agora você compra pelo <strong className="text-white">SuitePlus</strong>: cria a conta,
-              ganha créditos e libera o e-book com uma recarga.
+              Cadastre-se agora no <strong className="text-white">SuitePlus</strong> e leve o e-book
+              que custa <strong className="text-white">R$ 97</strong> por apenas{" "}
+              <strong className="text-primary">R$ 50</strong>.
             </p>
+
+            <div className="flex items-baseline justify-center gap-4 mb-8">
+              <span className="text-white/50 line-through text-2xl md:text-3xl">R$ 97</span>
+              <span className="text-5xl md:text-6xl font-black text-primary">R$ 50</span>
+              <span className="text-sm text-white/60 text-left leading-tight">
+                cadastrando
+                <br />
+                no SuitePlus
+              </span>
+            </div>
 
             <div className="w-full mb-8">
               <div className="aspect-video rounded-2xl overflow-hidden shadow-card border border-border bg-black max-w-3xl mx-auto">
@@ -153,9 +188,9 @@ function Landing() {
 
             <div className="grid sm:grid-cols-3 gap-3 max-w-3xl mx-auto mb-8 text-left">
               {[
-                { n: "1", title: "Cadastre-se", desc: "Conta grátis + 20 créditos" },
-                { n: "2", title: "Recarregue R$ 50", desc: "Receba 120 créditos" },
-                { n: "3", title: "Compre o e-book", desc: "Direto no SuitePlus" },
+                { n: "1", title: "Cadastre-se", desc: "+20 créditos grátis" },
+                { n: "2", title: "Complete o perfil", desc: "+10 créditos" },
+                { n: "3", title: "Recarregue R$ 50", desc: "+120 créditos" },
               ].map((step) => (
                 <div
                   key={step.n}
@@ -178,13 +213,13 @@ function Landing() {
 
             <div className="flex flex-wrap gap-5 mt-6 text-sm text-white/70 justify-center">
               <div className="flex items-center gap-2">
-                <Coins className="w-5 h-5 text-primary" /> 20 créditos no cadastro
+                <Coins className="w-5 h-5 text-primary" /> 20 no cadastro + 10 no perfil
               </div>
               <div className="flex items-center gap-2">
                 <Wallet className="w-5 h-5 text-success" /> R$ 50 = 120 créditos
               </div>
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-success" /> Acesso no SuitePlus
+                <ShieldCheck className="w-5 h-5 text-success" /> E-book por R$ 50
               </div>
             </div>
           </div>
@@ -196,13 +231,13 @@ function Landing() {
         <div className="container mx-auto px-4 max-w-5xl">
           <div className="text-center mb-12">
             <span className="text-primary font-bold uppercase text-sm tracking-wider">
-              Como comprar
+              Nova jornada
             </span>
             <h2 className="text-3xl md:text-5xl font-black mt-2 mb-4">
               Em 3 passos simples
             </h2>
             <p className="text-muted-foreground text-lg">
-              Sem Hotmart. Tudo acontece dentro do ecossistema SuitePlus.
+              De R$ 97 por R$ 50 — cadastre-se agora no SuitePlus e libere o e-book.
             </p>
           </div>
 
@@ -210,35 +245,54 @@ function Landing() {
             {[
               {
                 icon: UserPlus,
-                title: "1. Crie sua conta",
-                desc: "Cadastro gratuito no SuitePlus. Você já recebe 20 créditos para começar a explorar as ferramentas.",
+                title: "1. Cadastre-se",
+                desc: "Crie sua conta gratuita no SuitePlus e receba 20 créditos na hora.",
+                href: SIGNUP_URL,
+                cta: "Criar conta",
+              },
+              {
+                icon: UserRound,
+                title: "2. Complete o perfil",
+                desc: "Preencha seus dados no perfil e ganhe mais 10 créditos de bônus.",
+                href: PROFILE_URL,
+                cta: "Ir para o perfil",
               },
               {
                 icon: Wallet,
-                title: "2. Recarregue R$ 50",
-                desc: "Na área de recarga, escolha o pacote de R$ 50 e receba 120 créditos na hora.",
-              },
-              {
-                icon: BookOpen,
-                title: "3. Compre o e-book",
-                desc: "Com os créditos disponíveis, adquira o E-book Pje-Calc 2026 dentro do SuitePlus.",
+                title: "3. Recarregue R$ 50",
+                desc: "Faça a recarga de R$ 50 e receba 120 créditos para comprar o e-book no SuitePlus.",
+                href: RECHARGE_URL,
+                cta: "Recarregar agora",
               },
             ].map((item) => (
               <div
                 key={item.title}
-                className="bg-card border-2 border-border rounded-2xl p-7 hover:border-primary hover:shadow-card transition-all"
+                className="bg-card border-2 border-border rounded-2xl p-7 hover:border-primary hover:shadow-card transition-all flex flex-col"
               >
                 <div className="w-12 h-12 rounded-xl bg-gradient-cta flex items-center justify-center text-primary-foreground mb-4">
                   <item.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
+                <p className="text-muted-foreground leading-relaxed flex-1">{item.desc}</p>
+                <TrackedTextLink href={item.href}>
+                  {item.cta} <ArrowRight className="w-4 h-4" />
+                </TrackedTextLink>
               </div>
             ))}
           </div>
 
-          <div className="text-center mt-10">
-            <SignupCTA>Quero começar pelo cadastro</SignupCTA>
+          <div className="mt-10 rounded-2xl border-2 border-primary/30 bg-card p-6 md:p-8 text-center max-w-3xl mx-auto">
+            <p className="text-sm font-bold uppercase tracking-wider text-primary mb-2">
+              Oferta ao cadastrar agora
+            </p>
+            <div className="flex items-baseline justify-center gap-4 mb-3">
+              <span className="text-muted-foreground line-through text-2xl">R$ 97</span>
+              <span className="text-5xl font-black text-primary">R$ 50</span>
+            </div>
+            <p className="text-muted-foreground mb-6">
+              O e-book que custa R$ 97 sai por apenas R$ 50 fazendo o cadastro agora no SuitePlus.
+            </p>
+            <SignupCTA>Quero o e-book por R$ 50</SignupCTA>
           </div>
         </div>
       </section>
@@ -419,16 +473,16 @@ function Landing() {
           <div className="space-y-3">
             {[
               {
-                q: "Por que preciso me cadastrar no SuitePlus?",
-                a: "Porque nesta oferta o e-book é adquirido dentro do SuitePlus, com créditos. Ao criar a conta você já ganha 20 créditos e passa a ter acesso às ferramentas da plataforma.",
+                q: "Como o e-book de R$ 97 sai por R$ 50?",
+                a: "Cadastrando agora no SuitePlus você segue a jornada: cadastro (+20 créditos), complete o perfil (+10 créditos) e recarregue R$ 50 (120 créditos). Com isso, o e-book fica disponível por apenas R$ 50 na plataforma.",
               },
               {
-                q: "O que significa a recarga de R$ 50?",
-                a: "Ao recarregar R$ 50 no SuitePlus você recebe 120 créditos. Com esses créditos você compra o e-book dentro da plataforma.",
+                q: "Quais são os 3 passos da jornada?",
+                a: "1) Criar conta e ganhar 20 créditos. 2) Completar o perfil e ganhar mais 10 créditos. 3) Recarregar R$ 50 e receber 120 créditos para comprar o e-book no SuitePlus.",
               },
               {
                 q: "Já tenho conta no SuitePlus. O que faço?",
-                a: "Faça login, vá em Recarregar, escolha o pacote de R$ 50 (120 créditos) e depois compre o e-book no SuitePlus.",
+                a: "Complete o perfil (se ainda não fez) para ganhar os 10 créditos, depois vá em Recarregar, escolha o pacote de R$ 50 (120 créditos) e compre o e-book.",
               },
               {
                 q: "O conteúdo serve para quem é iniciante no Pje-Calc?",
@@ -456,16 +510,15 @@ function Landing() {
         />
         <div className="container mx-auto px-4 relative text-center max-w-3xl">
           <h2 className="text-3xl md:text-5xl font-black mb-5 leading-tight">
-            Comece pelo cadastro e libere o e-book no{" "}
-            <span className="text-primary">SuitePlus</span>
+            De <span className="line-through text-white/50">R$ 97</span> por{" "}
+            <span className="text-primary">R$ 50</span> no SuitePlus
           </h2>
           <p className="text-lg md:text-xl text-white/80 mb-8">
-            Conta grátis + 20 créditos → recarga de R$ 50 (120 créditos) → compre o e-book na
-            plataforma.
+            Cadastro (+20) → Complete o perfil (+10) → Recarga R$ 50 (120 créditos) → e-book liberado.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
-            <SignupCTA large>Criar conta gratuitamente</SignupCTA>
+            <SignupCTA large>Criar conta e pagar só R$ 50</SignupCTA>
             <SecondaryLink href={SUITEPLUS_URL}>
               Ir para o SuitePlus
               <ArrowRight className="w-5 h-5" />
