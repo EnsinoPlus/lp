@@ -17,6 +17,8 @@ interface ImportMetaEnv {
   readonly VITE_IMPUGNADOR_APP_URL?: string;
   /** Promo SuitePlus — preferir leitura runtime via getCreditsCheckoutUrl(); VITE_ só para docs/dev */
   readonly VITE_SUITEPLUS_CREDITS_CHECKOUT_URL?: string;
+  /** Livro físico — preferir getBookCheckoutUrl() em runtime */
+  readonly VITE_SUITEPLUS_BOOK_CHECKOUT_URL?: string;
   /** ID do Google Tag Manager, ex.: GTM-ABC1234 */
   readonly VITE_GTM_ID?: string;
 }

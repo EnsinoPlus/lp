@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import catalogoCover from "@/assets/catalogo-capa-pjecalc-vicelmo.png";
+import livroCover from "@/assets/livro-pjecalc-capa.webp";
 import {
   BookOpen,
   Bot,
@@ -24,6 +25,18 @@ export const Route = createFileRoute("/")({
 });
 
 const products = [
+  {
+    slug: "livro-pjecalc-vicelmo",
+    title: "Manual PJe-Calc (Livro Físico)",
+    subtitle: "6ª Edição · Mizuno",
+    description:
+      "Livro físico ilustrado com telas do PJe-Calc. Liquidação, juros, IA e impugnação. R$ 151,20 no PIX.",
+    price: "R$ 151,20",
+    oldPrice: "R$ 168" as string | null,
+    cover: livroCover,
+    icon: null,
+    href: "/livro-pjecalc-vicelmo/" as const,
+  },
   {
     slug: "ebook-pjecalc-suiteplus",
     title: "E-book Pje-Calc 2026 (SuitePlus)",

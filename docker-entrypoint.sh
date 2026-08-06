@@ -15,6 +15,8 @@ cfg.vars = { ...(cfg.vars || {}) };
 const keys = [
   "SUITEPLUS_CREDITS_CHECKOUT_URL",
   "VITE_SUITEPLUS_CREDITS_CHECKOUT_URL",
+  "SUITEPLUS_BOOK_CHECKOUT_URL",
+  "VITE_SUITEPLUS_BOOK_CHECKOUT_URL",
 ];
 
 for (const key of keys) {
@@ -29,6 +31,14 @@ const checkout =
 if (checkout) {
   cfg.vars.SUITEPLUS_CREDITS_CHECKOUT_URL = checkout;
   cfg.vars.VITE_SUITEPLUS_CREDITS_CHECKOUT_URL = checkout;
+}
+
+const bookCheckout =
+  process.env.SUITEPLUS_BOOK_CHECKOUT_URL?.trim() ||
+  process.env.VITE_SUITEPLUS_BOOK_CHECKOUT_URL?.trim();
+if (bookCheckout) {
+  cfg.vars.SUITEPLUS_BOOK_CHECKOUT_URL = bookCheckout;
+  cfg.vars.VITE_SUITEPLUS_BOOK_CHECKOUT_URL = bookCheckout;
 }
 
 fs.writeFileSync(path, JSON.stringify(cfg));

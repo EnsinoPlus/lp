@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SuiteplusPromo0808IndexRouteImport } from './routes/suiteplus-promo-0808/index'
 import { Route as PontoMagicoIndexRouteImport } from './routes/ponto-magico/index'
+import { Route as LivroPjecalcVicelmoIndexRouteImport } from './routes/livro-pjecalc-vicelmo/index'
 import { Route as ImpugnadorIndexRouteImport } from './routes/impugnador/index'
 import { Route as FgtsFacilIndexRouteImport } from './routes/fgts-facil/index'
 import { Route as ExtratorDeAusenciasIndexRouteImport } from './routes/extrator-de-ausencias/index'
@@ -39,6 +40,12 @@ const PontoMagicoIndexRoute = PontoMagicoIndexRouteImport.update({
   path: '/ponto-magico/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LivroPjecalcVicelmoIndexRoute =
+  LivroPjecalcVicelmoIndexRouteImport.update({
+    id: '/livro-pjecalc-vicelmo/',
+    path: '/livro-pjecalc-vicelmo/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ImpugnadorIndexRoute = ImpugnadorIndexRouteImport.update({
   id: '/impugnador/',
   path: '/impugnador/',
@@ -114,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/extrator-de-ausencias/': typeof ExtratorDeAusenciasIndexRoute
   '/fgts-facil/': typeof FgtsFacilIndexRoute
   '/impugnador/': typeof ImpugnadorIndexRoute
+  '/livro-pjecalc-vicelmo/': typeof LivroPjecalcVicelmoIndexRoute
   '/ponto-magico/': typeof PontoMagicoIndexRoute
   '/suiteplus-promo-0808/': typeof SuiteplusPromo0808IndexRoute
 }
@@ -130,6 +138,7 @@ export interface FileRoutesByTo {
   '/extrator-de-ausencias': typeof ExtratorDeAusenciasIndexRoute
   '/fgts-facil': typeof FgtsFacilIndexRoute
   '/impugnador': typeof ImpugnadorIndexRoute
+  '/livro-pjecalc-vicelmo': typeof LivroPjecalcVicelmoIndexRoute
   '/ponto-magico': typeof PontoMagicoIndexRoute
   '/suiteplus-promo-0808': typeof SuiteplusPromo0808IndexRoute
 }
@@ -147,6 +156,7 @@ export interface FileRoutesById {
   '/extrator-de-ausencias/': typeof ExtratorDeAusenciasIndexRoute
   '/fgts-facil/': typeof FgtsFacilIndexRoute
   '/impugnador/': typeof ImpugnadorIndexRoute
+  '/livro-pjecalc-vicelmo/': typeof LivroPjecalcVicelmoIndexRoute
   '/ponto-magico/': typeof PontoMagicoIndexRoute
   '/suiteplus-promo-0808/': typeof SuiteplusPromo0808IndexRoute
 }
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
     | '/extrator-de-ausencias/'
     | '/fgts-facil/'
     | '/impugnador/'
+    | '/livro-pjecalc-vicelmo/'
     | '/ponto-magico/'
     | '/suiteplus-promo-0808/'
   fileRoutesByTo: FileRoutesByTo
@@ -181,6 +192,7 @@ export interface FileRouteTypes {
     | '/extrator-de-ausencias'
     | '/fgts-facil'
     | '/impugnador'
+    | '/livro-pjecalc-vicelmo'
     | '/ponto-magico'
     | '/suiteplus-promo-0808'
   id:
@@ -197,6 +209,7 @@ export interface FileRouteTypes {
     | '/extrator-de-ausencias/'
     | '/fgts-facil/'
     | '/impugnador/'
+    | '/livro-pjecalc-vicelmo/'
     | '/ponto-magico/'
     | '/suiteplus-promo-0808/'
   fileRoutesById: FileRoutesById
@@ -214,6 +227,7 @@ export interface RootRouteChildren {
   ExtratorDeAusenciasIndexRoute: typeof ExtratorDeAusenciasIndexRoute
   FgtsFacilIndexRoute: typeof FgtsFacilIndexRoute
   ImpugnadorIndexRoute: typeof ImpugnadorIndexRoute
+  LivroPjecalcVicelmoIndexRoute: typeof LivroPjecalcVicelmoIndexRoute
   PontoMagicoIndexRoute: typeof PontoMagicoIndexRoute
   SuiteplusPromo0808IndexRoute: typeof SuiteplusPromo0808IndexRoute
 }
@@ -239,6 +253,13 @@ declare module '@tanstack/react-router' {
       path: '/ponto-magico'
       fullPath: '/ponto-magico/'
       preLoaderRoute: typeof PontoMagicoIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/livro-pjecalc-vicelmo/': {
+      id: '/livro-pjecalc-vicelmo/'
+      path: '/livro-pjecalc-vicelmo'
+      fullPath: '/livro-pjecalc-vicelmo/'
+      preLoaderRoute: typeof LivroPjecalcVicelmoIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/impugnador/': {
@@ -336,6 +357,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExtratorDeAusenciasIndexRoute: ExtratorDeAusenciasIndexRoute,
   FgtsFacilIndexRoute: FgtsFacilIndexRoute,
   ImpugnadorIndexRoute: ImpugnadorIndexRoute,
+  LivroPjecalcVicelmoIndexRoute: LivroPjecalcVicelmoIndexRoute,
   PontoMagicoIndexRoute: PontoMagicoIndexRoute,
   SuiteplusPromo0808IndexRoute: SuiteplusPromo0808IndexRoute,
 }
