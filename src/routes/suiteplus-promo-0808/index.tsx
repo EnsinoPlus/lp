@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { UrgencyBar } from "@/components/UrgencyBar";
 import { useTrackedUrl } from "@/hooks/useSignupOrigin";
+import { getCreditsCheckoutUrl } from "@/lib/runtime-config";
 import {
   Calculator,
   CalendarX,
@@ -32,12 +33,11 @@ export const Route = createFileRoute("/suiteplus-promo-0808/")({
       },
     ],
   }),
+  loader: async () => ({
+    checkoutUrl: await getCreditsCheckoutUrl(),
+  }),
   component: Landing,
 });
-
-const CHECKOUT_URL =
-  import.meta.env.VITE_SUITEPLUS_CREDITS_CHECKOUT_URL?.trim() ||
-  "https://suiteplus.ensinoplus.com.br/promo88";
 
 const TOOLS = [
   {
@@ -72,8 +72,16 @@ const TOOLS = [
   },
 ] as const;
 
-function CTAButton({ children, large = false }: { children: React.ReactNode; large?: boolean }) {
-  const checkoutHref = useTrackedUrl(CHECKOUT_URL);
+function CTAButton({
+  children,
+  checkoutUrl,
+  large = false,
+}: {
+  children: React.ReactNode;
+  checkoutUrl: string;
+  large?: boolean;
+}) {
+  const checkoutHref = useTrackedUrl(checkoutUrl);
   return (
     <a
       href={checkoutHref}
@@ -90,6 +98,7 @@ function CTAButton({ children, large = false }: { children: React.ReactNode; lar
 }
 
 function Landing() {
+  const { checkoutUrl } = Route.useLoaderData();
   return (
     <div className="min-h-screen bg-background">
       <UrgencyBar message="PROMOÇÃO 08/08 — SOMENTE 1 DIA! TERMINA EM:" />
@@ -143,7 +152,9 @@ function Landing() {
               </div>
             </div>
 
-            <CTAButton large>Recarregar agora — R$ 200</CTAButton>
+            <CTAButton large checkoutUrl={checkoutUrl}>
+              Recarregar agora — R$ 200
+            </CTAButton>
 
             <div className="flex flex-wrap gap-5 mt-8 text-sm text-white/70 justify-center">
               <div className="flex items-center gap-2">
@@ -237,7 +248,9 @@ function Landing() {
             Recarregue hoje e desbloqueie todo o poder do SuitePlus com PlusCoin.
           </p>
 
-          <CTAButton large>Garantir meus 1.000 créditos</CTAButton>
+          <CTAButton large checkoutUrl={checkoutUrl}>
+            Garantir meus 1.000 créditos
+          </CTAButton>
 
           <p className="text-sm text-white/60 mt-6">
             Promoção exclusiva válida em 08/08/2026 · Somente 1 dia

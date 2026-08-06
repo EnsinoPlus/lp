@@ -15,7 +15,7 @@ interface ImportMetaEnv {
   readonly VITE_EXTRATOR_AUSENCIAS_APP_URL?: string;
   readonly VITE_FGTS_FACIL_APP_URL?: string;
   readonly VITE_IMPUGNADOR_APP_URL?: string;
-  /** Promo SuitePlus — checkout/recarga de créditos */
+  /** Promo SuitePlus — preferir leitura runtime via getCreditsCheckoutUrl(); VITE_ só para docs/dev */
   readonly VITE_SUITEPLUS_CREDITS_CHECKOUT_URL?: string;
   /** ID do Google Tag Manager, ex.: GTM-ABC1234 */
   readonly VITE_GTM_ID?: string;
