@@ -8,28 +8,29 @@ import {
   Clock,
   Coins,
   FileText,
+  Gift,
   ShieldCheck,
   Sparkles,
   Wallet,
   Zap,
 } from "lucide-react";
 
-export const Route = createFileRoute("/suiteplus-promo-0808/")({
+export const Route = createFileRoute("/suiteplus-promo-0909/")({
   head: () => ({
     meta: [
       {
-        title: "SuitePlus — 1.000 Créditos por R$ 200 | Promoção 08/08",
+        title: "SuitePlus — 400 Créditos por R$ 100 | Promoção 9.9",
       },
       {
         name: "description",
         content:
-          "Promoção exclusiva 08/08: recarregue no SuitePlus e ganhe 1.000 créditos PlusCoin por apenas R$ 200. Somente 1 dia!",
+          "Promoção exclusiva 09/09: recarregue no SuitePlus e ganhe 400 créditos PlusCoin por apenas R$ 100 — com 100 créditos de bônus. Somente 1 dia!",
       },
-      { property: "og:title", content: "SuitePlus — Recarregue e Ganhe Mais | PlusCoin" },
+      { property: "og:title", content: "SuitePlus — Promoção 9.9 | PlusCoin" },
       {
         property: "og:description",
         content:
-          "1.000 créditos por R$ 200,00. Bônus exclusivo 08/08. Calc Machine, Ponto Mágico e mais ferramentas de IA.",
+          "400 créditos por R$ 100,00. R$ 0,25 por crédito + 100 de bônus. Calc Machine, Ponto Mágico e mais ferramentas de IA.",
       },
     ],
   }),
@@ -101,7 +102,7 @@ function Landing() {
   const { checkoutUrl } = Route.useLoaderData();
   return (
     <div className="min-h-screen bg-background">
-      <UrgencyBar message="PROMOÇÃO 08/08 — SOMENTE 1 DIA! TERMINA EM:" />
+      <UrgencyBar message="PROMOÇÃO 9.9 — SOMENTE 1 DIA! TERMINA EM:" />
 
       {/* HERO */}
       <section className="bg-gradient-hero text-dark-foreground relative overflow-hidden">
@@ -115,15 +116,19 @@ function Landing() {
         <div className="container mx-auto px-4 py-12 md:py-20 relative">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-urgency/25 text-urgency-foreground border border-urgency/50 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider mb-4">
-              <Sparkles className="w-4 h-4" /> Promoção · 08/08 · Somente 1 dia
+              <Sparkles className="w-4 h-4" /> Oferta por tempo limitado · 09/09
             </div>
 
             <p className="text-sm md:text-base font-bold uppercase tracking-[0.2em] text-white/60 mb-3">
               SuitePlus
             </p>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-[1.05] mb-8">
-              RECARGUE E <span className="text-primary">GANHE MAIS!</span>
+            <p className="text-6xl md:text-7xl font-black text-primary leading-none mb-2">09/09</p>
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black leading-[1.05] mb-4">
+              Promoção <span className="text-primary">9.9</span>
             </h1>
+            <p className="text-lg md:text-xl text-white/70 mb-10">
+              A melhor oferta de créditos do ano
+            </p>
 
             {/* PlusCoin */}
             <div className="inline-flex flex-col items-center mb-10">
@@ -141,24 +146,30 @@ function Landing() {
 
             {/* Price block */}
             <div className="bg-white/5 border-2 border-primary/40 rounded-2xl p-8 md:p-10 max-w-xl mx-auto mb-8 shadow-card">
-              <p className="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-2">1.000</p>
-              <p className="text-lg md:text-xl font-bold uppercase tracking-wider text-white/80 mb-6">
+              <div className="inline-flex items-center gap-1 bg-gradient-cta text-primary-foreground text-xs font-bold px-3 py-1 rounded-full mb-5">
+                <Sparkles className="w-3 h-3" /> MELHOR OFERTA
+              </div>
+              <p className="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-2">400</p>
+              <p className="text-lg md:text-xl font-bold uppercase tracking-wider text-white/80 mb-4">
                 Créditos
               </p>
-              <p className="text-sm uppercase tracking-wider text-white/60 mb-2">Por apenas</p>
-              <p className="text-5xl md:text-6xl font-black text-primary mb-4">R$ 200,00</p>
+              <div className="flex items-center justify-center gap-3 mb-4 flex-wrap">
+                <span className="text-white/40 line-through text-lg">300 créditos</span>
+                <span className="text-5xl md:text-6xl font-black text-primary">R$ 100,00</span>
+              </div>
+              <p className="text-sm text-white/50 mb-4">R$ 0,25 por crédito — 100 créditos de bônus</p>
               <div className="inline-flex items-center gap-2 bg-primary/20 text-primary border border-primary/40 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider">
-                Bônus exclusivo 08/08
+                <Gift className="w-3.5 h-3.5" /> Bônus exclusivo 09/09
               </div>
             </div>
 
             <CTAButton large checkoutUrl={checkoutUrl}>
-              Recarregar agora — R$ 200
+              Recarregar agora — R$ 100
             </CTAButton>
 
             <div className="flex flex-wrap gap-5 mt-8 text-sm text-white/70 justify-center">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-success" /> Oferta válida somente em 08/08
+                <ShieldCheck className="w-5 h-5 text-success" /> Oferta válida somente em 09/09
               </div>
               <div className="flex items-center gap-2">
                 <Coins className="w-5 h-5 text-amber-400" /> Créditos PlusCoin na plataforma
@@ -173,10 +184,10 @@ function Landing() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
-              { n: "1.000", l: "Créditos PlusCoin" },
-              { n: "R$ 200", l: "Investimento único" },
-              { n: "08/08", l: "Somente 1 dia" },
-              { n: "5+", l: "Ferramentas SuitePlus" },
+              { n: "400", l: "Créditos PlusCoin" },
+              { n: "R$ 100", l: "Investimento único" },
+              { n: "+100", l: "Créditos de bônus" },
+              { n: "09/09", l: "Somente 1 dia" },
             ].map((s) => (
               <div key={s.l}>
                 <div className="text-3xl md:text-5xl font-black text-primary">{s.n}</div>
@@ -239,21 +250,24 @@ function Landing() {
         />
         <div className="container mx-auto px-4 relative text-center max-w-3xl">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-urgency-foreground bg-urgency/30 inline-block rounded-full px-4 py-1 mb-6">
-            Última chance — 08/08
+            Última chance — 09/09
           </p>
           <h2 className="text-3xl md:text-5xl font-black mb-5 leading-tight">
-            <span className="text-primary">1.000 créditos</span> por R$ 200,00
+            <span className="text-primary">400 créditos</span> por R$ 100,00
           </h2>
-          <p className="text-lg md:text-xl text-white/80 mb-10">
+          <p className="text-lg md:text-xl text-white/80 mb-4">
+            Inclui 100 créditos de bônus · R$ 0,25 por crédito
+          </p>
+          <p className="text-base text-white/60 mb-10">
             Recarregue hoje e desbloqueie todo o poder do SuitePlus com PlusCoin.
           </p>
 
           <CTAButton large checkoutUrl={checkoutUrl}>
-            Garantir meus 1.000 créditos
+            Garantir meus 400 créditos
           </CTAButton>
 
           <p className="text-sm text-white/60 mt-6">
-            Promoção exclusiva válida em 08/08/2026 · Somente 1 dia
+            Promoção exclusiva válida em 09/09/2026 · Somente 1 dia
           </p>
         </div>
       </section>

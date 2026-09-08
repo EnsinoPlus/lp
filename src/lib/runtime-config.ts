@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 
-const DEFAULT_CREDITS_CHECKOUT_URL = "https://suiteplus.ensinoplus.com.br/promo88";
+const DEFAULT_CREDITS_CHECKOUT_URL = "https://suiteplus.ensinoplus.com.br/promo99";
 const DEFAULT_BOOK_CHECKOUT_URL = "https://suiteplus.ensinoplus.com.br/livro";
 
 /** Lê env em runtime (Easypanel/runtime). Não usa import.meta.env / build do Vite. */

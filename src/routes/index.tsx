@@ -50,16 +50,16 @@ const products = [
     href: "/ebook-pjecalc-suiteplus/" as const,
   },
   {
-    slug: "suiteplus-promo-0808",
-    title: "SuitePlus — Promo 08/08",
+    slug: "suiteplus-promo-0909",
+    title: "SuitePlus — Promo 9.9",
     subtitle: "PlusCoin · Recarga",
     description:
-      "1.000 créditos por R$ 200,00. Bônus exclusivo 08/08 — somente 1 dia. Calc Machine, Ponto Mágico e mais.",
-    price: "R$ 200",
+      "400 créditos por R$ 100,00. 100 de bônus exclusivo 09/09 — somente 1 dia. Calc Machine, Ponto Mágico e mais.",
+    price: "R$ 100",
     oldPrice: null as string | null,
     cover: null as string | null,
     icon: Coins,
-    href: "/suiteplus-promo-0808/" as const,
+    href: "/suiteplus-promo-0909/" as const,
   },
   {
     slug: "calc-machine",
