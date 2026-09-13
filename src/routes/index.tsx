@@ -7,7 +7,6 @@ import {
   Calculator,
   CalendarX,
   Clock,
-  Coins,
   FileText,
   MessageSquare,
   ShoppingCart,
@@ -48,18 +47,6 @@ const products = [
     cover: catalogoCover,
     icon: null,
     href: "/ebook-pjecalc-suiteplus/" as const,
-  },
-  {
-    slug: "suiteplus-promo-0909",
-    title: "SuitePlus — Promo 9.9",
-    subtitle: "PlusCoin · Recarga",
-    description:
-      "400 créditos por R$ 100,00. 100 de bônus exclusivo 09/09 — somente 1 dia. Calc Machine, Ponto Mágico e mais.",
-    price: "R$ 100",
-    oldPrice: null as string | null,
-    cover: null as string | null,
-    icon: Coins,
-    href: "/suiteplus-promo-0909/" as const,
   },
   {
     slug: "calc-machine",
