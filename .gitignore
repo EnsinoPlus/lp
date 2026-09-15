@@ -7,7 +7,10 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
+
+# Build / output
 dist
 dist-ssr
 .output
@@ -15,18 +18,41 @@ dist-ssr
 .tanstack/**
 .nitro
 *.local
+coverage
+*.tsbuildinfo
+
+# Env & secrets (keep .env.example tracked)
+.env
+.env.*
+!.env.example
+!.env*.example
 
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars
+.mf/
+
+# OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*~
+
+# Certificates / keys
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+service-account*.json

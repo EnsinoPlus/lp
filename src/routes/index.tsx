@@ -8,6 +8,7 @@ import {
   CalendarX,
   Clock,
   FileText,
+  GraduationCap,
   MessageSquare,
   ShoppingCart,
   Wallet,
@@ -47,6 +48,18 @@ const products = [
     cover: catalogoCover,
     icon: null,
     href: "/ebook-pjecalc-suiteplus/" as const,
+  },
+  {
+    slug: "cct",
+    title: "CCT 2026 — Clube do Cálculo",
+    subtitle: "Formação · Cadastro",
+    description:
+      "30+ cursos, 500+ aulas e certificados digitais em cálculos trabalhistas. Cadastre-se e comece a estudar.",
+    price: "Cadastre-se",
+    oldPrice: null as string | null,
+    cover: null as string | null,
+    icon: GraduationCap,
+    href: "/cct/" as const,
   },
   {
     slug: "calc-machine",

@@ -19,10 +19,12 @@ import { Route as EbookPjecalcSuiteplusIndexRouteImport } from './routes/ebook-p
 import { Route as EbookPjecalc2026IndexRouteImport } from './routes/ebook-pjecalc-2026/index'
 import { Route as ContrachequeTransparenteIndexRouteImport } from './routes/contracheque-transparente/index'
 import { Route as ChatCctIndexRouteImport } from './routes/chat-cct/index'
+import { Route as CctIndexRouteImport } from './routes/cct/index'
 import { Route as CalcMachineIndexRouteImport } from './routes/calc-machine/index'
 import { Route as EbookPjecalc2026ObrigadoAnaliseCreditoRouteImport } from './routes/ebook-pjecalc-2026/obrigado-analise-credito'
 import { Route as EbookPjecalc2026ObrigadoAguardandoPagamentoRouteImport } from './routes/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
 import { Route as EbookPjecalc2026ObrigadoRouteImport } from './routes/ebook-pjecalc-2026/obrigado'
+import { Route as CctObrigadoRouteImport } from './routes/cct/obrigado'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -78,6 +80,11 @@ const ChatCctIndexRoute = ChatCctIndexRouteImport.update({
   path: '/chat-cct/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CctIndexRoute = CctIndexRouteImport.update({
+  id: '/cct/',
+  path: '/cct/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CalcMachineIndexRoute = CalcMachineIndexRouteImport.update({
   id: '/calc-machine/',
   path: '/calc-machine/',
@@ -101,13 +108,20 @@ const EbookPjecalc2026ObrigadoRoute =
     path: '/ebook-pjecalc-2026/obrigado',
     getParentRoute: () => rootRouteImport,
   } as any)
+const CctObrigadoRoute = CctObrigadoRouteImport.update({
+  id: '/cct/obrigado',
+  path: '/cct/obrigado',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/cct/obrigado': typeof CctObrigadoRoute
   '/ebook-pjecalc-2026/obrigado': typeof EbookPjecalc2026ObrigadoRoute
   '/ebook-pjecalc-2026/obrigado-aguardando-pagamento': typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
   '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
   '/calc-machine/': typeof CalcMachineIndexRoute
+  '/cct/': typeof CctIndexRoute
   '/chat-cct/': typeof ChatCctIndexRoute
   '/contracheque-transparente/': typeof ContrachequeTransparenteIndexRoute
   '/ebook-pjecalc-2026/': typeof EbookPjecalc2026IndexRoute
@@ -120,10 +134,12 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cct/obrigado': typeof CctObrigadoRoute
   '/ebook-pjecalc-2026/obrigado': typeof EbookPjecalc2026ObrigadoRoute
   '/ebook-pjecalc-2026/obrigado-aguardando-pagamento': typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
   '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
   '/calc-machine': typeof CalcMachineIndexRoute
+  '/cct': typeof CctIndexRoute
   '/chat-cct': typeof ChatCctIndexRoute
   '/contracheque-transparente': typeof ContrachequeTransparenteIndexRoute
   '/ebook-pjecalc-2026': typeof EbookPjecalc2026IndexRoute
@@ -137,10 +153,12 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/cct/obrigado': typeof CctObrigadoRoute
   '/ebook-pjecalc-2026/obrigado': typeof EbookPjecalc2026ObrigadoRoute
   '/ebook-pjecalc-2026/obrigado-aguardando-pagamento': typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
   '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
   '/calc-machine/': typeof CalcMachineIndexRoute
+  '/cct/': typeof CctIndexRoute
   '/chat-cct/': typeof ChatCctIndexRoute
   '/contracheque-transparente/': typeof ContrachequeTransparenteIndexRoute
   '/ebook-pjecalc-2026/': typeof EbookPjecalc2026IndexRoute
@@ -155,10 +173,12 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/cct/obrigado'
     | '/ebook-pjecalc-2026/obrigado'
     | '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
     | '/ebook-pjecalc-2026/obrigado-analise-credito'
     | '/calc-machine/'
+    | '/cct/'
     | '/chat-cct/'
     | '/contracheque-transparente/'
     | '/ebook-pjecalc-2026/'
@@ -171,10 +191,12 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/cct/obrigado'
     | '/ebook-pjecalc-2026/obrigado'
     | '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
     | '/ebook-pjecalc-2026/obrigado-analise-credito'
     | '/calc-machine'
+    | '/cct'
     | '/chat-cct'
     | '/contracheque-transparente'
     | '/ebook-pjecalc-2026'
@@ -187,10 +209,12 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/cct/obrigado'
     | '/ebook-pjecalc-2026/obrigado'
     | '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
     | '/ebook-pjecalc-2026/obrigado-analise-credito'
     | '/calc-machine/'
+    | '/cct/'
     | '/chat-cct/'
     | '/contracheque-transparente/'
     | '/ebook-pjecalc-2026/'
@@ -204,10 +228,12 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CctObrigadoRoute: typeof CctObrigadoRoute
   EbookPjecalc2026ObrigadoRoute: typeof EbookPjecalc2026ObrigadoRoute
   EbookPjecalc2026ObrigadoAguardandoPagamentoRoute: typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
   EbookPjecalc2026ObrigadoAnaliseCreditoRoute: typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
   CalcMachineIndexRoute: typeof CalcMachineIndexRoute
+  CctIndexRoute: typeof CctIndexRoute
   ChatCctIndexRoute: typeof ChatCctIndexRoute
   ContrachequeTransparenteIndexRoute: typeof ContrachequeTransparenteIndexRoute
   EbookPjecalc2026IndexRoute: typeof EbookPjecalc2026IndexRoute
@@ -291,6 +317,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChatCctIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cct/': {
+      id: '/cct/'
+      path: '/cct'
+      fullPath: '/cct/'
+      preLoaderRoute: typeof CctIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/calc-machine/': {
       id: '/calc-machine/'
       path: '/calc-machine'
@@ -319,17 +352,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EbookPjecalc2026ObrigadoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cct/obrigado': {
+      id: '/cct/obrigado'
+      path: '/cct/obrigado'
+      fullPath: '/cct/obrigado'
+      preLoaderRoute: typeof CctObrigadoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CctObrigadoRoute: CctObrigadoRoute,
   EbookPjecalc2026ObrigadoRoute: EbookPjecalc2026ObrigadoRoute,
   EbookPjecalc2026ObrigadoAguardandoPagamentoRoute:
     EbookPjecalc2026ObrigadoAguardandoPagamentoRoute,
   EbookPjecalc2026ObrigadoAnaliseCreditoRoute:
     EbookPjecalc2026ObrigadoAnaliseCreditoRoute,
   CalcMachineIndexRoute: CalcMachineIndexRoute,
+  CctIndexRoute: CctIndexRoute,
   ChatCctIndexRoute: ChatCctIndexRoute,
   ContrachequeTransparenteIndexRoute: ContrachequeTransparenteIndexRoute,
   EbookPjecalc2026IndexRoute: EbookPjecalc2026IndexRoute,
