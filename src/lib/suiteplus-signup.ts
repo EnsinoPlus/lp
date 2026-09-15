@@ -39,7 +39,11 @@ function mapAuthError(message: string): string {
 
 /**
  * Cadastro SuitePlus: Auth (Supabase) + créditos (create-user) + Brevo lista 46.
+ * Lista 46: pedida pela LP via brevo_extra_list_ids no create-user (mesma key do login)
+ * e também via server fn local (fallback).
  */
+const CCT_FUNNEL_LIST_ID = 46;
+
 export async function signupSuitePlus(
   input: SuitePlusSignupInput,
 ): Promise<SuitePlusSignupResult> {
@@ -85,6 +89,8 @@ export async function signupSuitePlus(
           email,
           name: fullName,
           signup_origin_code: originCode || undefined,
+          // LP decide a 46; create-user do login só adiciona se vier no body
+          brevo_extra_list_ids: [CCT_FUNNEL_LIST_ID],
         }),
       });
       if (resp.ok) creditCreated = true;
@@ -99,7 +105,10 @@ export async function signupSuitePlus(
   }
 
   try {
-    await addCctContactToBrevo({ data: { email, name: fullName } });
+    const brevo = await addCctContactToBrevo({ data: { email, name: fullName } });
+    if (!brevo?.ok) {
+      console.error("[suiteplus-signup] Brevo lista 46 (LP) não adicionada:", brevo);
+    }
   } catch (err) {
     console.error("[suiteplus-signup] Falha ao adicionar à Brevo lista 46:", err);
   }
