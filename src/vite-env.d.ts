@@ -24,6 +24,11 @@ interface ImportMetaEnv {
   /** CCT — cadastro e WhatsApp da LP de conversão */
   readonly VITE_CCT_SIGNUP_URL?: string;
   readonly VITE_CCT_WHATSAPP_URL?: string;
+  /** SuitePlus Auth (mesmo projeto do login) — embutidas no build */
+  readonly VITE_SUPABASE_URL?: string;
+  readonly VITE_SUPABASE_ANON_KEY?: string;
+  readonly VITE_SUITEPLUS_CREATE_USER_URL?: string;
+  readonly VITE_SUITEPLUS_CONFIRM_EMAIL_URL?: string;
 }
 
 interface ImportMeta {
