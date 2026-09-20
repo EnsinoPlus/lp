@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   captureSignupOriginFromSearch,
+  getStoredAttribution,
   getStoredSignupOrigin,
   installSignupOriginLinker,
-  withSignupOrigin,
+  withSignupAttribution,
 } from "@/lib/signup-origin";
 
-/** Captura ?origem= na entrada e reescreve links SuitePlus / internos no clique. */
+/** Captura ?origem= + UTMs/gclid na entrada e reescreve links SuitePlus / internos no clique. */
 export function useSignupOriginTracker() {
   useEffect(() => {
     captureSignupOriginFromSearch();
@@ -14,16 +15,23 @@ export function useSignupOriginTracker() {
   }, []);
 }
 
-/** URL com origem anexada (reativa ao código capturado). */
+/** URL com atribuição anexada (reativa ao código capturado). */
 export function useTrackedUrl(baseUrl: string): string {
   const [originCode, setOriginCode] = useState(() =>
     typeof window === "undefined" ? "" : getStoredSignupOrigin(),
   );
+  const [attrVersion, setAttrVersion] = useState(0);
 
   useEffect(() => {
     const code = captureSignupOriginFromSearch();
     setOriginCode(code);
+    setAttrVersion((v) => v + 1);
   }, []);
 
-  return useMemo(() => withSignupOrigin(baseUrl, originCode), [baseUrl, originCode]);
+  return useMemo(
+    () => withSignupAttribution(baseUrl, getStoredAttribution()),
+    // originCode/attrVersion forçam refresh após captura no mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [baseUrl, originCode, attrVersion],
+  );
 }

@@ -1,5 +1,5 @@
 import { getSupabase } from "@/lib/supabase";
-import { getStoredSignupOrigin } from "@/lib/signup-origin";
+import { buildAttributionPayload, getStoredSignupOrigin } from "@/lib/signup-origin";
 import { addCctContactToBrevo } from "@/lib/brevo";
 
 const DEFAULT_CREATE_USER_URL =
@@ -51,6 +51,9 @@ export async function signupSuitePlus(
   const fullName = input.fullName.trim();
   const password = input.password;
   const originCode = resolveOrigin(input.defaultOrigin);
+  const attribution = buildAttributionPayload(
+    originCode ? { origem: originCode } : undefined,
+  );
 
   if (!fullName) throw new Error("Informe seu nome completo");
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -69,6 +72,7 @@ export async function signupSuitePlus(
       data: {
         full_name: fullName,
         signup_origin_code: originCode,
+        signup_attribution: attribution,
       },
       emailRedirectTo,
     },
@@ -89,6 +93,7 @@ export async function signupSuitePlus(
           email,
           name: fullName,
           signup_origin_code: originCode || undefined,
+          signup_attribution: attribution || undefined,
           // LP decide a 46; create-user do login só adiciona se vier no body
           brevo_extra_list_ids: [CCT_FUNNEL_LIST_ID],
         }),
