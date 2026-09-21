@@ -175,7 +175,7 @@ function Home() {
           <span className="text-primary font-bold uppercase text-sm tracking-wider flex items-center justify-center gap-2">
             <BookOpen className="w-4 h-4" /> Nossos produtos
           </span>
-          <h2 className="text-3xl md:text-5xl font-black mt-2">Escolha seu material</h2>
+          <h2 className="text-4xl md:text-6xl font-black mt-2">Escolha seu material</h2>
           <p className="text-muted-foreground mt-3 text-lg">Conhecimento prático para alavancar sua carreira jurídica.</p>
         </div>
 
