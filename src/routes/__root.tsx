@@ -6,7 +6,8 @@ import { SignupOriginTracker } from "@/components/SignupOriginTracker";
 
 const gtmId = import.meta.env.VITE_GTM_ID?.trim() || undefined;
 const gtmHeadScript = gtmId ? buildGtmHeadScript(gtmId) : null;
-const metaPixelId = import.meta.env.VITE_META_PIXEL_ID?.trim() || undefined;
+// O ID é público; a variável permite substituí-lo por ambiente sem deixar o Pixel ausente no deploy.
+const metaPixelId = import.meta.env.VITE_META_PIXEL_ID?.trim() || "984600751325289";
 const metaPixelHeadScript = metaPixelId ? buildMetaPixelHeadScript(metaPixelId) : null;
 
 function NotFoundComponent() {
