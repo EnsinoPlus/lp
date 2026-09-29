@@ -21,6 +21,8 @@ interface ImportMetaEnv {
   readonly VITE_SUITEPLUS_BOOK_CHECKOUT_URL?: string;
   /** ID do Google Tag Manager, ex.: GTM-ABC1234 */
   readonly VITE_GTM_ID?: string;
+  /** ID público do Meta Pixel. */
+  readonly VITE_META_PIXEL_ID?: string;
   /** CCT — cadastro e WhatsApp da LP de conversão */
   readonly VITE_CCT_SIGNUP_URL?: string;
   readonly VITE_CCT_WHATSAPP_URL?: string;

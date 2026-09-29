@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { CheckCircle2, Inbox, Mail, ShieldCheck } from "lucide-react";
+import { buildMetaPixelHeadScript, trackMetaCustomEvent } from "@/lib/meta-pixel";
+
+const metaPixelId = import.meta.env.VITE_META_PIXEL_ID?.trim() || undefined;
+const metaPixelScript = metaPixelId ? buildMetaPixelHeadScript(metaPixelId) : null;
 
 export const Route = createFileRoute("/cct/obrigado")({
   head: () => ({
@@ -20,7 +24,9 @@ export const Route = createFileRoute("/cct/obrigado")({
 
 function ThankYou() {
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      {metaPixelScript ? <script dangerouslySetInnerHTML={{ __html: metaPixelScript }} /> : null}
+      <div className="min-h-screen bg-background">
       <section className="bg-gradient-hero text-dark-foreground py-16 md:py-24 relative overflow-hidden">
         <div
           className="absolute inset-0 opacity-25"
@@ -91,6 +97,14 @@ function ThankYou() {
               <strong className="text-foreground">Não encontrou o e-mail?</strong> Confira a pasta de spam ou
               promoções. Se precisar de ajuda, fale conosco pelo WhatsApp — o botão fica no canto da tela.
             </div>
+
+            <a
+              href="https://suiteplus.ensinoplus.com.br/"
+              onClick={() => trackMetaCustomEvent("AcessarPlataforma")}
+              className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-gradient-cta px-6 py-4 font-bold uppercase tracking-wide text-primary-foreground shadow-cta transition hover:brightness-110"
+            >
+              Acessar a plataforma
+            </a>
           </div>
         </div>
       </section>
@@ -102,6 +116,7 @@ function ThankYou() {
       </footer>
 
       <WhatsAppFloat />
-    </div>
+      </div>
+    </>
   );
 }

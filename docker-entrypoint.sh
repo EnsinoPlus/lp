@@ -28,6 +28,8 @@ const keys = [
   "VITE_SUITEPLUS_BOOK_CHECKOUT_URL",
   "BREVO_API_KEY",
   "BREVO_CCT_FUNNEL_LIST_ID",
+  "META_PIXEL_ID",
+  "META_CONVERSIONS_API_TOKEN",
 ];
 
 const injected = {};

@@ -1,21 +1,27 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Eye, EyeOff, Loader2, UserPlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { isSupabaseConfigured } from "@/lib/supabase";
 import { signupSuitePlus } from "@/lib/suiteplus-signup";
+import { trackMetaCustomEvent, trackMetaLead } from "@/lib/meta-pixel";
+import { sendMetaLead } from "@/lib/meta-conversions";
+
+const QUALIFIED_PROFESSIONS = ["Advogado(a)", "Perito(a)", "Contador(a)", "Estudante", "Empresário(a)"] as const;
+const OTHER_PROFESSION = "Outro";
 
 type PasswordFieldProps = {
   id: string;
   label: string;
   value: string;
   onChange: (v: string) => void;
+  onBlur?: (v: string) => void;
   disabled: boolean;
   dark?: boolean;
 };
 
-function PasswordField({ id, label, value, onChange, disabled, dark }: PasswordFieldProps) {
+function PasswordField({ id, label, value, onChange, onBlur, disabled, dark }: PasswordFieldProps) {
   const [show, setShow] = useState(false);
   return (
     <div className="space-y-2">
@@ -28,6 +34,7 @@ function PasswordField({ id, label, value, onChange, disabled, dark }: PasswordF
           type={show ? "text" : "password"}
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          onBlur={(e) => onBlur?.(e.target.value)}
           required
           disabled={disabled}
           minLength={6}
@@ -61,10 +68,20 @@ export function CctSignupForm({ variant = "card", className = "" }: CctSignupFor
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [profession, setProfession] = useState("");
+  const [otherProfession, setOtherProfession] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const trackedFields = useRef(new Set<string>());
+
+  const trackField = (eventName: string, value: string) => {
+    if (!value.trim() || trackedFields.current.has(eventName)) return;
+    trackedFields.current.add(eventName);
+    trackMetaCustomEvent(eventName);
+  };
 
   const passwordsMatch = password === confirmPassword;
   const canSubmit =
@@ -73,7 +90,9 @@ export function CctSignupForm({ variant = "card", className = "" }: CctSignupFor
     password.length >= 6 &&
     passwordsMatch &&
     fullName.trim() &&
-    email.trim();
+    email.trim() &&
+    profession &&
+    (profession !== OTHER_PROFESSION || otherProfession.trim());
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,13 +109,24 @@ export function CctSignupForm({ variant = "card", className = "" }: CctSignupFor
     }
 
     setIsSubmitting(true);
+    trackMetaCustomEvent("CriarConta");
     try {
       await signupSuitePlus({
         email,
         password,
         fullName,
+        phone,
+        profession: profession === OTHER_PROFESSION ? otherProfession : profession,
         defaultOrigin: "cct",
       });
+      const metaLead = trackMetaLead();
+      if (metaLead) {
+        void sendMetaLead({ data: { email, ...metaLead } });
+      }
+      trackMetaCustomEvent(
+        profession === OTHER_PROFESSION ? "LeadDesqualificado" : "LeadQualificado",
+        { profissao: profession },
+      );
       await navigate({ to: "/cct/obrigado" });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Falha ao criar conta";
@@ -132,6 +162,7 @@ export function CctSignupForm({ variant = "card", className = "" }: CctSignupFor
           placeholder="Seu nome"
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
+          onBlur={(e) => trackField("NomePreenchido", e.target.value)}
           required
           disabled={isSubmitting}
           autoComplete="name"
@@ -156,14 +187,78 @@ export function CctSignupForm({ variant = "card", className = "" }: CctSignupFor
         />
       </div>
 
+      <div className="space-y-2">
+        <Label htmlFor="cct-phone" className={dark ? "text-white/90" : undefined}>
+          WhatsApp
+        </Label>
+        <Input
+          id="cct-phone"
+          type="tel"
+          placeholder="(00) 00000-0000"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          onBlur={(e) => trackField("WhatsAppPreenchido", e.target.value)}
+          disabled={isSubmitting}
+          autoComplete="tel"
+          className={inputClass}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="cct-profession" className={dark ? "text-white/90" : undefined}>
+          Profissão *
+        </Label>
+        <select
+          id="cct-profession"
+          value={profession}
+          onChange={(e) => {
+            setProfession(e.target.value);
+            if (e.target.value !== OTHER_PROFESSION) setOtherProfession("");
+          }}
+          disabled={isSubmitting}
+          required
+          className={`${inputClass} w-full rounded-md border px-3 text-sm`}
+        >
+          <option value="">Selecione</option>
+          {QUALIFIED_PROFESSIONS.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+          <option value={OTHER_PROFESSION}>{OTHER_PROFESSION}</option>
+        </select>
+      </div>
+
+      {profession === OTHER_PROFESSION && (
+        <div className="space-y-2">
+          <Label htmlFor="cct-other-profession" className={dark ? "text-white/90" : undefined}>
+            Qual é a sua profissão? *
+          </Label>
+          <Input
+            id="cct-other-profession"
+            type="text"
+            placeholder="Digite sua profissão"
+            value={otherProfession}
+            onChange={(e) => setOtherProfession(e.target.value)}
+            onBlur={(e) => trackField("ProfissaoPreenchida", e.target.value)}
+            disabled={isSubmitting}
+            required
+            autoComplete="organization-title"
+            className={inputClass}
+          />
+        </div>
+      )}
+
       <PasswordField
         id="cct-password"
         label="Senha"
         value={password}
         onChange={setPassword}
+        onBlur={(value) => trackField("SenhaPreenchida", value)}
         disabled={isSubmitting}
         dark={dark}
       />
+
 
       <PasswordField
         id="cct-confirmPassword"

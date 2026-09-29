@@ -11,6 +11,8 @@ export type SuitePlusSignupInput = {
   email: string;
   password: string;
   fullName: string;
+  phone?: string;
+  profession?: string;
   /** Fallback when URL/sessionStorage has no origem (ex.: "cct") */
   defaultOrigin?: string;
 };
@@ -50,6 +52,8 @@ export async function signupSuitePlus(
   const email = input.email.trim().toLowerCase();
   const fullName = input.fullName.trim();
   const password = input.password;
+  const phone = input.phone?.trim();
+  const profession = input.profession?.trim();
   const originCode = resolveOrigin(input.defaultOrigin);
   const attribution = buildAttributionPayload(
     originCode ? { origem: originCode } : undefined,
@@ -71,6 +75,8 @@ export async function signupSuitePlus(
     options: {
       data: {
         full_name: fullName,
+        phone,
+        profession,
         signup_origin_code: originCode,
         signup_attribution: attribution,
       },
@@ -92,6 +98,8 @@ export async function signupSuitePlus(
         body: JSON.stringify({
           email,
           name: fullName,
+          phone,
+          profession,
           signup_origin_code: originCode || undefined,
           signup_attribution: attribution || undefined,
           // LP decide a 46; create-user do login só adiciona se vier no body
