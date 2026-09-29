@@ -1,3 +1,5 @@
+import { trackMetaCustomEvent } from "@/lib/meta-pixel";
+
 const DEFAULT_WHATSAPP =
   import.meta.env.VITE_CCT_WHATSAPP_URL?.trim() || "https://wa.me/5584920002384";
 
@@ -14,6 +16,7 @@ export function WhatsAppFloat({
       target="_blank"
       rel="noreferrer"
       aria-label={label}
+      onClick={() => trackMetaCustomEvent("WHATSAPP")}
       className="fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full bg-[#25D366] text-white font-bold shadow-lg hover:brightness-110 transition px-4 py-3 md:px-5 md:py-3.5"
     >
       <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current" aria-hidden="true">

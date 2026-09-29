@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CctSignupForm } from "@/components/CctSignupForm";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
-import { buildMetaPixelHeadScript } from "@/lib/meta-pixel";
 import {
   Award,
   BookOpen,
@@ -13,9 +12,6 @@ import {
   UserPlus,
   Zap,
 } from "lucide-react";
-
-const metaPixelId = import.meta.env.VITE_META_PIXEL_ID?.trim() || undefined;
-const metaPixelScript = metaPixelId ? buildMetaPixelHeadScript(metaPixelId) : null;
 
 export const Route = createFileRoute("/cct/")({
   head: () => ({
@@ -115,9 +111,7 @@ function ScrollToSignup({
 
 function Landing() {
   return (
-    <>
-      {metaPixelScript ? <script dangerouslySetInnerHTML={{ __html: metaPixelScript }} /> : null}
-      <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background">
       {/* HERO */}
       <section className="bg-gradient-hero text-dark-foreground relative overflow-hidden">
         <div
@@ -299,7 +293,6 @@ function Landing() {
       </footer>
 
       <WhatsAppFloat />
-      </div>
-    </>
+    </div>
   );
 }

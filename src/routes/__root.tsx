@@ -1,10 +1,13 @@
 import { Outlet, createRootRoute, HeadContent, Scripts, Navigate } from "@tanstack/react-router";
 import appCss from "../styles.css?url";
 import { buildGtmHeadScript } from "@/lib/gtm";
+import { buildMetaPixelHeadScript } from "@/lib/meta-pixel";
 import { SignupOriginTracker } from "@/components/SignupOriginTracker";
 
 const gtmId = import.meta.env.VITE_GTM_ID?.trim() || undefined;
 const gtmHeadScript = gtmId ? buildGtmHeadScript(gtmId) : null;
+const metaPixelId = import.meta.env.VITE_META_PIXEL_ID?.trim() || undefined;
+const metaPixelHeadScript = metaPixelId ? buildMetaPixelHeadScript(metaPixelId) : null;
 
 function NotFoundComponent() {
   return <Navigate to="/" />;
@@ -51,9 +54,21 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html lang="pt-BR">
       <head>
         {gtmId && gtmHeadScript ? <script dangerouslySetInnerHTML={{ __html: gtmHeadScript }} /> : null}
+        {metaPixelHeadScript ? <script dangerouslySetInnerHTML={{ __html: metaPixelHeadScript }} /> : null}
         <HeadContent />
       </head>
       <body>
+        {metaPixelId ? (
+          <noscript>
+            <img
+              height="1"
+              width="1"
+              style={{ display: "none" }}
+              src={`https://www.facebook.com/tr?id=${encodeURIComponent(metaPixelId)}&ev=PageView&noscript=1`}
+              alt=""
+            />
+          </noscript>
+        ) : null}
         {gtmId ? (
           <noscript>
             <iframe

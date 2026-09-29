@@ -1,10 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { CheckCircle2, Inbox, Mail, ShieldCheck } from "lucide-react";
-import { buildMetaPixelHeadScript, trackMetaCustomEvent } from "@/lib/meta-pixel";
-
-const metaPixelId = import.meta.env.VITE_META_PIXEL_ID?.trim() || undefined;
-const metaPixelScript = metaPixelId ? buildMetaPixelHeadScript(metaPixelId) : null;
+import { trackMetaCustomEvent } from "@/lib/meta-pixel";
 
 export const Route = createFileRoute("/cct/obrigado")({
   head: () => ({
@@ -24,9 +21,7 @@ export const Route = createFileRoute("/cct/obrigado")({
 
 function ThankYou() {
   return (
-    <>
-      {metaPixelScript ? <script dangerouslySetInnerHTML={{ __html: metaPixelScript }} /> : null}
-      <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background">
       <section className="bg-gradient-hero text-dark-foreground py-16 md:py-24 relative overflow-hidden">
         <div
           className="absolute inset-0 opacity-25"
@@ -116,7 +111,6 @@ function ThankYou() {
       </footer>
 
       <WhatsAppFloat />
-      </div>
-    </>
+    </div>
   );
 }
