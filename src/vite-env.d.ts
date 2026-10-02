@@ -30,6 +30,7 @@ interface ImportMetaEnv {
   readonly VITE_SUPABASE_URL?: string;
   readonly VITE_SUPABASE_ANON_KEY?: string;
   readonly VITE_SUITEPLUS_CREATE_USER_URL?: string;
+  readonly VITE_SUITEPLUS_VISITA_URL?: string;
   readonly VITE_SUITEPLUS_CONFIRM_EMAIL_URL?: string;
 }
 
