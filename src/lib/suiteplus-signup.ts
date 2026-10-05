@@ -2,10 +2,8 @@ import { getSupabase } from "@/lib/supabase";
 import { buildAttributionPayload, getStoredSignupOrigin } from "@/lib/signup-origin";
 import { addCctContactToBrevo } from "@/lib/brevo";
 
-const DEFAULT_CREATE_USER_URL =
-  "https://suiteplus.ensinoplus.com.br/api/credits/create-user";
-const DEFAULT_EMAIL_REDIRECT =
-  "https://suiteplus.ensinoplus.com.br/confirm-email";
+const DEFAULT_CREATE_USER_URL = "https://suiteplus.ensinoplus.com.br/api/credits/create-user";
+const DEFAULT_EMAIL_REDIRECT = "https://suiteplus.ensinoplus.com.br/confirm-email";
 
 export type SuitePlusSignupInput = {
   email: string;
@@ -15,6 +13,7 @@ export type SuitePlusSignupInput = {
   profession?: string;
   /** Fallback when URL/sessionStorage has no origem (ex.: "cct") */
   defaultOrigin?: string;
+  emailRedirectTo?: string;
 };
 
 export type SuitePlusSignupResult = {
@@ -46,18 +45,14 @@ function mapAuthError(message: string): string {
  */
 const CCT_FUNNEL_LIST_ID = 46;
 
-export async function signupSuitePlus(
-  input: SuitePlusSignupInput,
-): Promise<SuitePlusSignupResult> {
+export async function signupSuitePlus(input: SuitePlusSignupInput): Promise<SuitePlusSignupResult> {
   const email = input.email.trim().toLowerCase();
   const fullName = input.fullName.trim();
   const password = input.password;
   const phone = input.phone?.trim();
   const profession = input.profession?.trim();
   const originCode = resolveOrigin(input.defaultOrigin);
-  const attribution = buildAttributionPayload(
-    originCode ? { origem: originCode } : undefined,
-  );
+  const attribution = buildAttributionPayload(originCode ? { origem: originCode } : undefined);
 
   if (!fullName) throw new Error("Informe seu nome completo");
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -66,7 +61,9 @@ export async function signupSuitePlus(
   if (password.length < 6) throw new Error("A senha deve ter pelo menos 6 caracteres");
 
   const emailRedirectTo =
-    import.meta.env.VITE_SUITEPLUS_CONFIRM_EMAIL_URL?.trim() || DEFAULT_EMAIL_REDIRECT;
+    input.emailRedirectTo ||
+    import.meta.env.VITE_SUITEPLUS_CONFIRM_EMAIL_URL?.trim() ||
+    DEFAULT_EMAIL_REDIRECT;
 
   const supabase = getSupabase();
   const { error } = await supabase.auth.signUp({

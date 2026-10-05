@@ -8,7 +8,13 @@ import { signupSuitePlus } from "@/lib/suiteplus-signup";
 import { trackMetaCustomEvent, trackMetaLead } from "@/lib/meta-pixel";
 import { sendMetaLead } from "@/lib/meta-conversions";
 
-const QUALIFIED_PROFESSIONS = ["Advogado(a)", "Perito(a)", "Contador(a)", "Estudante", "Empresário(a)"] as const;
+const QUALIFIED_PROFESSIONS = [
+  "Advogado(a)",
+  "Perito(a)",
+  "Contador(a)",
+  "Estudante",
+  "Empresário(a)",
+] as const;
 const OTHER_PROFESSION = "Outro";
 
 type PasswordFieldProps = {
@@ -118,6 +124,7 @@ export function CctSignupForm({ variant = "card", className = "" }: CctSignupFor
         phone,
         profession: profession === OTHER_PROFESSION ? otherProfession : profession,
         defaultOrigin: "cct",
+        emailRedirectTo: `${window.location.origin}/cct/obrigado`,
       });
       const metaLead = trackMetaLead();
       if (metaLead) {
@@ -141,13 +148,11 @@ export function CctSignupForm({ variant = "card", className = "" }: CctSignupFor
     : "h-11 bg-background";
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className={`space-y-4 text-left ${className}`}
-      noValidate
-    >
+    <form onSubmit={handleSubmit} className={`space-y-4 text-left ${className}`} noValidate>
       {!isSupabaseConfigured() && (
-        <p className={`text-sm rounded-lg px-3 py-2 ${dark ? "bg-amber-500/20 text-amber-100" : "bg-amber-50 text-amber-800"}`}>
+        <p
+          className={`text-sm rounded-lg px-3 py-2 ${dark ? "bg-amber-500/20 text-amber-100" : "bg-amber-50 text-amber-800"}`}
+        >
           Configure VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY para ativar o cadastro.
         </p>
       )}
@@ -258,7 +263,6 @@ export function CctSignupForm({ variant = "card", className = "" }: CctSignupFor
         disabled={isSubmitting}
         dark={dark}
       />
-
 
       <PasswordField
         id="cct-confirmPassword"

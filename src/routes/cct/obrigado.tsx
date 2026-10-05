@@ -6,10 +6,11 @@ import { trackMetaCustomEvent } from "@/lib/meta-pixel";
 export const Route = createFileRoute("/cct/obrigado")({
   head: () => ({
     meta: [
-      { title: "Confirme seu e-mail — CCT 2026" },
+      { title: "Cadastro concluído — CCT 2026" },
       {
         name: "description",
-        content: "Cadastro iniciado. Confirme seu e-mail para liberar o acesso ao Clube do Cálculo Trabalhista.",
+        content:
+          "Cadastro concluído. Acesse o Clube do Cálculo Trabalhista.",
       },
       { name: "robots", content: "noindex, nofollow" },
       { name: "googlebot", content: "noindex, nofollow" },
@@ -34,10 +35,10 @@ function ThankYou() {
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-success mb-6 shadow-glow">
             <CheckCircle2 className="w-12 h-12 text-success-foreground" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-black mb-4">Cadastro quase concluído!</h1>
+          <h1 className="text-4xl md:text-5xl font-black mb-4">Cadastro concluído!</h1>
           <p className="text-lg md:text-xl text-white/80 leading-relaxed">
-            Enviamos um e-mail de confirmação. Valide sua conta para liberar o acesso ao Clube do Cálculo
-            Trabalhista.
+            Sua conta foi criada. Clique no botão abaixo para entrar no Clube do Cálculo
+            Trabalhista já logado.
           </p>
         </div>
       </section>
@@ -50,8 +51,10 @@ function ThankYou() {
                 <Mail className="w-6 h-6" />
               </div>
               <div>
-                <h2 className="text-2xl font-black">Valide seu e-mail</h2>
-                <p className="text-sm text-muted-foreground">Passo obrigatório para ativar sua conta</p>
+                <h2 className="text-2xl font-black">Sua conta está pronta</h2>
+                <p className="text-sm text-muted-foreground">
+                  Não precisa confirmar e-mail
+                </p>
               </div>
             </div>
 
@@ -59,18 +62,18 @@ function ThankYou() {
               {[
                 {
                   icon: Inbox,
-                  title: "Abra sua caixa de entrada",
-                  desc: "Procure a mensagem de confirmação do cadastro no e-mail que você usou.",
+                  title: "Clique em Acessar a plataforma",
+                  desc: "Você entra direto, já logado com o e-mail que acabou de cadastrar.",
                 },
                 {
                   icon: ShieldCheck,
-                  title: "Clique no link de validação",
-                  desc: "O link confirma que o e-mail é seu e libera o acesso à plataforma.",
+                  title: "Escolha por onde começar",
+                  desc: "Navegue pelas aulas, trilhas e conteúdos liberados no plano grátis.",
                 },
                 {
                   icon: CheckCircle2,
                   title: "Pronto para estudar",
-                  desc: "Depois de validar, entre na plataforma e comece pelos cursos e trilhas.",
+                  desc: "Aproveite o período de teste e conheça a plataforma.",
                 },
               ].map((item, i) => (
                 <li key={item.title} className="flex gap-4 items-start">
@@ -82,19 +85,21 @@ function ThankYou() {
                       <item.icon className="w-4 h-4 text-primary" />
                       {item.title}
                     </p>
-                    <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{item.desc}</p>
+                    <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+                      {item.desc}
+                    </p>
                   </div>
                 </li>
               ))}
             </ol>
 
             <div className="mt-8 rounded-xl bg-secondary border border-border p-5 text-sm text-muted-foreground leading-relaxed">
-              <strong className="text-foreground">Não encontrou o e-mail?</strong> Confira a pasta de spam ou
-              promoções. Se precisar de ajuda, fale conosco pelo WhatsApp — o botão fica no canto da tela.
+              <strong className="text-foreground">Precisa de ajuda?</strong> Fale conosco pelo WhatsApp — o botão fica
+              no canto da tela.
             </div>
 
             <a
-              href="https://suiteplus.ensinoplus.com.br/"
+              href="https://suite.ensinoplus.com.br/?app=cct"
               onClick={() => trackMetaCustomEvent("AcessarPlataforma")}
               className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-gradient-cta px-6 py-4 font-bold uppercase tracking-wide text-primary-foreground shadow-cta transition hover:brightness-110"
             >
