@@ -1,13 +1,11 @@
+import { cookieStorage, isEnsinoPlusDomain } from "@/lib/supabase-cookie-storage";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 /** Remove aspas acidentais do .env (`"https://..."`). */
 function cleanEnv(value: string | undefined): string | undefined {
   const v = value?.trim();
   if (!v) return undefined;
-  if (
-    (v.startsWith('"') && v.endsWith('"')) ||
-    (v.startsWith("'") && v.endsWith("'"))
-  ) {
+  if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
     return v.slice(1, -1).trim() || undefined;
   }
   return v;
@@ -45,7 +43,10 @@ export function getSupabase(): SupabaseClient {
 
   if (!client) {
     client = createClient(url, anonKey, {
-      auth: { persistSession: true },
+      auth: {
+        persistSession: true,
+        storage: isEnsinoPlusDomain ? cookieStorage : undefined,
+      },
     });
   }
 
