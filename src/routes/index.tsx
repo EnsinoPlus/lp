@@ -7,6 +7,7 @@ import {
   Calculator,
   CalendarX,
   Clock,
+  Coins,
   FileText,
   GraduationCap,
   MessageSquare,
@@ -48,6 +49,18 @@ const products = [
     cover: catalogoCover,
     icon: null,
     href: "/ebook-pjecalc-suiteplus/" as const,
+  },
+  {
+    slug: "suiteplus-promo-1010",
+    title: "SuitePlus — 10 do 10",
+    subtitle: "PlusCoin · Recarga",
+    description:
+      "400 créditos + e-book Cálculos Trabalhistas Aplicados ao PJe-Calc. De R$ 397 por R$ 200 em 10 e 11/10.",
+    price: "R$ 200",
+    oldPrice: "R$ 397" as string | null,
+    cover: null as string | null,
+    icon: Coins,
+    href: "/suiteplus-promo-1010/" as const,
   },
   {
     slug: "cct",

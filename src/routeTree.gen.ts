@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SuiteplusPromo1010IndexRouteImport } from './routes/suiteplus-promo-1010/index'
 import { Route as PontoMagicoIndexRouteImport } from './routes/ponto-magico/index'
 import { Route as LivroPjecalcVicelmoIndexRouteImport } from './routes/livro-pjecalc-vicelmo/index'
 import { Route as ImpugnadorIndexRouteImport } from './routes/impugnador/index'
@@ -29,6 +30,11 @@ import { Route as CctObrigadoRouteImport } from './routes/cct/obrigado'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SuiteplusPromo1010IndexRoute = SuiteplusPromo1010IndexRouteImport.update({
+  id: '/suiteplus-promo-1010/',
+  path: '/suiteplus-promo-1010/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PontoMagicoIndexRoute = PontoMagicoIndexRouteImport.update({
@@ -131,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/impugnador/': typeof ImpugnadorIndexRoute
   '/livro-pjecalc-vicelmo/': typeof LivroPjecalcVicelmoIndexRoute
   '/ponto-magico/': typeof PontoMagicoIndexRoute
+  '/suiteplus-promo-1010/': typeof SuiteplusPromo1010IndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -149,6 +156,7 @@ export interface FileRoutesByTo {
   '/impugnador': typeof ImpugnadorIndexRoute
   '/livro-pjecalc-vicelmo': typeof LivroPjecalcVicelmoIndexRoute
   '/ponto-magico': typeof PontoMagicoIndexRoute
+  '/suiteplus-promo-1010': typeof SuiteplusPromo1010IndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -168,6 +176,7 @@ export interface FileRoutesById {
   '/impugnador/': typeof ImpugnadorIndexRoute
   '/livro-pjecalc-vicelmo/': typeof LivroPjecalcVicelmoIndexRoute
   '/ponto-magico/': typeof PontoMagicoIndexRoute
+  '/suiteplus-promo-1010/': typeof SuiteplusPromo1010IndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -188,6 +197,7 @@ export interface FileRouteTypes {
     | '/impugnador/'
     | '/livro-pjecalc-vicelmo/'
     | '/ponto-magico/'
+    | '/suiteplus-promo-1010/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -206,6 +216,7 @@ export interface FileRouteTypes {
     | '/impugnador'
     | '/livro-pjecalc-vicelmo'
     | '/ponto-magico'
+    | '/suiteplus-promo-1010'
   id:
     | '__root__'
     | '/'
@@ -224,6 +235,7 @@ export interface FileRouteTypes {
     | '/impugnador/'
     | '/livro-pjecalc-vicelmo/'
     | '/ponto-magico/'
+    | '/suiteplus-promo-1010/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -243,6 +255,7 @@ export interface RootRouteChildren {
   ImpugnadorIndexRoute: typeof ImpugnadorIndexRoute
   LivroPjecalcVicelmoIndexRoute: typeof LivroPjecalcVicelmoIndexRoute
   PontoMagicoIndexRoute: typeof PontoMagicoIndexRoute
+  SuiteplusPromo1010IndexRoute: typeof SuiteplusPromo1010IndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -252,6 +265,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/suiteplus-promo-1010/': {
+      id: '/suiteplus-promo-1010/'
+      path: '/suiteplus-promo-1010'
+      fullPath: '/suiteplus-promo-1010/'
+      preLoaderRoute: typeof SuiteplusPromo1010IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ponto-magico/': {
@@ -381,6 +401,7 @@ const rootRouteChildren: RootRouteChildren = {
   ImpugnadorIndexRoute: ImpugnadorIndexRoute,
   LivroPjecalcVicelmoIndexRoute: LivroPjecalcVicelmoIndexRoute,
   PontoMagicoIndexRoute: PontoMagicoIndexRoute,
+  SuiteplusPromo1010IndexRoute: SuiteplusPromo1010IndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
