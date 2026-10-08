@@ -97,6 +97,7 @@ export function CctSignupForm({ variant = "card", className = "" }: CctSignupFor
     passwordsMatch &&
     fullName.trim() &&
     email.trim() &&
+    phone.trim() &&
     profession &&
     (profession !== OTHER_PROFESSION || otherProfession.trim());
 
@@ -203,6 +204,7 @@ export function CctSignupForm({ variant = "card", className = "" }: CctSignupFor
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           onBlur={(e) => trackField("WhatsAppPreenchido", e.target.value)}
+          required
           disabled={isSubmitting}
           autoComplete="tel"
           className={inputClass}
