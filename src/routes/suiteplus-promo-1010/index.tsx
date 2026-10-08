@@ -336,10 +336,6 @@ function Landing() {
           <CTAButton large checkoutUrl={checkoutUrl}>
             Aproveitar agora — R$ 200
           </CTAButton>
-
-          <p className="text-sm text-white/60 mt-6">
-            Campanha 10 do 10 · Ensino Plus · 10 de outubro de 2026
-          </p>
         </div>
       </section>
 
