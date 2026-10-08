@@ -150,10 +150,15 @@ async function insertSupabase(
     landingPage?: string;
   },
 ): Promise<{ ok: boolean; reason?: string }> {
+  // Banco de LEADS (pode ser diferente do Supabase de login do cliente).
   const url =
-    (await readRuntimeEnv("SUPABASE_URL")) || (await readRuntimeEnv("VITE_SUPABASE_URL"));
-  const serviceKey = await readRuntimeEnv("SUPABASE_SERVICE_ROLE_KEY");
-  if (!url || !serviceKey) return { ok: false, reason: "missing_supabase_env" };
+    (await readRuntimeEnv("SUPABASE_LEADS_URL")) ||
+    (await readRuntimeEnv("SUPABASE_URL")) ||
+    (await readRuntimeEnv("VITE_SUPABASE_URL"));
+  const key =
+    (await readRuntimeEnv("SUPABASE_LEADS_KEY")) ||
+    (await readRuntimeEnv("SUPABASE_SERVICE_ROLE_KEY"));
+  if (!url || !key) return { ok: false, reason: "missing_supabase_env" };
 
   const attr = row.attribution || {};
   const body = {
@@ -175,8 +180,8 @@ async function insertSupabase(
     const resp = await fetch(`${url.replace(/\/$/, "")}/rest/v1/promo1010_leads`, {
       method: "POST",
       headers: {
-        apikey: serviceKey,
-        Authorization: `Bearer ${serviceKey}`,
+        apikey: key,
+        Authorization: `Bearer ${key}`,
         "Content-Type": "application/json",
         Prefer: "return=minimal",
       },
