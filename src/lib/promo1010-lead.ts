@@ -43,6 +43,9 @@ const inputSchema = z.object({
   email: z.string().email(),
   phone: z.string().trim().max(40).optional(),
   attribution: z.record(z.string()).optional(),
+  /** TODOS os parâmetros da URL (não só marketing). */
+  params: z.record(z.string()).optional(),
+  landingPage: z.string().max(300).optional(),
 });
 
 type Stage = z.infer<typeof inputSchema>["stage"];
@@ -135,6 +138,62 @@ async function fireN8n(
   }
 }
 
+async function insertSupabase(
+  stage: Stage,
+  row: {
+    name: string;
+    email: string;
+    phoneRaw: string | undefined;
+    phoneE164: string | undefined;
+    attribution?: Record<string, string>;
+    params?: Record<string, string>;
+    landingPage?: string;
+  },
+): Promise<{ ok: boolean; reason?: string }> {
+  const url =
+    (await readRuntimeEnv("SUPABASE_URL")) || (await readRuntimeEnv("VITE_SUPABASE_URL"));
+  const serviceKey = await readRuntimeEnv("SUPABASE_SERVICE_ROLE_KEY");
+  if (!url || !serviceKey) return { ok: false, reason: "missing_supabase_env" };
+
+  const attr = row.attribution || {};
+  const body = {
+    stage,
+    name: row.name || null,
+    email: row.email,
+    phone: row.phoneE164 || row.phoneRaw || null,
+    utm_source: attr.utm_source || null,
+    utm_medium: attr.utm_medium || null,
+    utm_campaign: attr.utm_campaign || null,
+    origem: attr.origem || null,
+    gclid: attr.gclid || null,
+    attribution: Object.keys(attr).length ? attr : null,
+    url_params: row.params && Object.keys(row.params).length ? row.params : null,
+    landing_page: row.landingPage || null,
+  };
+
+  try {
+    const resp = await fetch(`${url.replace(/\/$/, "")}/rest/v1/promo1010_leads`, {
+      method: "POST",
+      headers: {
+        apikey: serviceKey,
+        Authorization: `Bearer ${serviceKey}`,
+        "Content-Type": "application/json",
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify(body),
+    });
+    if (!resp.ok) {
+      const txt = await resp.text().catch(() => "");
+      console.error("[promo1010] Supabase insert falhou", stage, resp.status, txt);
+      return { ok: false, reason: `supabase_${resp.status}` };
+    }
+    return { ok: true };
+  } catch (err) {
+    console.error("[promo1010] Supabase erro de rede:", err);
+    return { ok: false, reason: "network_error" };
+  }
+}
+
 export const registerPromo1010Lead = createServerFn({ method: "POST" })
   .inputValidator(inputSchema)
   .handler(async ({ data }) => {
@@ -142,7 +201,7 @@ export const registerPromo1010Lead = createServerFn({ method: "POST" })
     const name = (data.name ?? "").trim();
     const phoneE164 = toE164BR(data.phone);
 
-    const [brevo, n8n] = await Promise.all([
+    const [brevo, n8n, supabase] = await Promise.all([
       addToBrevo(data.stage, email, name, phoneE164),
       fireN8n(data.stage, {
         stage: data.stage,
@@ -151,9 +210,20 @@ export const registerPromo1010Lead = createServerFn({ method: "POST" })
         email,
         phone: phoneE164 || data.phone || undefined,
         attribution: data.attribution || undefined,
+        params: data.params || undefined,
+        landing_page: data.landingPage || undefined,
         submitted_at: new Date().toISOString(),
+      }),
+      insertSupabase(data.stage, {
+        name,
+        email,
+        phoneRaw: data.phone,
+        phoneE164,
+        attribution: data.attribution,
+        params: data.params,
+        landingPage: data.landingPage,
       }),
     ]);
 
-    return { ok: brevo.ok || n8n.ok, brevo, n8n };
+    return { ok: brevo.ok || n8n.ok || supabase.ok, brevo, n8n, supabase };
   });

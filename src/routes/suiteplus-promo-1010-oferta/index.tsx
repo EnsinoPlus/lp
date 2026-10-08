@@ -137,7 +137,7 @@ function Landing() {
                   Informe seus dados para liberar o checkout
                 </h2>
               </div>
-              <Promo1010Form mode="checkout" checkoutUrl={checkoutUrl} cta="Liberar e ir ao checkout" />
+              <Promo1010Form mode="checkout" checkoutUrl={checkoutUrl} cta="Liberar e comprar créditos" />
             </div>
           </div>
         </div>
@@ -216,7 +216,7 @@ function Landing() {
             <Promo1010Form
               mode="checkout"
               checkoutUrl={checkoutUrl}
-              cta="Liberar e ir ao checkout"
+              cta="Liberar e comprar créditos"
             />
           </div>
           <p className="mt-6 text-sm text-white/50">

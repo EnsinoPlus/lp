@@ -5,6 +5,22 @@ import { Label } from "@/components/ui/label";
 import { registerPromo1010Lead } from "@/lib/promo1010-lead";
 import { getStoredAttribution, withSignupAttribution } from "@/lib/signup-origin";
 
+/** Captura TODOS os parâmetros presentes na URL (não só os de marketing). */
+function readAllUrlParams(): Record<string, string> {
+  if (typeof window === "undefined") return {};
+  const out: Record<string, string> = {};
+  try {
+    const sp = new URLSearchParams(window.location.search);
+    for (const [k, v] of sp.entries()) {
+      if (!k) continue;
+      out[k.slice(0, 100)] = String(v).slice(0, 500);
+    }
+  } catch {
+    // ignore
+  }
+  return out;
+}
+
 type Mode = "lead" | "checkout";
 
 type Promo1010FormProps = {
@@ -42,6 +58,7 @@ export function Promo1010Form({ mode, checkoutUrl, cta, className = "" }: Promo1
 
     const cleanEmail = email.trim().toLowerCase();
     const attribution = getStoredAttribution();
+    const urlParams = readAllUrlParams();
 
     try {
       await registerPromo1010Lead({
@@ -51,6 +68,11 @@ export function Promo1010Form({ mode, checkoutUrl, cta, className = "" }: Promo1
           email: cleanEmail,
           phone: phone.trim() || undefined,
           attribution: Object.keys(attribution).length ? attribution : undefined,
+          params: Object.keys(urlParams).length ? urlParams : undefined,
+          landingPage:
+            typeof window !== "undefined"
+              ? `${window.location.pathname}${window.location.search}`.slice(0, 300)
+              : undefined,
         },
       });
     } catch (err) {
