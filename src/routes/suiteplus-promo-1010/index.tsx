@@ -1,8 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import catalogoCover from "@/assets/catalogo-capa-pjecalc-vicelmo.png";
-import { UrgencyBar } from "@/components/UrgencyBar";
-import { useTrackedUrl } from "@/hooks/useSignupOrigin";
-import { getCreditsCheckoutUrl } from "@/lib/runtime-config";
+import { CountdownTimer, PROMO_1010_START } from "@/components/CountdownTimer";
+import { Promo1010Form } from "@/components/Promo1010Form";
 import {
   BookOpen,
   Bot,
@@ -18,7 +17,6 @@ import {
   ShieldCheck,
   Sparkles,
   Wallet,
-  Zap,
 } from "lucide-react";
 
 export const Route = createFileRoute("/suiteplus-promo-1010/")({
@@ -30,18 +28,15 @@ export const Route = createFileRoute("/suiteplus-promo-1010/")({
       {
         name: "description",
         content:
-          "Oferta 10 do 10: 400 créditos PlusCoin e o e-book Cálculos Trabalhistas Aplicados ao PJe-Calc por R$ 200. Válida em 10 de outubro.",
+          "Entre na lista da oferta 10 do 10: 400 créditos PlusCoin + e-book Cálculos Trabalhistas Aplicados ao PJe-Calc por R$ 200. Abre 10 de outubro às 6h.",
       },
       { property: "og:title", content: "Ensino Plus — 10 do 10 | 400 créditos + e-book" },
       {
         property: "og:description",
         content:
-          "400 créditos + e-book Cálculos Trabalhistas Aplicados ao PJe-Calc por R$ 200,00.",
+          "400 créditos + e-book do PJe-Calc por R$ 200,00. Cadastre-se e seja avisado quando abrir.",
       },
     ],
-  }),
-  loader: async () => ({
-    checkoutUrl: await getCreditsCheckoutUrl(),
   }),
   component: Landing,
 });
@@ -114,36 +109,17 @@ const EBOOK_TOPICS = [
   },
 ];
 
-function CTAButton({
-  children,
-  checkoutUrl,
-  large = false,
-}: {
-  children: React.ReactNode;
-  checkoutUrl: string;
-  large?: boolean;
-}) {
-  const checkoutHref = useTrackedUrl(checkoutUrl);
-  return (
-    <a
-      href={checkoutHref}
-      target="_blank"
-      rel="noreferrer"
-      className={`inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-cta text-primary-foreground font-bold uppercase tracking-wide shadow-cta hover:brightness-110 transition-all animate-pulse-cta ${
-        large ? "px-8 py-5 text-lg md:text-xl" : "px-6 py-4 text-base"
-      }`}
-    >
-      <Zap className="w-5 h-5" />
-      {children}
-    </a>
-  );
-}
-
 function Landing() {
-  const { checkoutUrl } = Route.useLoaderData();
   return (
     <div className="min-h-screen bg-background">
-      <UrgencyBar message="OFERTA TERMINA EM:" />
+      {/* Barra de topo: contador real até a abertura (10/10 06h) */}
+      <div className="bg-gradient-urgency text-urgency-foreground py-2.5 px-4 text-center text-sm font-semibold">
+        <div className="flex items-center justify-center gap-2 flex-wrap">
+          <span className="inline-block w-2 h-2 rounded-full bg-white animate-pulse" />
+          <span>A OFERTA 10 DO 10 ABRE EM:</span>
+          <CountdownTimer target={PROMO_1010_START} variant="bar" doneLabel="ABERTA AGORA!" />
+        </div>
+      </div>
 
       <section className="bg-gradient-hero text-dark-foreground relative overflow-hidden">
         <div
@@ -154,54 +130,68 @@ function Landing() {
           }}
         />
         <div className="container mx-auto px-4 py-12 md:py-20 relative">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-urgency/25 text-urgency-foreground border border-urgency/50 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider mb-4">
-              <Sparkles className="w-4 h-4" /> Bônus revelado · Edição especial
+          <div className="max-w-5xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
+            {/* Coluna da oferta */}
+            <div className="text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 bg-urgency/25 text-urgency-foreground border border-urgency/50 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider mb-4">
+                <Sparkles className="w-4 h-4" /> Pré-lançamento · Lista de espera
+              </div>
+
+              <p className="text-sm md:text-base font-bold uppercase tracking-[0.2em] text-white/60 mb-3">
+                Ensino Plus · SuitePlus
+              </p>
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-black leading-[1.05] mb-4">
+                Campanha <span className="text-primary">10</span> do{" "}
+                <span className="text-primary">10</span>
+              </h1>
+              <p className="text-lg md:text-xl text-white/70 mb-6 max-w-2xl mx-auto lg:mx-0">
+                400 créditos para usar na Suite, com o e-book do Prof. Vicelmo de bônus — por{" "}
+                <span className="text-white font-bold">R$ 200</span>.
+              </p>
+
+              <div className="flex items-end justify-center lg:justify-start gap-3 mb-6 flex-wrap">
+                <span className="text-5xl md:text-6xl font-black text-primary">400</span>
+                <span className="text-lg md:text-xl font-bold uppercase tracking-wider text-white/80 pb-2">
+                  créditos + e-book
+                </span>
+              </div>
+
+              <p className="text-sm font-bold uppercase tracking-wider text-white/60 mb-3">
+                A oferta abre em:
+              </p>
+              <CountdownTimer
+                target={PROMO_1010_START}
+                className="justify-center lg:justify-start"
+                doneLabel="A oferta está aberta!"
+              />
+
+              <div className="flex flex-wrap gap-5 mt-8 text-sm text-white/70 justify-center lg:justify-start">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5 text-success" /> Abre 10 de outubro, 6h
+                </div>
+                <div className="flex items-center gap-2">
+                  <Coins className="w-5 h-5 text-amber-400" /> Créditos PlusCoin
+                </div>
+                <div className="flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-primary" /> E-book incluso
+                </div>
+              </div>
             </div>
 
-            <p className="text-sm md:text-base font-bold uppercase tracking-[0.2em] text-white/60 mb-3">
-              Ensino Plus · SuitePlus
-            </p>
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black leading-[1.05] mb-4">
-              Campanha <span className="text-primary">10</span> do <span className="text-primary">10</span>
-            </h1>
-            <p className="text-lg md:text-xl text-white/70 mb-10 max-w-2xl mx-auto">
-              400 créditos para usar na Suite, com o e-book do Prof. Vicelmo de bônus.
-            </p>
-
-            <div className="bg-white/5 border-2 border-primary/40 rounded-2xl p-8 md:p-10 max-w-xl mx-auto mb-8 shadow-card">
-              <div className="inline-flex items-center gap-1 bg-gradient-cta text-primary-foreground text-xs font-bold px-3 py-1 rounded-full mb-5">
-                <Sparkles className="w-3 h-3" /> OFERTA DO DIA
+            {/* Coluna do formulário (lead) */}
+            <div className="bg-white/5 border-2 border-primary/40 rounded-2xl p-6 md:p-8 shadow-card">
+              <div className="text-center mb-5">
+                <div className="inline-flex items-center gap-1 bg-gradient-cta text-primary-foreground text-xs font-bold px-3 py-1 rounded-full mb-3">
+                  <Gift className="w-3 h-3" /> Garanta sua vaga na oferta
+                </div>
+                <h2 className="text-xl md:text-2xl font-black text-white">
+                  Entre na lista do 10 do 10
+                </h2>
+                <p className="text-sm text-white/60 mt-1">
+                  Avisamos no e-mail e no WhatsApp assim que abrir.
+                </p>
               </div>
-              <p className="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-2">400</p>
-              <p className="text-lg md:text-xl font-bold uppercase tracking-wider text-white/80 mb-2">
-                Créditos
-              </p>
-              <p className="text-base text-white/70 mb-5">
-                + e-book <span className="text-white font-semibold">Cálculos Trabalhistas Aplicados ao PJe-Calc</span>
-              </p>
-              <div className="flex items-end justify-center gap-3 mb-4 flex-wrap">
-                <span className="text-5xl md:text-6xl font-black text-primary">R$ 200,00</span>
-              </div>
-              <div className="inline-flex items-center gap-2 bg-primary/20 text-primary border border-primary/40 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider">
-                <Gift className="w-3.5 h-3.5" /> Bônus revelado no 10 do 10
-              </div>
-            </div>
-
-            <CTAButton large checkoutUrl={checkoutUrl}>
-              Aproveitar agora — R$ 200
-            </CTAButton>
-
-            <div className="flex flex-wrap gap-5 mt-8 text-sm text-white/70 justify-center">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-success" /> Válida em 10 de outubro
-              </div>
-              <div className="flex items-center gap-2">
-                <Coins className="w-5 h-5 text-amber-400" /> Créditos PlusCoin na plataforma
-              </div>
-              <div className="flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-primary" /> E-book do Prof. Vicelmo incluso
-              </div>
+              <Promo1010Form mode="lead" />
             </div>
           </div>
         </div>
@@ -234,9 +224,7 @@ function Landing() {
             <p className="text-xl md:text-2xl font-bold text-foreground mb-2">
               O e-book entra junto com os créditos
             </p>
-            <p className="text-muted-foreground text-base">
-              Edição 2026, do Prof. Vicelmo Alencar.
-            </p>
+            <p className="text-muted-foreground text-base">Edição 2026, do Prof. Vicelmo Alencar.</p>
           </div>
 
           <div className="max-w-5xl mx-auto grid md:grid-cols-[220px_1fr] gap-8 md:gap-12 items-center bg-card border-2 border-border rounded-2xl p-6 md:p-10">
@@ -246,12 +234,15 @@ function Landing() {
               className="w-44 md:w-full mx-auto drop-shadow-2xl"
             />
             <div>
-              <p className="text-sm font-bold uppercase tracking-wider text-primary mb-3">Prof. Vicelmo Alencar</p>
+              <p className="text-sm font-bold uppercase tracking-wider text-primary mb-3">
+                Prof. Vicelmo Alencar
+              </p>
               <h3 className="text-2xl md:text-3xl font-black mb-4 leading-tight">
                 Cálculos Trabalhistas Aplicados ao PJe-Calc
               </h3>
               <p className="text-muted-foreground leading-relaxed mb-6">
-                O guia prático para liquidar sentenças no sistema oficial da Justiça do Trabalho, com a Lei 14.905/2024 já aplicada.
+                O guia prático para liquidar sentenças no sistema oficial da Justiça do Trabalho, com
+                a Lei 14.905/2024 já aplicada.
               </p>
               <ul className="grid sm:grid-cols-2 gap-4">
                 {EBOOK_TOPICS.map((topic) => (
@@ -295,7 +286,9 @@ function Landing() {
                 </div>
                 <h3 className="text-lg font-black uppercase tracking-wide mb-2">{tool.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{tool.desc}</p>
-                <p className="mt-4 text-xs font-bold uppercase tracking-wider text-primary">Conhecer ferramenta →</p>
+                <p className="mt-4 text-xs font-bold uppercase tracking-wider text-primary">
+                  Conhecer ferramenta →
+                </p>
               </Link>
             ))}
 
@@ -319,23 +312,20 @@ function Landing() {
               "radial-gradient(circle at 50% 50%, oklch(0.82 0.16 85 / 0.35), transparent 60%)",
           }}
         />
-        <div className="container mx-auto px-4 relative text-center max-w-3xl">
+        <div className="container mx-auto px-4 relative text-center max-w-xl">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-urgency-foreground bg-urgency/30 inline-block rounded-full px-4 py-1 mb-6">
-            É hoje — 10 do 10
+            Pré-lançamento — 10 do 10
           </p>
           <h2 className="text-3xl md:text-5xl font-black mb-5 leading-tight">
             <span className="text-primary">400 créditos</span> + e-book por R$ 200,00
           </h2>
-          <p className="text-lg md:text-xl text-white/80 mb-4">
-            Inclui o e-book oficial Cálculos Trabalhistas Aplicados ao PJe-Calc (Edição 2026)
+          <p className="text-base text-white/70 mb-8">
+            Entre na lista e seja o primeiro a comprar quando a oferta abrir, no sábado 10 de outubro
+            às 6h.
           </p>
-          <p className="text-base text-white/60 mb-10">
-            A oferta é válida exclusivamente no sábado, 10 de outubro.
-          </p>
-
-          <CTAButton large checkoutUrl={checkoutUrl}>
-            Aproveitar agora — R$ 200
-          </CTAButton>
+          <div className="bg-white/5 border-2 border-primary/40 rounded-2xl p-6 md:p-8 shadow-card text-left">
+            <Promo1010Form mode="lead" />
+          </div>
         </div>
       </section>
 
