@@ -143,7 +143,7 @@ function Landing() {
   const { checkoutUrl } = Route.useLoaderData();
   return (
     <div className="min-h-screen bg-background">
-      <UrgencyBar message="OFERTA 10 DO 10 TERMINA EM:" />
+      <UrgencyBar message="OFERTA TERMINA EM:" />
 
       <section className="bg-gradient-hero text-dark-foreground relative overflow-hidden">
         <div
@@ -156,15 +156,14 @@ function Landing() {
         <div className="container mx-auto px-4 py-12 md:py-20 relative">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-urgency/25 text-urgency-foreground border border-urgency/50 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider mb-4">
-              <Sparkles className="w-4 h-4" /> O bônus foi revelado · 10/10
+              <Sparkles className="w-4 h-4" /> Bônus revelado · Edição especial
             </div>
 
             <p className="text-sm md:text-base font-bold uppercase tracking-[0.2em] text-white/60 mb-3">
               Ensino Plus · SuitePlus
             </p>
-            <p className="text-6xl md:text-7xl font-black text-primary leading-none mb-2">10/10</p>
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-black leading-[1.05] mb-4">
-              <span className="text-primary">10</span> do <span className="text-primary">10</span>
+              Campanha <span className="text-primary">10</span> do <span className="text-primary">10</span>
             </h1>
             <p className="text-lg md:text-xl text-white/70 mb-10 max-w-2xl mx-auto">
               400 créditos para usar na Suite, com o e-book do Prof. Vicelmo de bônus.
