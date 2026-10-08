@@ -10,6 +10,14 @@ import { z } from "zod";
  * Todas as integrações são best-effort: nunca derrubam o fluxo do usuário (ex.: ir ao checkout).
  */
 
+/**
+ * Banco de LEADS padrão = projeto da agência (sistema-b7). Chave anon é pública
+ * (protegida por RLS: anon só INSERE, não lê PII). Pode ser sobrescrito por env.
+ */
+const DEFAULT_LEADS_URL = "https://rartcafydsaocdzshqcx.supabase.co";
+const DEFAULT_LEADS_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcnRjYWZ5ZHNhb2NkenNocWN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTM5ODgsImV4cCI6MjEwNDUyOTk4OH0.kM0xlo6YjKWY1i7jqrYwwG1RkkVHMFte12K9_AHuT-I";
+
 /** Lê env em runtime no Worker (Cloudflare) e no Node. */
 async function readRuntimeEnv(name: string): Promise<string | undefined> {
   try {
@@ -150,14 +158,12 @@ async function insertSupabase(
     landingPage?: string;
   },
 ): Promise<{ ok: boolean; reason?: string }> {
-  // Banco de LEADS (pode ser diferente do Supabase de login do cliente).
-  const url =
-    (await readRuntimeEnv("SUPABASE_LEADS_URL")) ||
-    (await readRuntimeEnv("SUPABASE_URL")) ||
-    (await readRuntimeEnv("VITE_SUPABASE_URL"));
+  // Banco de LEADS = sistema-b7 por padrão (não o Supabase de login do cliente).
+  const url = (await readRuntimeEnv("SUPABASE_LEADS_URL")) || DEFAULT_LEADS_URL;
   const key =
     (await readRuntimeEnv("SUPABASE_LEADS_KEY")) ||
-    (await readRuntimeEnv("SUPABASE_SERVICE_ROLE_KEY"));
+    (await readRuntimeEnv("SUPABASE_SERVICE_ROLE_KEY")) ||
+    DEFAULT_LEADS_KEY;
   if (!url || !key) return { ok: false, reason: "missing_supabase_env" };
 
   const attr = row.attribution || {};

@@ -7,6 +7,11 @@ import { z } from "zod";
  * Protegido por PROMO1010_DASHBOARD_TOKEN quando configurado.
  */
 
+/** Banco de LEADS padrão = sistema-b7 (chave anon pública, protegida por RLS). */
+const DEFAULT_LEADS_URL = "https://rartcafydsaocdzshqcx.supabase.co";
+const DEFAULT_LEADS_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcnRjYWZ5ZHNhb2NkenNocWN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTM5ODgsImV4cCI6MjEwNDUyOTk4OH0.kM0xlo6YjKWY1i7jqrYwwG1RkkVHMFte12K9_AHuT-I";
+
 async function readRuntimeEnv(name: string): Promise<string | undefined> {
   try {
     const fromProcess = process.env[name]?.trim();
@@ -47,13 +52,11 @@ export const getPromo1010Stats = createServerFn({ method: "GET" })
       return { ok: false, reason: "unauthorized" };
     }
 
-    const url =
-      (await readRuntimeEnv("SUPABASE_LEADS_URL")) ||
-      (await readRuntimeEnv("SUPABASE_URL")) ||
-      (await readRuntimeEnv("VITE_SUPABASE_URL"));
+    const url = (await readRuntimeEnv("SUPABASE_LEADS_URL")) || DEFAULT_LEADS_URL;
     const key =
       (await readRuntimeEnv("SUPABASE_LEADS_KEY")) ||
-      (await readRuntimeEnv("SUPABASE_SERVICE_ROLE_KEY"));
+      (await readRuntimeEnv("SUPABASE_SERVICE_ROLE_KEY")) ||
+      DEFAULT_LEADS_KEY;
     if (!url || !key) return { ok: false, reason: "not_configured" };
 
     try {
