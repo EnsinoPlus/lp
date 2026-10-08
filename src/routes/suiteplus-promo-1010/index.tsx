@@ -30,13 +30,13 @@ export const Route = createFileRoute("/suiteplus-promo-1010/")({
       {
         name: "description",
         content:
-          "Oferta 10 do 10: 400 créditos PlusCoin e o e-book Cálculos Trabalhistas Aplicados ao PJe-Calc, de R$ 397 por R$ 200. Válida em 10 e 11 de outubro.",
+          "Oferta 10 do 10: 400 créditos PlusCoin e o e-book Cálculos Trabalhistas Aplicados ao PJe-Calc por R$ 200. Válida em 10 de outubro.",
       },
       { property: "og:title", content: "Ensino Plus — 10 do 10 | 400 créditos + e-book" },
       {
         property: "og:description",
         content:
-          "400 créditos + e-book Cálculos Trabalhistas Aplicados ao PJe-Calc. De R$ 397,00 por R$ 200,00.",
+          "400 créditos + e-book Cálculos Trabalhistas Aplicados ao PJe-Calc por R$ 200,00.",
       },
     ],
   }),
@@ -169,19 +169,6 @@ function Landing() {
               400 créditos para usar na Suite, com o e-book do Prof. Vicelmo de bônus.
             </p>
 
-            <div className="inline-flex flex-col items-center mb-10">
-              <div className="relative mb-4">
-                <div
-                  className="absolute inset-0 blur-2xl opacity-60 rounded-full"
-                  style={{ background: "radial-gradient(circle, oklch(0.82 0.16 85), transparent 70%)" }}
-                />
-                <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-full flex items-center justify-center border-4 border-amber-400/80 bg-gradient-to-br from-amber-300 via-yellow-400 to-amber-600 shadow-[0_0_40px_oklch(0.82_0.16_85_/_0.5)]">
-                  <Coins className="w-12 h-12 md:w-14 md:h-14 text-amber-900" />
-                </div>
-              </div>
-              <p className="text-2xl md:text-3xl font-black tracking-wide text-amber-300">PLUSCOIN</p>
-            </div>
-
             <div className="bg-white/5 border-2 border-primary/40 rounded-2xl p-8 md:p-10 max-w-xl mx-auto mb-8 shadow-card">
               <div className="inline-flex items-center gap-1 bg-gradient-cta text-primary-foreground text-xs font-bold px-3 py-1 rounded-full mb-5">
                 <Sparkles className="w-3 h-3" /> OFERTA DO DIA
@@ -194,7 +181,6 @@ function Landing() {
                 + e-book <span className="text-white font-semibold">Cálculos Trabalhistas Aplicados ao PJe-Calc</span>
               </p>
               <div className="flex items-end justify-center gap-3 mb-4 flex-wrap">
-                <span className="text-white/40 line-through text-lg">De R$ 397,00</span>
                 <span className="text-5xl md:text-6xl font-black text-primary">R$ 200,00</span>
               </div>
               <div className="inline-flex items-center gap-2 bg-primary/20 text-primary border border-primary/40 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider">
@@ -208,7 +194,7 @@ function Landing() {
 
             <div className="flex flex-wrap gap-5 mt-8 text-sm text-white/70 justify-center">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-success" /> Válida em 10 e 11 de outubro
+                <ShieldCheck className="w-5 h-5 text-success" /> Válida em 10 de outubro
               </div>
               <div className="flex items-center gap-2">
                 <Coins className="w-5 h-5 text-amber-400" /> Créditos PlusCoin na plataforma
@@ -226,9 +212,9 @@ function Landing() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
               { n: "400", l: "Créditos PlusCoin" },
-              { n: "R$ 200", l: "Em vez de R$ 397" },
+              { n: "R$ 200", l: "Pacote completo" },
               { n: "E-book", l: "Bônus do PJe-Calc" },
-              { n: "10/10", l: "Sábado e domingo" },
+              { n: "10/10", l: "Somente no sábado" },
             ].map((s) => (
               <div key={s.l}>
                 <div className="text-3xl md:text-5xl font-black text-primary">{s.n}</div>
@@ -242,11 +228,13 @@ function Landing() {
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <span className="text-primary font-bold uppercase text-sm tracking-wider">Bônus revelado</span>
-            <h2 className="text-3xl md:text-5xl font-black mt-2 mb-4">
-              O e-book entra junto com os créditos
+            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tight text-primary mb-3">
+              BÔNUS REVELADO
             </h2>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-xl md:text-2xl font-bold text-foreground mb-2">
+              O e-book entra junto com os créditos
+            </p>
+            <p className="text-muted-foreground text-base">
               Edição 2026, do Prof. Vicelmo Alencar.
             </p>
           </div>
@@ -284,11 +272,13 @@ function Landing() {
       <section className="py-16 md:py-24 bg-secondary">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-14">
-            <span className="text-primary font-bold uppercase text-sm tracking-wider">Ecossistema</span>
-            <h2 className="text-3xl md:text-5xl font-black mt-2 mb-4">
-              Use os créditos em todas as ferramentas
+            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tight text-primary mb-3">
+              ECOSSISTEMA
             </h2>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-xl md:text-2xl font-bold text-foreground mb-2">
+              Use os créditos em todas as ferramentas
+            </p>
+            <p className="text-muted-foreground text-base">
               Um login, as soluções de IA da Suite para cálculo e produtividade trabalhista.
             </p>
           </div>
@@ -314,7 +304,7 @@ function Landing() {
                 MAIS CRÉDITOS, <span className="text-primary">MAIS PRODUTIVIDADE!</span>
               </p>
               <p className="text-white/70 mt-3 text-lg max-w-2xl mx-auto">
-                400 créditos PlusCoin e o e-book do PJe-Calc no mesmo pacote, de R$ 397 por R$ 200.
+                400 créditos PlusCoin e o e-book do PJe-Calc no mesmo pacote por R$ 200.
               </p>
             </div>
           </div>
@@ -337,10 +327,10 @@ function Landing() {
             <span className="text-primary">400 créditos</span> + e-book por R$ 200,00
           </h2>
           <p className="text-lg md:text-xl text-white/80 mb-4">
-            De R$ 397,00 por R$ 200,00 · Cálculos Trabalhistas Aplicados ao PJe-Calc
+            Inclui o e-book oficial Cálculos Trabalhistas Aplicados ao PJe-Calc (Edição 2026)
           </p>
           <p className="text-base text-white/60 mb-10">
-            A oferta segue no domingo, 11 de outubro, para quem não aproveitou no sábado.
+            A oferta é válida exclusivamente no sábado, 10 de outubro.
           </p>
 
           <CTAButton large checkoutUrl={checkoutUrl}>
@@ -348,7 +338,7 @@ function Landing() {
           </CTAButton>
 
           <p className="text-sm text-white/60 mt-6">
-            Campanha 10 do 10 · Ensino Plus · 10 e 11 de outubro de 2026
+            Campanha 10 do 10 · Ensino Plus · 10 de outubro de 2026
           </p>
         </div>
       </section>
