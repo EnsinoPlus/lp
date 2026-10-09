@@ -3,7 +3,7 @@ import { Loader2, Lock, Zap } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { registerPromo1010Lead } from "@/lib/promo1010-lead";
-import { upsertPromo1010Lead } from "@/lib/promo1010-supabase";
+import { upsertPromo1010Lead, type LeadStage } from "@/lib/promo1010-supabase";
 import { trackMetaCustomEvent, trackMetaLead } from "@/lib/meta-pixel";
 import { sendMetaLead } from "@/lib/meta-conversions";
 import { getStoredAttribution, withSignupAttribution } from "@/lib/signup-origin";
@@ -32,11 +32,19 @@ type Promo1010FormProps = {
   mode: Mode;
   /** Obrigatório no modo checkout. */
   checkoutUrl?: string;
+  /** Sobrescreve a etapa no funil (padrão: page1 no lead, checkout no checkout). */
+  stage?: LeadStage;
   cta?: string;
   className?: string;
 };
 
-export function Promo1010Form({ mode, checkoutUrl, cta, className = "" }: Promo1010FormProps) {
+export function Promo1010Form({
+  mode,
+  checkoutUrl,
+  stage: stageProp,
+  cta,
+  className = "",
+}: Promo1010FormProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -51,7 +59,7 @@ export function Promo1010Form({ mode, checkoutUrl, cta, className = "" }: Promo1
   const nameOk = !isLead || name.trim().length >= 2;
   const canSubmit = !submitting && emailOk && phoneOk && nameOk;
 
-  const stage = isLead ? "page1" : "checkout";
+  const stage: LeadStage = stageProp ?? (isLead ? "page1" : "checkout");
   const meta = () => {
     const attribution = getStoredAttribution();
     const urlParams = readAllUrlParams();

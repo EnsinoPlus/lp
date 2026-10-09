@@ -5,6 +5,7 @@ import {
   Eye,
   Loader2,
   Lock,
+  Moon,
   RefreshCw,
   ShoppingCart,
   UserCheck,
@@ -16,7 +17,14 @@ import {
   type AcessoRow,
   type FunnelRow,
   type LeadRow,
+  type LeadStage,
 } from "@/lib/promo1010-supabase";
+
+const STAGES: { key: LeadStage; label: string; accent: boolean }[] = [
+  { key: "page1", label: "Página 1 — Lista de interesse", accent: false },
+  { key: "checkout", label: "Checkout (10/10)", accent: true },
+  { key: "ressaca", label: "Ressaca (11/10)", accent: true },
+];
 
 export const Route = createFileRoute("/relatorio-promo-1010/")({
   head: () => ({ meta: [{ title: "Funil 10 do 10 — Relatório" }] }),
@@ -128,25 +136,27 @@ function Dashboard() {
     [fAcessos, fFunnel],
   );
 
-  const p1 = stage("page1");
-  const ck = stage("checkout");
-  const totalAcessos = p1.acessos + ck.acessos;
+  const totals = useMemo(
+    () => ({
+      page1: stage("page1"),
+      checkout: stage("checkout"),
+      ressaca: stage("ressaca"),
+    }),
+    [stage],
+  );
+  const totalAcessos = totals.page1.acessos + totals.checkout.acessos + totals.ressaca.acessos;
 
-  // Quebra por utm (apenas completos)
+  // Quebra por utm (apenas completos, todas as etapas)
   const byUtm = useCallback(
     (field: "utm_source" | "utm_campaign") => {
-      const map = new Map<string, { page1: number; checkout: number }>();
+      const map = new Map<string, number>();
       for (const r of fFunnel) {
         if (r.status !== "completo") continue;
-        const key = r[field];
-        const g = map.get(key) ?? { page1: 0, checkout: 0 };
-        if (r.stage === "page1") g.page1 += r.total;
-        else g.checkout += r.total;
-        map.set(key, g);
+        map.set(r[field], (map.get(r[field]) ?? 0) + r.total);
       }
       return [...map.entries()]
-        .map(([key, v]) => ({ key, ...v }))
-        .sort((a, b) => b.page1 + b.checkout - (a.page1 + a.checkout));
+        .map(([key, total]) => ({ key, total }))
+        .sort((a, b) => b.total - a.total);
     },
     [fFunnel],
   );
@@ -160,8 +170,6 @@ function Dashboard() {
       ),
     [leads, matchFilter],
   );
-  const leadsPage1 = filteredLeads.filter((l) => l.stage === "page1");
-  const leadsCheckout = filteredLeads.filter((l) => l.stage === "checkout");
 
   if (state === "loading" && !funnel) {
     return (
@@ -184,7 +192,9 @@ function Dashboard() {
     );
   }
 
-  const hasData = totalAcessos + p1.completos + ck.completos + p1.parciais + ck.parciais > 0;
+  const totalCompletos = totals.page1.completos + totals.checkout.completos + totals.ressaca.completos;
+  const totalParciais = totals.page1.parciais + totals.checkout.parciais + totals.ressaca.parciais;
+  const hasData = totalAcessos + totalCompletos + totalParciais > 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -224,16 +234,18 @@ function Dashboard() {
           </div>
         )}
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
           <Kpi icon={Eye} label="Acessos" value={totalAcessos} tone="default" />
-          <Kpi icon={UserCheck} label="Cadastros completos (lista)" value={p1.completos} tone="accent" />
-          <Kpi icon={ShoppingCart} label="Checkout (completos)" value={ck.completos} tone="success" />
-          <Kpi icon={BarChart3} label="Parciais (lista + checkout)" value={p1.parciais + ck.parciais} tone="warn" />
+          <Kpi icon={UserCheck} label="Completos — lista" value={totals.page1.completos} tone="accent" />
+          <Kpi icon={ShoppingCart} label="Completos — checkout" value={totals.checkout.completos} tone="success" />
+          <Kpi icon={Moon} label="Completos — ressaca" value={totals.ressaca.completos} tone="warn" />
+          <Kpi icon={BarChart3} label="Parciais (todas)" value={totalParciais} tone="warn" />
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6">
-          <FunnelCard title="Página 1 — Lista de interesse" t={p1} />
-          <FunnelCard title="Checkout" t={ck} accent />
+        <div className="grid lg:grid-cols-3 gap-6">
+          {STAGES.map((s) => (
+            <FunnelCard key={s.key} title={s.label} t={totals[s.key]} accent={s.accent} />
+          ))}
         </div>
 
         <div className="grid lg:grid-cols-2 gap-6">
@@ -242,9 +254,15 @@ function Dashboard() {
         </div>
 
         {leadsAuth === "ok" ? (
-          <div className="grid lg:grid-cols-2 gap-6">
-            <LeadList title="Lista de interesse (página 1)" leads={leadsPage1} />
-            <LeadList title="Checkout" leads={leadsCheckout} accent />
+          <div className="grid lg:grid-cols-3 gap-6">
+            {STAGES.map((s) => (
+              <LeadList
+                key={s.key}
+                title={s.label}
+                leads={filteredLeads.filter((l) => l.stage === s.key)}
+                accent={s.accent}
+              />
+            ))}
           </div>
         ) : (
           <section className="bg-card border rounded-xl p-6">
@@ -415,7 +433,7 @@ function BreakdownTable({
   groups,
 }: {
   title: string;
-  groups: Array<{ key: string; page1: number; checkout: number }>;
+  groups: Array<{ key: string; total: number }>;
 }) {
   return (
     <section className="bg-card border rounded-xl p-6">
@@ -428,16 +446,14 @@ function BreakdownTable({
             <thead>
               <tr className="text-left text-muted-foreground border-b">
                 <th className="py-2 pr-2 font-semibold">Valor</th>
-                <th className="py-2 px-2 font-semibold text-right">Lista</th>
-                <th className="py-2 pl-2 font-semibold text-right">Checkout</th>
+                <th className="py-2 pl-2 font-semibold text-right">Completos</th>
               </tr>
             </thead>
             <tbody>
               {groups.map((g) => (
                 <tr key={g.key} className="border-b last:border-0">
-                  <td className="py-2 pr-2 font-medium truncate max-w-[200px]">{g.key}</td>
-                  <td className="py-2 px-2 text-right tabular-nums">{g.page1}</td>
-                  <td className="py-2 pl-2 text-right tabular-nums">{g.checkout}</td>
+                  <td className="py-2 pr-2 font-medium truncate max-w-[220px]">{g.key}</td>
+                  <td className="py-2 pl-2 text-right tabular-nums font-bold">{g.total}</td>
                 </tr>
               ))}
             </tbody>

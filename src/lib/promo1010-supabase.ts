@@ -36,7 +36,7 @@ export function getVisitorId(): string {
   }
 }
 
-export type LeadStage = "page1" | "checkout";
+export type LeadStage = "page1" | "checkout" | "ressaca";
 export type LeadStatus = "parcial" | "completo";
 
 type Attr = Record<string, string>;

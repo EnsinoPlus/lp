@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SuiteplusPromo1010IndexRouteImport } from './routes/suiteplus-promo-1010/index'
+import { Route as SuiteplusPromo1010RessacaIndexRouteImport } from './routes/suiteplus-promo-1010-ressaca/index'
 import { Route as SuiteplusPromo1010OfertaIndexRouteImport } from './routes/suiteplus-promo-1010-oferta/index'
 import { Route as RelatorioPromo1010IndexRouteImport } from './routes/relatorio-promo-1010/index'
 import { Route as PontoMagicoIndexRouteImport } from './routes/ponto-magico/index'
@@ -39,6 +40,12 @@ const SuiteplusPromo1010IndexRoute = SuiteplusPromo1010IndexRouteImport.update({
   path: '/suiteplus-promo-1010/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SuiteplusPromo1010RessacaIndexRoute =
+  SuiteplusPromo1010RessacaIndexRouteImport.update({
+    id: '/suiteplus-promo-1010-ressaca/',
+    path: '/suiteplus-promo-1010-ressaca/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const SuiteplusPromo1010OfertaIndexRoute =
   SuiteplusPromo1010OfertaIndexRouteImport.update({
     id: '/suiteplus-promo-1010-oferta/',
@@ -152,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/ponto-magico/': typeof PontoMagicoIndexRoute
   '/relatorio-promo-1010/': typeof RelatorioPromo1010IndexRoute
   '/suiteplus-promo-1010-oferta/': typeof SuiteplusPromo1010OfertaIndexRoute
+  '/suiteplus-promo-1010-ressaca/': typeof SuiteplusPromo1010RessacaIndexRoute
   '/suiteplus-promo-1010/': typeof SuiteplusPromo1010IndexRoute
 }
 export interface FileRoutesByTo {
@@ -173,6 +181,7 @@ export interface FileRoutesByTo {
   '/ponto-magico': typeof PontoMagicoIndexRoute
   '/relatorio-promo-1010': typeof RelatorioPromo1010IndexRoute
   '/suiteplus-promo-1010-oferta': typeof SuiteplusPromo1010OfertaIndexRoute
+  '/suiteplus-promo-1010-ressaca': typeof SuiteplusPromo1010RessacaIndexRoute
   '/suiteplus-promo-1010': typeof SuiteplusPromo1010IndexRoute
 }
 export interface FileRoutesById {
@@ -195,6 +204,7 @@ export interface FileRoutesById {
   '/ponto-magico/': typeof PontoMagicoIndexRoute
   '/relatorio-promo-1010/': typeof RelatorioPromo1010IndexRoute
   '/suiteplus-promo-1010-oferta/': typeof SuiteplusPromo1010OfertaIndexRoute
+  '/suiteplus-promo-1010-ressaca/': typeof SuiteplusPromo1010RessacaIndexRoute
   '/suiteplus-promo-1010/': typeof SuiteplusPromo1010IndexRoute
 }
 export interface FileRouteTypes {
@@ -218,6 +228,7 @@ export interface FileRouteTypes {
     | '/ponto-magico/'
     | '/relatorio-promo-1010/'
     | '/suiteplus-promo-1010-oferta/'
+    | '/suiteplus-promo-1010-ressaca/'
     | '/suiteplus-promo-1010/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -239,6 +250,7 @@ export interface FileRouteTypes {
     | '/ponto-magico'
     | '/relatorio-promo-1010'
     | '/suiteplus-promo-1010-oferta'
+    | '/suiteplus-promo-1010-ressaca'
     | '/suiteplus-promo-1010'
   id:
     | '__root__'
@@ -260,6 +272,7 @@ export interface FileRouteTypes {
     | '/ponto-magico/'
     | '/relatorio-promo-1010/'
     | '/suiteplus-promo-1010-oferta/'
+    | '/suiteplus-promo-1010-ressaca/'
     | '/suiteplus-promo-1010/'
   fileRoutesById: FileRoutesById
 }
@@ -282,6 +295,7 @@ export interface RootRouteChildren {
   PontoMagicoIndexRoute: typeof PontoMagicoIndexRoute
   RelatorioPromo1010IndexRoute: typeof RelatorioPromo1010IndexRoute
   SuiteplusPromo1010OfertaIndexRoute: typeof SuiteplusPromo1010OfertaIndexRoute
+  SuiteplusPromo1010RessacaIndexRoute: typeof SuiteplusPromo1010RessacaIndexRoute
   SuiteplusPromo1010IndexRoute: typeof SuiteplusPromo1010IndexRoute
 }
 
@@ -299,6 +313,13 @@ declare module '@tanstack/react-router' {
       path: '/suiteplus-promo-1010'
       fullPath: '/suiteplus-promo-1010/'
       preLoaderRoute: typeof SuiteplusPromo1010IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/suiteplus-promo-1010-ressaca/': {
+      id: '/suiteplus-promo-1010-ressaca/'
+      path: '/suiteplus-promo-1010-ressaca'
+      fullPath: '/suiteplus-promo-1010-ressaca/'
+      preLoaderRoute: typeof SuiteplusPromo1010RessacaIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/suiteplus-promo-1010-oferta/': {
@@ -444,6 +465,7 @@ const rootRouteChildren: RootRouteChildren = {
   PontoMagicoIndexRoute: PontoMagicoIndexRoute,
   RelatorioPromo1010IndexRoute: RelatorioPromo1010IndexRoute,
   SuiteplusPromo1010OfertaIndexRoute: SuiteplusPromo1010OfertaIndexRoute,
+  SuiteplusPromo1010RessacaIndexRoute: SuiteplusPromo1010RessacaIndexRoute,
   SuiteplusPromo1010IndexRoute: SuiteplusPromo1010IndexRoute,
 }
 export const routeTree = rootRouteImport

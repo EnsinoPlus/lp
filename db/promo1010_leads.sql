@@ -115,3 +115,6 @@ create unique index if not exists promo1010_leads_contact_stage_uq
   on public.promo1010_leads (stage, contact_key);
 -- promo1010_upsert_lead reescrita com ON CONFLICT (stage, contact_key);
 -- UTM/origem vindas da URL ATUAL do cadastro (client), nao do first-touch.
+
+-- ===== Etapa RESSACA (pagina 11/10) =====
+-- stage agora aceita (page1, checkout, ressaca) em leads e visits; RPC idem.

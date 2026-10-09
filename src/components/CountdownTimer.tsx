@@ -93,3 +93,5 @@ export function CountdownTimer({
 /** Alvos oficiais da campanha 10 do 10 (horário de Brasília, UTC-3). */
 export const PROMO_1010_START = "2026-10-10T06:00:00-03:00";
 export const PROMO_1010_END = "2026-10-10T23:59:59-03:00";
+/** Ressaca: oferta mantida só no dia 11/10, encerra 23:59 de 11/10. */
+export const PROMO_1010_RESSACA_END = "2026-10-11T23:59:59-03:00";
