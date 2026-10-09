@@ -47,3 +47,31 @@ from public.promo1010_leads
 group by 1, 2, 3, 4, 5, 6;
 
 grant select on public.promo1010_funnel to anon, authenticated;
+
+-- ===== Acesso às LISTAS individuais (PII) via token =====
+-- Usado pelo dashboard (/relatorio-promo-1010?token=...).
+create table if not exists public.promo1010_dashboard_access (
+  id int primary key default 1,
+  token text not null
+);
+alter table public.promo1010_dashboard_access enable row level security; -- anon não lê
+
+insert into public.promo1010_dashboard_access (id, token)
+values (1, 'b7promo1010-f3a9c2e7d5b14a6c')
+on conflict (id) do update set token = excluded.token;
+
+-- Retorna os leads individuais só quando o token confere (SECURITY DEFINER).
+create or replace function public.promo1010_recent_leads(p_token text, p_limit int default 1000)
+returns setof public.promo1010_leads
+language plpgsql security definer set search_path = public as $$
+begin
+  if p_token is null
+     or p_token <> (select token from public.promo1010_dashboard_access where id = 1) then
+    raise exception 'unauthorized' using errcode = '28000';
+  end if;
+  return query select * from public.promo1010_leads
+    order by created_at desc limit greatest(1, least(p_limit, 5000));
+end; $$;
+
+revoke all on function public.promo1010_recent_leads(text, int) from public;
+grant execute on function public.promo1010_recent_leads(text, int) to anon, authenticated;

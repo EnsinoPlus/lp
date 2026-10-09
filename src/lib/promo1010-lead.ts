@@ -10,14 +10,6 @@ import { z } from "zod";
  * Todas as integrações são best-effort: nunca derrubam o fluxo do usuário (ex.: ir ao checkout).
  */
 
-/**
- * Banco de LEADS padrão = projeto da agência (sistema-b7). Chave anon é pública
- * (protegida por RLS: anon só INSERE, não lê PII). Pode ser sobrescrito por env.
- */
-const DEFAULT_LEADS_URL = "https://rartcafydsaocdzshqcx.supabase.co";
-const DEFAULT_LEADS_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcnRjYWZ5ZHNhb2NkenNocWN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTM5ODgsImV4cCI6MjEwNDUyOTk4OH0.kM0xlo6YjKWY1i7jqrYwwG1RkkVHMFte12K9_AHuT-I";
-
 /** Lê env em runtime no Worker (Cloudflare) e no Node. */
 async function readRuntimeEnv(name: string): Promise<string | undefined> {
   try {
@@ -146,65 +138,6 @@ async function fireN8n(
   }
 }
 
-async function insertSupabase(
-  stage: Stage,
-  row: {
-    name: string;
-    email: string;
-    phoneRaw: string | undefined;
-    phoneE164: string | undefined;
-    attribution?: Record<string, string>;
-    params?: Record<string, string>;
-    landingPage?: string;
-  },
-): Promise<{ ok: boolean; reason?: string }> {
-  // Banco de LEADS = sistema-b7 por padrão (não o Supabase de login do cliente).
-  const url = (await readRuntimeEnv("SUPABASE_LEADS_URL")) || DEFAULT_LEADS_URL;
-  const key =
-    (await readRuntimeEnv("SUPABASE_LEADS_KEY")) ||
-    (await readRuntimeEnv("SUPABASE_SERVICE_ROLE_KEY")) ||
-    DEFAULT_LEADS_KEY;
-  if (!url || !key) return { ok: false, reason: "missing_supabase_env" };
-
-  const attr = row.attribution || {};
-  const body = {
-    stage,
-    name: row.name || null,
-    email: row.email,
-    phone: row.phoneE164 || row.phoneRaw || null,
-    utm_source: attr.utm_source || null,
-    utm_medium: attr.utm_medium || null,
-    utm_campaign: attr.utm_campaign || null,
-    origem: attr.origem || null,
-    gclid: attr.gclid || null,
-    attribution: Object.keys(attr).length ? attr : null,
-    url_params: row.params && Object.keys(row.params).length ? row.params : null,
-    landing_page: row.landingPage || null,
-  };
-
-  try {
-    const resp = await fetch(`${url.replace(/\/$/, "")}/rest/v1/promo1010_leads`, {
-      method: "POST",
-      headers: {
-        apikey: key,
-        Authorization: `Bearer ${key}`,
-        "Content-Type": "application/json",
-        Prefer: "return=minimal",
-      },
-      body: JSON.stringify(body),
-    });
-    if (!resp.ok) {
-      const txt = await resp.text().catch(() => "");
-      console.error("[promo1010] Supabase insert falhou", stage, resp.status, txt);
-      return { ok: false, reason: `supabase_${resp.status}` };
-    }
-    return { ok: true };
-  } catch (err) {
-    console.error("[promo1010] Supabase erro de rede:", err);
-    return { ok: false, reason: "network_error" };
-  }
-}
-
 export const registerPromo1010Lead = createServerFn({ method: "POST" })
   .inputValidator(inputSchema)
   .handler(async ({ data }) => {
@@ -212,7 +145,8 @@ export const registerPromo1010Lead = createServerFn({ method: "POST" })
     const name = (data.name ?? "").trim();
     const phoneE164 = toE164BR(data.phone);
 
-    const [brevo, n8n, supabase] = await Promise.all([
+    // Supabase é gravado client-side (ver promo1010-supabase.ts). Aqui só Brevo + n8n.
+    const [brevo, n8n] = await Promise.all([
       addToBrevo(data.stage, email, name, phoneE164),
       fireN8n(data.stage, {
         stage: data.stage,
@@ -225,16 +159,7 @@ export const registerPromo1010Lead = createServerFn({ method: "POST" })
         landing_page: data.landingPage || undefined,
         submitted_at: new Date().toISOString(),
       }),
-      insertSupabase(data.stage, {
-        name,
-        email,
-        phoneRaw: data.phone,
-        phoneE164,
-        attribution: data.attribution,
-        params: data.params,
-        landingPage: data.landingPage,
-      }),
     ]);
 
-    return { ok: brevo.ok || n8n.ok || supabase.ok, brevo, n8n, supabase };
+    return { ok: brevo.ok || n8n.ok, brevo, n8n };
   });

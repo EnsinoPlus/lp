@@ -3,6 +3,7 @@ import { Loader2, Lock, Zap } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { registerPromo1010Lead } from "@/lib/promo1010-lead";
+import { insertPromo1010Lead } from "@/lib/promo1010-supabase";
 import { getStoredAttribution, withSignupAttribution } from "@/lib/signup-origin";
 
 /** Captura TODOS os parâmetros presentes na URL (não só os de marketing). */
@@ -59,29 +60,41 @@ export function Promo1010Form({ mode, checkoutUrl, cta, className = "" }: Promo1
     const cleanEmail = email.trim().toLowerCase();
     const attribution = getStoredAttribution();
     const urlParams = readAllUrlParams();
+    const stage = isLead ? "page1" : "checkout";
+    const landingPage =
+      typeof window !== "undefined"
+        ? `${window.location.pathname}${window.location.search}`.slice(0, 300)
+        : undefined;
 
-    try {
-      await registerPromo1010Lead({
-        data: {
-          stage: isLead ? "page1" : "checkout",
-          name: name.trim() || undefined,
-          email: cleanEmail,
-          phone: phone.trim() || undefined,
-          attribution: Object.keys(attribution).length ? attribution : undefined,
-          params: Object.keys(urlParams).length ? urlParams : undefined,
-          landingPage:
-            typeof window !== "undefined"
-              ? `${window.location.pathname}${window.location.search}`.slice(0, 300)
-              : undefined,
-        },
-      });
-    } catch (err) {
-      // Best-effort: no checkout, não bloqueia a venda; no lead, mostra erro.
-      if (isLead) {
-        setError(err instanceof Error ? err.message : "Não foi possível enviar. Tente novamente.");
-        setSubmitting(false);
-        return;
-      }
+    // 1) Grava no banco direto do navegador (caminho confiável).
+    const savedToDb = await insertPromo1010Lead({
+      stage,
+      name: name.trim() || undefined,
+      email: cleanEmail,
+      phone: phone.trim() || undefined,
+      attribution: Object.keys(attribution).length ? attribution : undefined,
+      params: Object.keys(urlParams).length ? urlParams : undefined,
+      landingPage,
+    });
+
+    // 2) Dispara Brevo + n8n via server fn (best-effort; não bloqueia).
+    void registerPromo1010Lead({
+      data: {
+        stage,
+        name: name.trim() || undefined,
+        email: cleanEmail,
+        phone: phone.trim() || undefined,
+        attribution: Object.keys(attribution).length ? attribution : undefined,
+        params: Object.keys(urlParams).length ? urlParams : undefined,
+        landingPage,
+      },
+    }).catch(() => undefined);
+
+    // No modo lead, se nem o banco salvou, avisa; no checkout, segue pro checkout.
+    if (isLead && !savedToDb) {
+      setError("Não foi possível enviar agora. Tente novamente em instantes.");
+      setSubmitting(false);
+      return;
     }
 
     if (!isLead && checkoutUrl) {
