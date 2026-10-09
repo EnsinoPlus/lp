@@ -102,6 +102,27 @@ export async function trackPromo1010Visit(stage: LeadStage): Promise<void> {
   return recordPromo1010Visit(stage, getStoredAttribution(), readUrlParams(), landingPage);
 }
 
+/** Adiciona o contato na lista Brevo da etapa (via Edge Function). Best-effort. */
+export async function notifyPromo1010Brevo(input: {
+  stage: LeadStage;
+  status: LeadStatus;
+  nome?: string;
+  email?: string;
+  telefone?: string;
+  utm_source?: string;
+}): Promise<void> {
+  if (!input.email) return; // Brevo é e-mail: sem e-mail, não envia.
+  try {
+    await fetch(`${LEADS_URL}/functions/v1/promo1010-brevo`, {
+      method: "POST",
+      headers: headers(),
+      body: JSON.stringify(input),
+    });
+  } catch {
+    // best-effort
+  }
+}
+
 export type UpsertLeadInput = {
   stage: LeadStage;
   status: LeadStatus;

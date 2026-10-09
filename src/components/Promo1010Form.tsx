@@ -3,7 +3,11 @@ import { Loader2, Lock, Zap } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { registerPromo1010Lead } from "@/lib/promo1010-lead";
-import { upsertPromo1010Lead, type LeadStage } from "@/lib/promo1010-supabase";
+import {
+  notifyPromo1010Brevo,
+  upsertPromo1010Lead,
+  type LeadStage,
+} from "@/lib/promo1010-supabase";
 import { trackMetaCustomEvent, trackMetaLead } from "@/lib/meta-pixel";
 import { sendMetaLead } from "@/lib/meta-conversions";
 import { getStoredAttribution, withSignupAttribution } from "@/lib/signup-origin";
@@ -78,13 +82,24 @@ export function Promo1010Form({
     const hasEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
     const hasPhone = phone.replace(/\D/g, "").length >= 10;
     if (!hasEmail && !hasPhone) return;
+    const partialEmail = hasEmail ? email.trim().toLowerCase() : undefined;
+    const m = meta();
     void upsertPromo1010Lead({
       stage,
       status: "parcial",
       name: name.trim() || undefined,
-      email: hasEmail ? email.trim().toLowerCase() : undefined,
+      email: partialEmail,
       phone: hasPhone ? phone.trim() : undefined,
-      ...meta(),
+      ...m,
+    });
+    // Brevo (lista da etapa) no parcial, se já tiver e-mail.
+    void notifyPromo1010Brevo({
+      stage,
+      status: "parcial",
+      nome: name.trim() || undefined,
+      email: partialEmail,
+      telefone: hasPhone ? phone.trim() : undefined,
+      utm_source: m.params?.utm_source || m.attribution?.utm_source,
     });
     // Pixel Ensino Plus: cadastro parcial (uma vez por sessão do form).
     if (!firedPartial.current) {
@@ -116,7 +131,17 @@ export function Promo1010Form({
       ...m,
     });
 
-    // 2) Dispara Brevo + n8n via server fn (best-effort; não bloqueia).
+    // 2) Brevo (lista da etapa) no completo, via Edge Function (client-side).
+    void notifyPromo1010Brevo({
+      stage,
+      status: "completo",
+      nome: name.trim() || undefined,
+      email: cleanEmail,
+      telefone: phone.trim() || undefined,
+      utm_source: m.params?.utm_source || m.attribution?.utm_source,
+    });
+
+    // 3) n8n via server fn (best-effort; não bloqueia).
     void registerPromo1010Lead({
       data: {
         stage,
