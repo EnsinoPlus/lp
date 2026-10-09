@@ -105,3 +105,13 @@ create policy promo1010_visits_insert on public.promo1010_visits
 
 -- Views: promo1010_funnel (agora com coluna status) e promo1010_acessos
 --   (count(*) as acessos, count(distinct visitor_id) as visitantes).
+
+-- ===== FIX: identidade do lead = contato (email ou telefone), nao visitor_id =====
+drop index if exists public.promo1010_leads_visitor_stage_uq;
+alter table public.promo1010_leads
+  add column if not exists contact_key text
+  generated always as (coalesce(lower(nullif(email,'')), nullif(phone,''))) stored;
+create unique index if not exists promo1010_leads_contact_stage_uq
+  on public.promo1010_leads (stage, contact_key);
+-- promo1010_upsert_lead reescrita com ON CONFLICT (stage, contact_key);
+-- UTM/origem vindas da URL ATUAL do cadastro (client), nao do first-touch.

@@ -42,13 +42,24 @@ export type LeadStatus = "parcial" | "completo";
 type Attr = Record<string, string>;
 
 /** Registra um acesso à página (page view). Best-effort. */
+/** UTM/origem valem o que está na URL ATUAL; só caem no first-touch se a URL não trouxer. */
+function pickUtm(params: Attr, attr: Attr) {
+  return {
+    utm_source: params.utm_source || attr.utm_source || null,
+    utm_medium: params.utm_medium || attr.utm_medium || null,
+    utm_campaign: params.utm_campaign || attr.utm_campaign || null,
+    origem: params.origem || params.src || attr.origem || null,
+    gclid: params.gclid || attr.gclid || null,
+  };
+}
+
 export async function recordPromo1010Visit(
   stage: LeadStage,
   attribution?: Attr,
   params?: Attr,
   landingPage?: string,
 ): Promise<void> {
-  const attr = attribution ?? {};
+  const u = pickUtm(params ?? {}, attribution ?? {});
   try {
     await fetch(`${LEADS_URL}/rest/v1/promo1010_visits`, {
       method: "POST",
@@ -56,10 +67,10 @@ export async function recordPromo1010Visit(
       body: JSON.stringify({
         visitor_id: getVisitorId(),
         stage,
-        utm_source: attr.utm_source || null,
-        utm_medium: attr.utm_medium || null,
-        utm_campaign: attr.utm_campaign || null,
-        origem: attr.origem || null,
+        utm_source: u.utm_source,
+        utm_medium: u.utm_medium,
+        utm_campaign: u.utm_campaign,
+        origem: u.origem,
         url_params: params && Object.keys(params).length ? params : null,
         landing_page: landingPage || null,
       }),
@@ -105,6 +116,8 @@ export type UpsertLeadInput = {
 /** Cria/atualiza o lead (parcial → completo) via RPC. Best-effort: não lança. */
 export async function upsertPromo1010Lead(input: UpsertLeadInput): Promise<boolean> {
   const attr = input.attribution ?? {};
+  const params = input.params ?? {};
+  const u = pickUtm(params, attr);
   try {
     const resp = await fetch(`${LEADS_URL}/rest/v1/rpc/promo1010_upsert_lead`, {
       method: "POST",
@@ -116,13 +129,13 @@ export async function upsertPromo1010Lead(input: UpsertLeadInput): Promise<boole
         p_name: input.name || null,
         p_email: input.email || null,
         p_phone: input.phone || null,
-        p_utm_source: attr.utm_source || null,
-        p_utm_medium: attr.utm_medium || null,
-        p_utm_campaign: attr.utm_campaign || null,
-        p_origem: attr.origem || null,
-        p_gclid: attr.gclid || null,
+        p_utm_source: u.utm_source,
+        p_utm_medium: u.utm_medium,
+        p_utm_campaign: u.utm_campaign,
+        p_origem: u.origem,
+        p_gclid: u.gclid,
         p_attribution: Object.keys(attr).length ? attr : null,
-        p_url_params: input.params && Object.keys(input.params).length ? input.params : null,
+        p_url_params: Object.keys(params).length ? params : null,
         p_landing_page: input.landingPage || null,
       }),
     });
