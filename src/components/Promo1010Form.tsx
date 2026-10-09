@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Loader2, Lock, Zap } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { registerPromo1010Lead } from "@/lib/promo1010-lead";
 import { upsertPromo1010Lead } from "@/lib/promo1010-supabase";
+import { trackMetaCustomEvent, trackMetaLead } from "@/lib/meta-pixel";
+import { sendMetaLead } from "@/lib/meta-conversions";
 import { getStoredAttribution, withSignupAttribution } from "@/lib/signup-origin";
 
 /** Captura TODOS os parâmetros presentes na URL (não só os de marketing). */
@@ -41,6 +43,7 @@ export function Promo1010Form({ mode, checkoutUrl, cta, className = "" }: Promo1
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const firedPartial = useRef(false);
 
   const isLead = mode === "lead";
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
@@ -75,6 +78,11 @@ export function Promo1010Form({ mode, checkoutUrl, cta, className = "" }: Promo1
       phone: hasPhone ? phone.trim() : undefined,
       ...meta(),
     });
+    // Pixel Ensino Plus: cadastro parcial (uma vez por sessão do form).
+    if (!firedPartial.current) {
+      firedPartial.current = true;
+      trackMetaCustomEvent("CadastroParcial", { etapa: stage });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -118,6 +126,13 @@ export function Promo1010Form({ mode, checkoutUrl, cta, className = "" }: Promo1
       setError("Não foi possível enviar agora. Tente novamente em instantes.");
       setSubmitting(false);
       return;
+    }
+
+    // Pixel Ensino Plus: cadastro completo + Lead padrão da Meta (browser + Conversions API).
+    trackMetaCustomEvent("CadastroCompleto", { etapa: stage });
+    const metaLead = trackMetaLead();
+    if (metaLead) {
+      void sendMetaLead({ data: { email: cleanEmail, ...metaLead } }).catch(() => undefined);
     }
 
     if (!isLead && checkoutUrl) {
