@@ -75,3 +75,33 @@ end; $$;
 
 revoke all on function public.promo1010_recent_leads(text, int) from public;
 grant execute on function public.promo1010_recent_leads(text, int) to anon, authenticated;
+
+-- ===== Acessos, cadastros parciais e completos =====
+alter table public.promo1010_leads add column if not exists status text not null default 'completo';
+alter table public.promo1010_leads add column if not exists visitor_id text;
+alter table public.promo1010_leads alter column email drop not null;
+-- constraints: status valido e ao menos email OU telefone
+--   promo1010_status_chk: status in ('parcial','completo')
+--   promo1010_contact_chk: email is not null or phone is not null
+create unique index if not exists promo1010_leads_visitor_stage_uq
+  on public.promo1010_leads (visitor_id, stage);
+
+-- Acessos à página (page views)
+create table if not exists public.promo1010_visits (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  visitor_id text,
+  stage text not null check (stage in ('page1','checkout')),
+  utm_source text, utm_medium text, utm_campaign text, origem text,
+  url_params jsonb, landing_page text
+);
+alter table public.promo1010_visits enable row level security;
+grant insert on public.promo1010_visits to anon, authenticated;
+create policy promo1010_visits_insert on public.promo1010_visits
+  for insert to anon, authenticated with check (true);
+
+-- Upsert do lead (parcial -> completo) via funcao controlada (anon so executa).
+-- Ver corpo completo aplicado no banco: public.promo1010_upsert_lead(...).
+
+-- Views: promo1010_funnel (agora com coluna status) e promo1010_acessos
+--   (count(*) as acessos, count(distinct visitor_id) as visitantes).

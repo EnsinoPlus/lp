@@ -3,7 +3,7 @@ import { Loader2, Lock, Zap } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { registerPromo1010Lead } from "@/lib/promo1010-lead";
-import { insertPromo1010Lead } from "@/lib/promo1010-supabase";
+import { upsertPromo1010Lead } from "@/lib/promo1010-supabase";
 import { getStoredAttribution, withSignupAttribution } from "@/lib/signup-origin";
 
 /** Captura TODOS os parâmetros presentes na URL (não só os de marketing). */
@@ -48,6 +48,35 @@ export function Promo1010Form({ mode, checkoutUrl, cta, className = "" }: Promo1
   const nameOk = !isLead || name.trim().length >= 2;
   const canSubmit = !submitting && emailOk && phoneOk && nameOk;
 
+  const stage = isLead ? "page1" : "checkout";
+  const meta = () => {
+    const attribution = getStoredAttribution();
+    const urlParams = readAllUrlParams();
+    return {
+      attribution: Object.keys(attribution).length ? attribution : undefined,
+      params: Object.keys(urlParams).length ? urlParams : undefined,
+      landingPage:
+        typeof window !== "undefined"
+          ? `${window.location.pathname}${window.location.search}`.slice(0, 300)
+          : undefined,
+    };
+  };
+
+  /** Salva parcial o que já tiver (email e/ou WhatsApp). Best-effort, não bloqueia. */
+  const savePartial = () => {
+    const hasEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+    const hasPhone = phone.replace(/\D/g, "").length >= 10;
+    if (!hasEmail && !hasPhone) return;
+    void upsertPromo1010Lead({
+      stage,
+      status: "parcial",
+      name: name.trim() || undefined,
+      email: hasEmail ? email.trim().toLowerCase() : undefined,
+      phone: hasPhone ? phone.trim() : undefined,
+      ...meta(),
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -59,22 +88,16 @@ export function Promo1010Form({ mode, checkoutUrl, cta, className = "" }: Promo1
 
     const cleanEmail = email.trim().toLowerCase();
     const attribution = getStoredAttribution();
-    const urlParams = readAllUrlParams();
-    const stage = isLead ? "page1" : "checkout";
-    const landingPage =
-      typeof window !== "undefined"
-        ? `${window.location.pathname}${window.location.search}`.slice(0, 300)
-        : undefined;
+    const m = meta();
 
-    // 1) Grava no banco direto do navegador (caminho confiável).
-    const savedToDb = await insertPromo1010Lead({
+    // 1) Grava COMPLETO no banco direto do navegador (caminho confiável).
+    const savedToDb = await upsertPromo1010Lead({
       stage,
+      status: "completo",
       name: name.trim() || undefined,
       email: cleanEmail,
       phone: phone.trim() || undefined,
-      attribution: Object.keys(attribution).length ? attribution : undefined,
-      params: Object.keys(urlParams).length ? urlParams : undefined,
-      landingPage,
+      ...m,
     });
 
     // 2) Dispara Brevo + n8n via server fn (best-effort; não bloqueia).
@@ -84,9 +107,9 @@ export function Promo1010Form({ mode, checkoutUrl, cta, className = "" }: Promo1
         name: name.trim() || undefined,
         email: cleanEmail,
         phone: phone.trim() || undefined,
-        attribution: Object.keys(attribution).length ? attribution : undefined,
-        params: Object.keys(urlParams).length ? urlParams : undefined,
-        landingPage,
+        attribution: m.attribution,
+        params: m.params,
+        landingPage: m.landingPage,
       },
     }).catch(() => undefined);
 
@@ -156,6 +179,7 @@ export function Promo1010Form({ mode, checkoutUrl, cta, className = "" }: Promo1
           placeholder="seu@email.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          onBlur={savePartial}
           required
           disabled={submitting}
           autoComplete="email"
@@ -173,6 +197,7 @@ export function Promo1010Form({ mode, checkoutUrl, cta, className = "" }: Promo1
           placeholder="(00) 00000-0000"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
+          onBlur={savePartial}
           required
           disabled={submitting}
           autoComplete="tel"

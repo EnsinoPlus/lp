@@ -1,8 +1,10 @@
+import { useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import catalogoCover from "@/assets/catalogo-capa-pjecalc-vicelmo.png";
 import { CountdownTimer, PROMO_1010_END } from "@/components/CountdownTimer";
 import { Promo1010Form } from "@/components/Promo1010Form";
 import { getCreditsCheckoutUrl } from "@/lib/runtime-config";
+import { trackPromo1010Visit } from "@/lib/promo1010-supabase";
 import {
   AlarmClock,
   BadgeCheck,
@@ -56,6 +58,9 @@ const EBOOK_TOPICS = [
 
 function Landing() {
   const { checkoutUrl } = Route.useLoaderData();
+  useEffect(() => {
+    void trackPromo1010Visit("checkout");
+  }, []);
   return (
     <div className="min-h-screen bg-background">
       {/* Barra de topo vermelha: últimas 24h */}

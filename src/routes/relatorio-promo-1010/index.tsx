@@ -1,17 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   BarChart3,
+  Eye,
   Loader2,
   Lock,
   RefreshCw,
-  Users,
   ShoppingCart,
-  Percent,
+  UserCheck,
 } from "lucide-react";
 import {
+  fetchPromo1010Acessos,
   fetchPromo1010Funnel,
   fetchPromo1010Leads,
+  type AcessoRow,
   type FunnelRow,
   type LeadRow,
 } from "@/lib/promo1010-supabase";
@@ -29,31 +31,23 @@ function pct(part: number, whole: number) {
   return Math.round((part / whole) * 1000) / 10;
 }
 
-type Group = { key: string; page1: number; checkout: number };
+type StageTotals = { acessos: number; parciais: number; completos: number };
 
-function groupBy(rows: FunnelRow[], field: keyof FunnelRow): Group[] {
-  const map = new Map<string, Group>();
-  for (const r of rows) {
-    const key = String(r[field]);
-    const g = map.get(key) ?? { key, page1: 0, checkout: 0 };
-    if (r.stage === "page1") g.page1 += r.total;
-    else g.checkout += r.total;
-    map.set(key, g);
-  }
-  return [...map.values()].sort((a, b) => b.page1 + b.checkout - (a.page1 + a.checkout));
+function emptyTotals(): StageTotals {
+  return { acessos: 0, parciais: 0, completos: 0 };
 }
 
 function Dashboard() {
   const [token, setToken] = useState("");
   const [tokenInput, setTokenInput] = useState("");
-  const [rows, setRows] = useState<FunnelRow[] | null>(null);
+  const [funnel, setFunnel] = useState<FunnelRow[] | null>(null);
+  const [acessos, setAcessos] = useState<AcessoRow[]>([]);
   const [leads, setLeads] = useState<LeadRow[] | null>(null);
   const [leadsAuth, setLeadsAuth] = useState<"none" | "ok" | "denied">("none");
   const [state, setState] = useState<"loading" | "ok" | "error">("loading");
   const [fSource, setFSource] = useState(ALL);
   const [fCampaign, setFCampaign] = useState(ALL);
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
-  const firstLoad = useRef(true);
 
   useEffect(() => {
     const t = new URLSearchParams(window.location.search).get("token") ?? "";
@@ -63,8 +57,9 @@ function Dashboard() {
 
   const load = useCallback(async () => {
     try {
-      const funnel = await fetchPromo1010Funnel();
-      setRows(funnel);
+      const [f, a] = await Promise.all([fetchPromo1010Funnel(), fetchPromo1010Acessos()]);
+      setFunnel(f);
+      setAcessos(a);
       setState("ok");
       setUpdatedAt(new Date());
     } catch {
@@ -85,62 +80,97 @@ function Dashboard() {
   }, [token]);
 
   useEffect(() => {
-    firstLoad.current = true;
     void load();
     const id = setInterval(() => void load(), REFRESH_MS);
     return () => clearInterval(id);
   }, [load]);
 
-  const sources = useMemo(() => [...new Set((rows ?? []).map((r) => r.utm_source))].sort(), [rows]);
-  const campaigns = useMemo(
-    () => [...new Set((rows ?? []).map((r) => r.utm_campaign))].sort(),
-    [rows],
+  const sources = useMemo(() => {
+    const s = new Set<string>();
+    (funnel ?? []).forEach((r) => s.add(r.utm_source));
+    acessos.forEach((r) => s.add(r.utm_source));
+    return [...s].sort();
+  }, [funnel, acessos]);
+  const campaigns = useMemo(() => {
+    const s = new Set<string>();
+    (funnel ?? []).forEach((r) => s.add(r.utm_campaign));
+    acessos.forEach((r) => s.add(r.utm_campaign));
+    return [...s].sort();
+  }, [funnel, acessos]);
+
+  const matchFilter = useCallback(
+    (utmSource: string, utmCampaign: string) =>
+      (fSource === ALL || utmSource === fSource) &&
+      (fCampaign === ALL || utmCampaign === fCampaign),
+    [fSource, fCampaign],
   );
 
-  const filtered = useMemo(
-    () =>
-      (rows ?? []).filter(
-        (r) =>
-          (fSource === ALL || r.utm_source === fSource) &&
-          (fCampaign === ALL || r.utm_campaign === fCampaign),
-      ),
-    [rows, fSource, fCampaign],
+  const fFunnel = useMemo(
+    () => (funnel ?? []).filter((r) => matchFilter(r.utm_source, r.utm_campaign)),
+    [funnel, matchFilter],
+  );
+  const fAcessos = useMemo(
+    () => acessos.filter((r) => matchFilter(r.utm_source, r.utm_campaign)),
+    [acessos, matchFilter],
   );
 
-  const totalPage1 = filtered.filter((r) => r.stage === "page1").reduce((s, r) => s + r.total, 0);
-  const totalCheckout = filtered
-    .filter((r) => r.stage === "checkout")
-    .reduce((s, r) => s + r.total, 0);
-  const conv = pct(totalCheckout, totalPage1);
-
-  const bySource = useMemo(() => groupBy(filtered, "utm_source"), [filtered]);
-  const byCampaign = useMemo(() => groupBy(filtered, "utm_campaign"), [filtered]);
-  const byDay = useMemo(
-    () => groupBy(filtered, "dia").sort((a, b) => a.key.localeCompare(b.key)),
-    [filtered],
+  const stage = useCallback(
+    (s: "page1" | "checkout"): StageTotals => {
+      const t = emptyTotals();
+      t.acessos = fAcessos.filter((r) => r.stage === s).reduce((a, r) => a + r.acessos, 0);
+      for (const r of fFunnel) {
+        if (r.stage !== s) continue;
+        if (r.status === "completo") t.completos += r.total;
+        else t.parciais += r.total;
+      }
+      return t;
+    },
+    [fAcessos, fFunnel],
   );
+
+  const p1 = stage("page1");
+  const ck = stage("checkout");
+  const totalAcessos = p1.acessos + ck.acessos;
+
+  // Quebra por utm (apenas completos)
+  const byUtm = useCallback(
+    (field: "utm_source" | "utm_campaign") => {
+      const map = new Map<string, { page1: number; checkout: number }>();
+      for (const r of fFunnel) {
+        if (r.status !== "completo") continue;
+        const key = r[field];
+        const g = map.get(key) ?? { page1: 0, checkout: 0 };
+        if (r.stage === "page1") g.page1 += r.total;
+        else g.checkout += r.total;
+        map.set(key, g);
+      }
+      return [...map.entries()]
+        .map(([key, v]) => ({ key, ...v }))
+        .sort((a, b) => b.page1 + b.checkout - (a.page1 + a.checkout));
+    },
+    [fFunnel],
+  );
+  const bySource = useMemo(() => byUtm("utm_source"), [byUtm]);
+  const byCampaign = useMemo(() => byUtm("utm_campaign"), [byUtm]);
 
   const filteredLeads = useMemo(
     () =>
-      (leads ?? []).filter(
-        (l) =>
-          (fSource === ALL || (l.utm_source ?? "(direto)") === fSource) &&
-          (fCampaign === ALL || (l.utm_campaign ?? "(nenhuma)") === fCampaign),
+      (leads ?? []).filter((l) =>
+        matchFilter(l.utm_source ?? "(direto)", l.utm_campaign ?? "(nenhuma)"),
       ),
-    [leads, fSource, fCampaign],
+    [leads, matchFilter],
   );
   const leadsPage1 = filteredLeads.filter((l) => l.stage === "page1");
   const leadsCheckout = filteredLeads.filter((l) => l.stage === "checkout");
 
-  if (state === "loading" && !rows) {
+  if (state === "loading" && !funnel) {
     return (
       <Centered>
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </Centered>
     );
   }
-
-  if (state === "error" && !rows) {
+  if (state === "error" && !funnel) {
     return (
       <Centered>
         <p className="text-red-600 font-bold">Erro ao carregar o relatório.</p>
@@ -154,7 +184,7 @@ function Dashboard() {
     );
   }
 
-  const hasData = (rows ?? []).length > 0;
+  const hasData = totalAcessos + p1.completos + ck.completos + p1.parciais + ck.parciais > 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -166,9 +196,7 @@ function Dashboard() {
           </div>
           <div className="flex items-center gap-3 text-sm text-muted-foreground">
             {updatedAt && (
-              <span className="tabular-nums">
-                atualizado {updatedAt.toLocaleTimeString("pt-BR")}
-              </span>
+              <span className="tabular-nums">atualizado {updatedAt.toLocaleTimeString("pt-BR")}</span>
             )}
             <span className="inline-flex items-center gap-1 text-green-600 font-semibold">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" /> ao vivo
@@ -191,59 +219,28 @@ function Dashboard() {
 
         {!hasData && (
           <div className="rounded-xl border-2 border-dashed p-10 text-center text-muted-foreground">
-            Ainda não há leads registrados. Assim que alguém se cadastrar, os números aparecem aqui
+            Ainda não há dados. Assim que alguém acessar ou se cadastrar, os números aparecem aqui
             (atualiza sozinho a cada 30s).
           </div>
         )}
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <Kpi icon={Users} label="Leads página 1" value={totalPage1} tone="default" />
-          <Kpi icon={ShoppingCart} label="Foram ao checkout" value={totalCheckout} tone="accent" />
-          <Kpi icon={Percent} label="Conversão p/ checkout" value={`${conv}%`} tone="success" />
-          <Kpi icon={BarChart3} label="Total de cadastros" value={totalPage1 + totalCheckout} tone="default" />
+          <Kpi icon={Eye} label="Acessos" value={totalAcessos} tone="default" />
+          <Kpi icon={UserCheck} label="Cadastros completos (lista)" value={p1.completos} tone="accent" />
+          <Kpi icon={ShoppingCart} label="Checkout (completos)" value={ck.completos} tone="success" />
+          <Kpi icon={BarChart3} label="Parciais (lista + checkout)" value={p1.parciais + ck.parciais} tone="warn" />
         </div>
-
-        <section className="bg-card border rounded-xl p-6">
-          <h2 className="font-black text-lg mb-4">Funil</h2>
-          <FunnelBar label="Página 1 (lista de espera)" value={totalPage1} max={Math.max(totalPage1, 1)} />
-          <FunnelBar label="Checkout" value={totalCheckout} max={Math.max(totalPage1, 1)} accent />
-          <p className="text-sm text-muted-foreground mt-3">
-            {totalCheckout} de {totalPage1} leads da página 1 avançaram ao checkout ({conv}%).
-          </p>
-        </section>
 
         <div className="grid lg:grid-cols-2 gap-6">
-          <BreakdownTable title="Por origem (utm_source)" groups={bySource} />
-          <BreakdownTable title="Por campanha (utm_campaign)" groups={byCampaign} />
+          <FunnelCard title="Página 1 — Lista de interesse" t={p1} />
+          <FunnelCard title="Checkout" t={ck} accent />
         </div>
 
-        {byDay.length > 0 && (
-          <section className="bg-card border rounded-xl p-6">
-            <h2 className="font-black text-lg mb-4">Cadastros por dia</h2>
-            <div className="space-y-2">
-              {byDay.map((d) => {
-                const total = d.page1 + d.checkout;
-                const max = Math.max(...byDay.map((x) => x.page1 + x.checkout), 1);
-                return (
-                  <div key={d.key} className="flex items-center gap-3">
-                    <span className="w-24 text-sm tabular-nums text-muted-foreground">{d.key}</span>
-                    <div className="flex-1 bg-secondary rounded h-6 overflow-hidden flex">
-                      <div className="bg-primary/70 h-full" style={{ width: `${pct(d.page1, max)}%` }} title={`Página 1: ${d.page1}`} />
-                      <div className="bg-green-500 h-full" style={{ width: `${pct(d.checkout, max)}%` }} title={`Checkout: ${d.checkout}`} />
-                    </div>
-                    <span className="w-10 text-right text-sm font-bold tabular-nums">{total}</span>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="flex gap-4 mt-4 text-xs text-muted-foreground">
-              <span className="inline-flex items-center gap-1"><i className="w-3 h-3 rounded-sm bg-primary/70 inline-block" /> Página 1</span>
-              <span className="inline-flex items-center gap-1"><i className="w-3 h-3 rounded-sm bg-green-500 inline-block" /> Checkout</span>
-            </div>
-          </section>
-        )}
+        <div className="grid lg:grid-cols-2 gap-6">
+          <BreakdownTable title="Completos por origem (utm_source)" groups={bySource} />
+          <BreakdownTable title="Completos por campanha (utm_campaign)" groups={byCampaign} />
+        </div>
 
-        {/* Listas individuais (PII) — exigem token */}
         {leadsAuth === "ok" ? (
           <div className="grid lg:grid-cols-2 gap-6">
             <LeadList title="Lista de interesse (página 1)" leads={leadsPage1} />
@@ -284,7 +281,8 @@ function Dashboard() {
         )}
 
         <p className="text-xs text-muted-foreground text-center pt-4">
-          Dados: Supabase (sistema-b7). Atualiza automaticamente a cada 30 segundos.
+          Parcial = deixou e-mail/WhatsApp sem finalizar. Completo = enviou o cadastro. Dados:
+          Supabase (sistema-b7), atualiza a cada 30s.
         </p>
       </main>
     </div>
@@ -337,13 +335,19 @@ function Kpi({
   value,
   tone,
 }: {
-  icon: typeof Users;
+  icon: typeof Eye;
   label: string;
   value: string | number;
-  tone: "default" | "accent" | "success";
+  tone: "default" | "accent" | "success" | "warn";
 }) {
   const toneClass =
-    tone === "accent" ? "text-primary" : tone === "success" ? "text-green-600" : "text-foreground";
+    tone === "accent"
+      ? "text-primary"
+      : tone === "success"
+        ? "text-green-600"
+        : tone === "warn"
+          ? "text-amber-600"
+          : "text-foreground";
   return (
     <div className="bg-card border rounded-xl p-5">
       <div className="flex items-center gap-2 text-muted-foreground mb-2">
@@ -355,16 +359,40 @@ function Kpi({
   );
 }
 
-function FunnelBar({
+function FunnelCard({
+  title,
+  t,
+  accent,
+}: {
+  title: string;
+  t: StageTotals;
+  accent?: boolean;
+}) {
+  const max = Math.max(t.acessos, t.parciais, t.completos, 1);
+  const convCompleto = pct(t.completos, t.acessos);
+  return (
+    <section className="bg-card border rounded-xl p-6">
+      <h2 className="font-black text-lg mb-4">{title}</h2>
+      <Bar label="Acessos" value={t.acessos} max={max} color="bg-slate-400" />
+      <Bar label="Cadastros parciais" value={t.parciais} max={max} color="bg-amber-500" />
+      <Bar label="Cadastros completos" value={t.completos} max={max} color={accent ? "bg-green-500" : "bg-primary"} />
+      <p className="text-sm text-muted-foreground mt-3">
+        {t.completos} completos de {t.acessos} acessos ({convCompleto}% de conversão).
+      </p>
+    </section>
+  );
+}
+
+function Bar({
   label,
   value,
   max,
-  accent,
+  color,
 }: {
   label: string;
   value: number;
   max: number;
-  accent?: boolean;
+  color: string;
 }) {
   return (
     <div className="mb-3">
@@ -372,9 +400,9 @@ function FunnelBar({
         <span className="font-semibold">{label}</span>
         <span className="font-bold tabular-nums">{value}</span>
       </div>
-      <div className="bg-secondary rounded-lg h-8 overflow-hidden">
+      <div className="bg-secondary rounded-lg h-7 overflow-hidden">
         <div
-          className={`h-full ${accent ? "bg-green-500" : "bg-primary"}`}
+          className={`h-full ${color}`}
           style={{ width: `${pct(value, max)}%`, minWidth: value > 0 ? "2%" : "0" }}
         />
       </div>
@@ -382,7 +410,13 @@ function FunnelBar({
   );
 }
 
-function BreakdownTable({ title, groups }: { title: string; groups: Group[] }) {
+function BreakdownTable({
+  title,
+  groups,
+}: {
+  title: string;
+  groups: Array<{ key: string; page1: number; checkout: number }>;
+}) {
   return (
     <section className="bg-card border rounded-xl p-6">
       <h2 className="font-black text-lg mb-4">{title}</h2>
@@ -394,18 +428,16 @@ function BreakdownTable({ title, groups }: { title: string; groups: Group[] }) {
             <thead>
               <tr className="text-left text-muted-foreground border-b">
                 <th className="py-2 pr-2 font-semibold">Valor</th>
-                <th className="py-2 px-2 font-semibold text-right">Página 1</th>
-                <th className="py-2 px-2 font-semibold text-right">Checkout</th>
-                <th className="py-2 pl-2 font-semibold text-right">Conv.</th>
+                <th className="py-2 px-2 font-semibold text-right">Lista</th>
+                <th className="py-2 pl-2 font-semibold text-right">Checkout</th>
               </tr>
             </thead>
             <tbody>
               {groups.map((g) => (
                 <tr key={g.key} className="border-b last:border-0">
-                  <td className="py-2 pr-2 font-medium truncate max-w-[180px]">{g.key}</td>
+                  <td className="py-2 pr-2 font-medium truncate max-w-[200px]">{g.key}</td>
                   <td className="py-2 px-2 text-right tabular-nums">{g.page1}</td>
-                  <td className="py-2 px-2 text-right tabular-nums">{g.checkout}</td>
-                  <td className="py-2 pl-2 text-right tabular-nums font-bold">{pct(g.checkout, g.page1)}%</td>
+                  <td className="py-2 pl-2 text-right tabular-nums">{g.checkout}</td>
                 </tr>
               ))}
             </tbody>
@@ -439,16 +471,26 @@ function LeadList({ title, leads, accent }: { title: string; leads: LeadRow[]; a
                 <th className="py-2 pr-2 font-semibold">Nome</th>
                 <th className="py-2 px-2 font-semibold">E-mail</th>
                 <th className="py-2 px-2 font-semibold">WhatsApp</th>
-                <th className="py-2 pl-2 font-semibold">Origem</th>
+                <th className="py-2 pl-2 font-semibold">Status</th>
               </tr>
             </thead>
             <tbody>
               {leads.map((l) => (
                 <tr key={l.id} className="border-b last:border-0 align-top">
                   <td className="py-2 pr-2 font-medium">{l.name || "—"}</td>
-                  <td className="py-2 px-2 break-all">{l.email}</td>
+                  <td className="py-2 px-2 break-all">{l.email || "—"}</td>
                   <td className="py-2 px-2 tabular-nums whitespace-nowrap">{l.phone || "—"}</td>
-                  <td className="py-2 pl-2 text-muted-foreground">{l.utm_source || "direto"}</td>
+                  <td className="py-2 pl-2">
+                    <span
+                      className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                        l.status === "completo"
+                          ? "bg-green-500/15 text-green-600"
+                          : "bg-amber-500/15 text-amber-600"
+                      }`}
+                    >
+                      {l.status}
+                    </span>
+                  </td>
                 </tr>
               ))}
             </tbody>

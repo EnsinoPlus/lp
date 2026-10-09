@@ -1,7 +1,9 @@
+import { useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import catalogoCover from "@/assets/catalogo-capa-pjecalc-vicelmo.png";
 import { CountdownTimer, PROMO_1010_START } from "@/components/CountdownTimer";
 import { Promo1010Form } from "@/components/Promo1010Form";
+import { trackPromo1010Visit } from "@/lib/promo1010-supabase";
 import {
   BookOpen,
   Bot,
@@ -110,6 +112,9 @@ const EBOOK_TOPICS = [
 ];
 
 function Landing() {
+  useEffect(() => {
+    void trackPromo1010Visit("page1");
+  }, []);
   return (
     <div className="min-h-screen bg-background">
       {/* Barra de topo: contador real até a abertura (10/10 06h) */}
