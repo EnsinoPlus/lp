@@ -157,9 +157,9 @@ export function Promo1010Form({
   if (done) {
     return (
       <div
-        className={`rounded-2xl bg-white/10 border-2 border-success/50 p-6 text-center ${className}`}
+        className={`rounded-2xl bg-white/10 border-2 border-white/30 p-6 text-center ${className}`}
       >
-        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-success/20 text-success">
+        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/20 text-white">
           <Zap className="h-6 w-6" />
         </div>
         <p className="text-lg font-black text-white">Cadastro confirmado! 🎉</p>

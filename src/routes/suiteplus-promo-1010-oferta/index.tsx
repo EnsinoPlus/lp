@@ -118,7 +118,7 @@ function Landing() {
               <ul className="space-y-3 text-left max-w-md mx-auto lg:mx-0">
                 {BENEFITS.map((b) => (
                   <li key={b.title} className="flex items-start gap-3">
-                    <CheckCircle2 className="w-6 h-6 text-success shrink-0" />
+                    <CheckCircle2 className="w-6 h-6 text-white shrink-0" />
                     <div>
                       <p className="font-bold leading-tight">{b.title}</p>
                       <p className="text-sm text-white/60">{b.desc}</p>

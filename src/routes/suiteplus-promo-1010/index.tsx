@@ -126,12 +126,12 @@ function Landing() {
         </div>
       </div>
 
-      <section className="bg-gradient-hero text-dark-foreground relative overflow-hidden">
+      <section className="bg-[oklch(0.17_0.03_28)] text-dark-foreground relative overflow-hidden">
         <div
           className="absolute inset-0 opacity-30"
           style={{
             backgroundImage:
-              "radial-gradient(circle at 75% 15%, oklch(0.82 0.16 85 / 0.45), transparent 40%), radial-gradient(circle at 15% 85%, oklch(0.7 0.19 38 / 0.35), transparent 50%)",
+              "radial-gradient(circle at 75% 15%, oklch(0.82 0.16 85 / 0.45), transparent 40%), radial-gradient(circle at 15% 85%, oklch(0.7 0.19 28 / 0.35), transparent 50%)",
           }}
         />
         <div className="container mx-auto px-4 py-12 md:py-20 relative">
@@ -172,7 +172,7 @@ function Landing() {
 
               <div className="flex flex-wrap gap-5 mt-8 text-sm text-white/70 justify-center lg:justify-start">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-5 h-5 text-success" /> Abre 10 de outubro, 6h
+                  <ShieldCheck className="w-5 h-5 text-white" /> Abre 10 de outubro, 6h
                 </div>
                 <div className="flex items-center gap-2">
                   <Coins className="w-5 h-5 text-amber-400" /> Créditos PlusCoin
@@ -297,7 +297,7 @@ function Landing() {
               </Link>
             ))}
 
-            <div className="sm:col-span-2 lg:col-span-3 bg-gradient-hero text-dark-foreground rounded-2xl p-8 md:p-10 text-center border-2 border-primary/30">
+            <div className="sm:col-span-2 lg:col-span-3 bg-[oklch(0.17_0.03_28)] text-dark-foreground rounded-2xl p-8 md:p-10 text-center border-2 border-primary/30">
               <p className="text-2xl md:text-4xl font-black">
                 MAIS CRÉDITOS, <span className="text-primary">MAIS PRODUTIVIDADE!</span>
               </p>
@@ -309,7 +309,7 @@ function Landing() {
         </div>
       </section>
 
-      <section className="py-20 bg-gradient-hero text-dark-foreground relative overflow-hidden">
+      <section className="py-20 bg-[oklch(0.17_0.03_28)] text-dark-foreground relative overflow-hidden">
         <div
           className="absolute inset-0 opacity-30"
           style={{
