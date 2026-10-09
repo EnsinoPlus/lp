@@ -242,6 +242,14 @@ function Dashboard() {
           <Kpi icon={BarChart3} label="Parciais (todas)" value={totalParciais} tone="warn" />
         </div>
 
+        <FunnelFlow
+          steps={[
+            { label: "Lista de interesse — captação", value: totals.page1.completos },
+            { label: "Checkout 10/10 — sábado", value: totals.checkout.completos },
+            { label: "Ressaca 11/10 — domingo", value: totals.ressaca.completos },
+          ]}
+        />
+
         <div className="grid lg:grid-cols-3 gap-6">
           {STAGES.map((s) => (
             <FunnelCard key={s.key} title={s.label} t={totals[s.key]} accent={s.accent} />
@@ -374,6 +382,39 @@ function Kpi({
       </div>
       <p className={`text-3xl md:text-4xl font-black tabular-nums ${toneClass}`}>{value}</p>
     </div>
+  );
+}
+
+function FunnelFlow({ steps }: { steps: Array<{ label: string; value: number }> }) {
+  const max = Math.max(...steps.map((s) => s.value), 1);
+  return (
+    <section className="bg-card border rounded-xl p-6">
+      <h2 className="font-black text-lg mb-6">Funil da campanha (cadastros completos)</h2>
+      <div className="flex flex-col items-center gap-1">
+        {steps.map((s, i) => {
+          const w = Math.max(pct(s.value, max), 28);
+          const prev = i > 0 ? steps[i - 1].value : null;
+          const drop = prev && prev > 0 ? pct(s.value, prev) : null;
+          return (
+            <div key={s.label} className="w-full flex flex-col items-center">
+              <div
+                className="rounded-xl bg-gradient-cta text-primary-foreground flex items-center justify-between gap-4 px-5 py-4 shadow-cta transition-all"
+                style={{ width: `${w}%`, minWidth: 200, maxWidth: "100%" }}
+              >
+                <span className="font-bold text-sm md:text-base leading-tight">{s.label}</span>
+                <span className="text-2xl md:text-3xl font-black tabular-nums">{s.value}</span>
+              </div>
+              {i < steps.length - 1 && (
+                <div className="flex items-center gap-2 text-xs text-muted-foreground py-1">
+                  <span className="text-lg leading-none">↓</span>
+                  {drop !== null && <span className="tabular-nums">{drop}% da etapa acima</span>}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
