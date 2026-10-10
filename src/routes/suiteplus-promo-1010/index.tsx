@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import catalogoCover from "@/assets/catalogo-capa-pjecalc-vicelmo.png";
-import { CountdownTimer, PROMO_1010_START } from "@/components/CountdownTimer";
-import { Promo1010Form } from "@/components/Promo1010Form";
+import { CountdownTimer, PROMO_1010_END, PROMO_1010_START } from "@/components/CountdownTimer";
 import { trackPromo1010Visit } from "@/lib/promo1010-supabase";
+import { getCreditsCheckoutUrl } from "@/lib/runtime-config";
+import { getStoredAttribution, withSignupAttribution } from "@/lib/signup-origin";
 import {
   BookOpen,
   Bot,
@@ -19,6 +20,7 @@ import {
   ShieldCheck,
   Sparkles,
   Wallet,
+  Zap,
 } from "lucide-react";
 
 export const Route = createFileRoute("/suiteplus-promo-1010/")({
@@ -30,15 +32,17 @@ export const Route = createFileRoute("/suiteplus-promo-1010/")({
       {
         name: "description",
         content:
-          "Entre na lista da oferta 10 do 10: 400 créditos PlusCoin + e-book Cálculos Trabalhistas Aplicados ao PJe-Calc por R$ 200. Abre 10 de outubro às 6h.",
+          "Oferta 10 do 10 aberta: 400 créditos PlusCoin + e-book Cálculos Trabalhistas Aplicados ao PJe-Calc por R$ 200.",
       },
       { property: "og:title", content: "Ensino Plus — 10 do 10 | 400 créditos + e-book" },
       {
         property: "og:description",
-        content:
-          "400 créditos + e-book do PJe-Calc por R$ 200,00. Cadastre-se e seja avisado quando abrir.",
+        content: "400 créditos + e-book do PJe-Calc por R$ 200,00. Compre no checkout da SuitePlus.",
       },
     ],
+  }),
+  loader: async () => ({
+    checkoutUrl: await getCreditsCheckoutUrl(),
   }),
   component: Landing,
 });
@@ -111,18 +115,59 @@ const EBOOK_TOPICS = [
   },
 ];
 
+function comParametrosDaPagina(url: string, search: string): string {
+  if (!search || search === "?") return url;
+  try {
+    const destino = new URL(url);
+    const atuais = new URLSearchParams(search);
+    for (const [chave, valor] of atuais.entries()) {
+      if (!chave) continue;
+      if (!destino.searchParams.getAll(chave).includes(valor)) {
+        destino.searchParams.append(chave, valor);
+      }
+    }
+    return destino.toString();
+  } catch {
+    return url;
+  }
+}
+
+function CheckoutButton({ checkoutUrl }: { checkoutUrl: string }) {
+  const [href, setHref] = useState(checkoutUrl);
+
+  useEffect(() => {
+    const comPagina = comParametrosDaPagina(checkoutUrl, window.location.search);
+    setHref(withSignupAttribution(comPagina, getStoredAttribution()));
+  }, [checkoutUrl]);
+
+  return (
+    <a
+      href={href}
+      className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-cta text-primary-foreground font-bold uppercase tracking-wide shadow-cta hover:brightness-110 transition-all animate-pulse-cta h-12 px-6"
+    >
+      <Zap className="h-5 w-5" />
+      Ir para o checkout
+    </a>
+  );
+}
+
 function Landing() {
+  const { checkoutUrl } = Route.useLoaderData();
   useEffect(() => {
     void trackPromo1010Visit("page1");
   }, []);
   return (
     <div className="min-h-screen bg-background">
-      {/* Barra de topo: contador real até a abertura (10/10 06h) */}
       <div className="bg-gradient-urgency text-urgency-foreground py-2.5 px-4 text-center text-sm font-semibold">
         <div className="flex items-center justify-center gap-2 flex-wrap">
           <span className="inline-block w-2 h-2 rounded-full bg-white animate-pulse" />
-          <span>A OFERTA 10 DO 10 ABRE EM:</span>
-          <CountdownTimer target={PROMO_1010_START} variant="bar" doneLabel="ABERTA AGORA!" />
+          <span>A OFERTA ACABA EM:</span>
+          <CountdownTimer
+            target={PROMO_1010_END}
+            variant="bar"
+            showDays={false}
+            doneLabel="ENCERRADA"
+          />
         </div>
       </div>
 
@@ -139,7 +184,7 @@ function Landing() {
             {/* Coluna da oferta */}
             <div className="text-center lg:text-left">
               <div className="inline-flex items-center gap-2 bg-urgency/25 text-urgency-foreground border border-urgency/50 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider mb-4">
-                <Sparkles className="w-4 h-4" /> Pré-lançamento · Lista de espera
+                <Sparkles className="w-4 h-4" /> Oferta aberta · 10 do 10
               </div>
 
               <p className="text-sm md:text-base font-bold uppercase tracking-[0.2em] text-white/60 mb-3">
@@ -161,9 +206,6 @@ function Landing() {
                 </span>
               </div>
 
-              <p className="text-sm font-bold uppercase tracking-wider text-white/60 mb-3">
-                A oferta abre em:
-              </p>
               <CountdownTimer
                 target={PROMO_1010_START}
                 className="justify-center lg:justify-start"
@@ -172,7 +214,7 @@ function Landing() {
 
               <div className="flex flex-wrap gap-5 mt-8 text-sm text-white/70 justify-center lg:justify-start">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-5 h-5 text-white" /> Abre 10 de outubro, 6h
+                  <ShieldCheck className="w-5 h-5 text-white" /> Somente hoje, 10 de outubro
                 </div>
                 <div className="flex items-center gap-2">
                   <Coins className="w-5 h-5 text-amber-400" /> Créditos PlusCoin
@@ -183,20 +225,16 @@ function Landing() {
               </div>
             </div>
 
-            {/* Coluna do formulário (lead) */}
-            <div className="bg-white/5 border-2 border-primary/40 rounded-2xl p-6 md:p-8 shadow-card">
-              <div className="text-center mb-5">
-                <div className="inline-flex items-center gap-1 bg-gradient-cta text-primary-foreground text-xs font-bold px-3 py-1 rounded-full mb-3">
-                  <Gift className="w-3 h-3" /> Garanta sua vaga na oferta
-                </div>
-                <h2 className="text-xl md:text-2xl font-black text-white">
-                  Entre na lista do 10 do 10
-                </h2>
-                <p className="text-sm text-white/60 mt-1">
-                  Avisamos no e-mail e no WhatsApp assim que abrir.
-                </p>
+            <div className="bg-white/5 border-2 border-primary/40 rounded-2xl p-6 md:p-8 shadow-card text-center">
+              <div className="inline-flex items-center gap-1 bg-gradient-cta text-primary-foreground text-xs font-bold px-3 py-1 rounded-full mb-3">
+                <Gift className="w-3 h-3" /> Oferta liberada por R$ 200
               </div>
-              <Promo1010Form mode="lead" />
+              <h2 className="text-xl md:text-2xl font-black text-white">400 créditos + e-book</h2>
+              <p className="text-sm text-white/60 mt-1 mb-6">
+                O pagamento é no checkout da SuitePlus. Créditos e e-book entram na conta depois da
+                compra.
+              </p>
+              <CheckoutButton checkoutUrl={checkoutUrl} />
             </div>
           </div>
         </div>
@@ -319,17 +357,16 @@ function Landing() {
         />
         <div className="container mx-auto px-4 relative text-center max-w-xl">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-urgency-foreground bg-urgency/30 inline-block rounded-full px-4 py-1 mb-6">
-            Pré-lançamento — 10 do 10
+            Oferta aberta — 10 do 10
           </p>
           <h2 className="text-3xl md:text-5xl font-black mb-5 leading-tight">
             <span className="text-primary">400 créditos</span> + e-book por R$ 200,00
           </h2>
           <p className="text-base text-white/70 mb-8">
-            Entre na lista e seja o primeiro a comprar quando a oferta abrir, no sábado 10 de outubro
-            às 6h.
+            Compre agora: 400 créditos PlusCoin e o e-book do PJe-Calc no mesmo pacote.
           </p>
-          <div className="bg-white/5 border-2 border-primary/40 rounded-2xl p-6 md:p-8 shadow-card text-left">
-            <Promo1010Form mode="lead" />
+          <div className="bg-white/5 border-2 border-primary/40 rounded-2xl p-6 md:p-8 shadow-card">
+            <CheckoutButton checkoutUrl={checkoutUrl} />
           </div>
         </div>
       </section>
