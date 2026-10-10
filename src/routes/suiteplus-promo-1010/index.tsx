@@ -4,7 +4,6 @@ import catalogoCover from "@/assets/catalogo-capa-pjecalc-vicelmo.png";
 import { CountdownTimer, PROMO_1010_END, PROMO_1010_START } from "@/components/CountdownTimer";
 import { trackPromo1010Visit } from "@/lib/promo1010-supabase";
 import { getCreditsCheckoutUrl } from "@/lib/runtime-config";
-import { getStoredAttribution, withSignupAttribution } from "@/lib/signup-origin";
 import {
   BookOpen,
   Bot,
@@ -136,13 +135,13 @@ function CheckoutButton({ checkoutUrl }: { checkoutUrl: string }) {
   const [href, setHref] = useState(checkoutUrl);
 
   useEffect(() => {
-    const comPagina = comParametrosDaPagina(checkoutUrl, window.location.search);
-    setHref(withSignupAttribution(comPagina, getStoredAttribution()));
+    setHref(comParametrosDaPagina(checkoutUrl, window.location.search));
   }, [checkoutUrl]);
 
   return (
     <a
       href={href}
+      data-url-params-only
       className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-cta text-primary-foreground font-bold uppercase tracking-wide shadow-cta hover:brightness-110 transition-all animate-pulse-cta h-12 px-6"
     >
       <Zap className="h-5 w-5" />
