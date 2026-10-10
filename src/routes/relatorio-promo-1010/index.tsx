@@ -528,6 +528,7 @@ function LeadList({ title, leads, accent }: { title: string; leads: LeadRow[]; a
                 <th className="py-2 pr-2 font-semibold">Nome</th>
                 <th className="py-2 px-2 font-semibold">E-mail</th>
                 <th className="py-2 px-2 font-semibold">WhatsApp</th>
+                <th className="py-2 px-2 font-semibold">Origem (utm_source)</th>
                 <th className="py-2 pl-2 font-semibold">Status</th>
               </tr>
             </thead>
@@ -537,6 +538,15 @@ function LeadList({ title, leads, accent }: { title: string; leads: LeadRow[]; a
                   <td className="py-2 pr-2 font-medium">{l.name || "—"}</td>
                   <td className="py-2 px-2 break-all">{l.email || "—"}</td>
                   <td className="py-2 px-2 tabular-nums whitespace-nowrap">{l.phone || "—"}</td>
+                  <td className="py-2 px-2 whitespace-nowrap">
+                    {l.utm_source ? (
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                        {l.utm_source}
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">direto</span>
+                    )}
+                  </td>
                   <td className="py-2 pl-2">
                     <span
                       className={`text-xs font-bold px-2 py-0.5 rounded-full ${
