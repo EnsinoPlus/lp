@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import catalogoCover from "@/assets/catalogo-capa-pjecalc-vicelmo.png";
-import { CountdownTimer, PROMO_1010_END } from "@/components/CountdownTimer";
+import { CountdownTimer, PROMO_1010_END, PROMO_1010_START } from "@/components/CountdownTimer";
 import { Promo1010Form } from "@/components/Promo1010Form";
 import { getCreditsCheckoutUrl } from "@/lib/runtime-config";
 import { trackPromo1010Visit } from "@/lib/promo1010-supabase";
@@ -61,19 +61,20 @@ function Landing() {
   useEffect(() => {
     void trackPromo1010Visit("checkout");
   }, []);
+  // Antes de sábado 6h conta pra abertura; durante o sábado conta até 23:59.
+  const beforeStart = Date.now() < new Date(PROMO_1010_START).getTime();
+  const cdTarget = beforeStart ? PROMO_1010_START : PROMO_1010_END;
+  const cdBarLabel = beforeStart ? "A oferta abre sábado 6h — em:" : "A oferta acaba em:";
+  const cdBlockLabel = beforeStart ? "A oferta abre sábado (10/10) às 6h" : "Tempo restante da oferta";
+  const cdDone = beforeStart ? "ABRIU AGORA!" : "ENCERRADA";
   return (
     <div className="min-h-screen bg-background">
       {/* Barra de topo vermelha: últimas 24h */}
       <div className="bg-red-600 text-white py-2.5 px-4 text-center text-sm font-bold">
         <div className="flex items-center justify-center gap-2 flex-wrap">
           <Flame className="w-4 h-4 animate-pulse" />
-          <span className="uppercase tracking-wider">A oferta acaba em:</span>
-          <CountdownTimer
-            target={PROMO_1010_END}
-            variant="bar"
-            showDays={false}
-            doneLabel="ENCERRADA"
-          />
+          <span className="uppercase tracking-wider">{cdBarLabel}</span>
+          <CountdownTimer target={cdTarget} variant="bar" doneLabel={cdDone} />
         </div>
       </div>
 
@@ -105,13 +106,12 @@ function Landing() {
 
               <div className="rounded-2xl bg-black/30 border border-white/10 p-5 mb-6">
                 <p className="text-xs font-bold uppercase tracking-wider text-white/60 mb-3">
-                  Tempo restante da oferta
+                  {cdBlockLabel}
                 </p>
                 <CountdownTimer
-                  target={PROMO_1010_END}
-                  showDays={false}
+                  target={cdTarget}
                   className="justify-center lg:justify-start"
-                  doneLabel="Oferta encerrada"
+                  doneLabel={beforeStart ? "A oferta abriu!" : "Oferta encerrada"}
                 />
               </div>
 
@@ -215,7 +215,7 @@ function Landing() {
             Garanta antes de zerar
           </h2>
           <div className="mb-8">
-            <CountdownTimer target={PROMO_1010_END} showDays={false} doneLabel="Oferta encerrada" />
+            <CountdownTimer target={cdTarget} doneLabel={beforeStart ? "A oferta abriu!" : "Oferta encerrada"} />
           </div>
           <div className="bg-white/5 border-2 border-red-400/40 rounded-2xl p-6 md:p-8 shadow-card text-left">
             <Promo1010Form
