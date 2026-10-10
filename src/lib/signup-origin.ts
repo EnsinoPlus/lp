@@ -273,6 +273,7 @@ export function installSignupAttributionLinker(): () => void {
     const anchor = target?.closest?.("a") as HTMLAnchorElement | null;
     if (!anchor || !anchor.href) return;
     if (anchor.hasAttribute("download")) return;
+    if (anchor.hasAttribute("data-url-params-only")) return;
 
     const data = getStoredAttribution();
     if (!Object.keys(data).length) return;
