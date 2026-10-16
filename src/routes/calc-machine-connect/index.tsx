@@ -254,6 +254,28 @@ const HTML = String.raw`
   </div>
 </section>
 
+<section id="na-pratica">
+  <div class="wrap">
+    <div class="eyebrow">Na prática</div>
+    <h2>Como é usar, do processo ao cálculo</h2>
+    <p class="lead">Você conversa com a sua IA como já faz hoje. A diferença é que ela passa a ter as ferramentas do Calc Machine para montar o cálculo de verdade, em vez de só responder em texto.</p>
+    <div class="grade">
+      <div class="cartao"><div class="num">1</div><h3>Você envia os documentos</h3><p>Sentença ou acórdão e, se tiver, contracheques, cartões de ponto, extrato do FGTS e relatórios de férias e afastamentos. Pode enviar o processo inteiro em PDF.</p></div>
+      <div class="cartao"><div class="num">2</div><h3>A IA organiza e confirma</h3><p>Ela localiza as peças que importam, mostra um resumo do que encontrou e faz poucas perguntas, uma de cada vez, apenas quando a decisão deixa dúvida. Nada é gerado sem a sua confirmação.</p></div>
+      <div class="cartao"><div class="num">3</div><h3>O arquivo é gerado</h3><p>O Calc Machine monta o cálculo e entrega o arquivo <strong>.pjc</strong> em poucos segundos, já salvo em “Meus Arquivos” na plataforma.</p></div>
+      <div class="cartao"><div class="num">4</div><h3>Você escolhe o próximo passo</h3><p>Receber só o .pjc, enviá-lo para o seu PJe-Calc aberto, ou pedir que o Calc Machine liquide e entregue o relatório em PDF ou HTML, com as telas que você quiser.</p></div>
+      <div class="cartao"><div class="num">5</div><h3>Conferência opcional</h3><p>Ao final, a IA oferece conferir a planilha com parâmetros que você determina ou contra a sentença, apontando o que está errado, sobrando ou faltando.</p></div>
+      <div class="cartao"><div class="num">6</div><h3>Atualização depois</h3><p>Mais tarde, peça a atualização do cálculo informando pagamentos e depósitos. O arquivo anterior continua guardado.</p></div>
+    </div>
+    <div class="grade" style="margin-top:26px">
+      <div class="cartao"><h3>O que você precisa</h3><p>Uma assinatura (ou o teste grátis), uma conta na Suite com o mesmo e-mail e uma IA conectada (Claude, ChatGPT ou Gemini). Para ver o cálculo no PJe-Calc, o programa instalado no seu computador.</p></div>
+      <div class="cartao"><h3>O que você recebe</h3><p>O arquivo .pjc do cálculo, o PDF ou HTML da liquidação (quando pedir), arquivos de importação de histórico salarial, cartão de ponto, FGTS e férias, e a conferência da planilha.</p></div>
+      <div class="cartao"><h3>O que o teste grátis inclui</h3><p>Dois dias corridos, com até 5 gerações de .pjc, 1 uso do PJe-Calc pelo Calc Machine e 10 anexos processados. Guias e validações são livres.</p></div>
+      <div class="cartao"><h3>O que continua com você</h3><p>A IA não decide no seu lugar: quando a sentença é ambígua ou falta documento, ela pergunta em vez de supor. A revisão final do cálculo é sua, como sempre.</p></div>
+    </div>
+  </div>
+</section>
+
 <section id="conectar">
   <div class="wrap">
     <div class="eyebrow">Conectar</div>
@@ -300,6 +322,9 @@ const HTML = String.raw`
   <div class="wrap">
     <div class="eyebrow">Dúvidas</div>
     <h2>Perguntas frequentes</h2>
+    <details class="faq"><summary>Preciso ter o PJe-Calc aberto para gerar o arquivo?</summary><p>Não. O arquivo .pjc é gerado pelo Calc Machine. Você abre o arquivo no PJe-Calc para ver, ajustar ou liquidar. Se preferir, o Calc Machine também pode liquidar e entregar o relatório por você.</p></details>
+    <details class="faq"><summary>A IA calcula sozinha, sem eu ver?</summary><p>Não. Ela mostra o que encontrou nos documentos, pergunta o que for incerto e pede a sua confirmação antes de gerar. O resultado é um arquivo de cálculo que você confere e pode alterar no PJe-Calc.</p></details>
+    <details class="faq"><summary>Quanto tempo leva?</summary><p>A geração do arquivo leva poucos segundos. O tempo total depende da leitura do processo pela sua IA e das perguntas que ela fizer.</p></details>
     <details class="faq"><summary>Preciso ter conta na Suite?</summary><p>Para assinar, não: basta o e-mail. Para usar o conector na sua IA, você entra com uma conta da Suite. Se ainda não tem, <a href="https://suiteplus.ensinoplus.com.br/register">crie uma gratuitamente</a> com o mesmo e-mail da assinatura.</p></details>
     <details class="faq"><summary>Tem cobrança por crédito a cada cálculo?</summary><p>Não. Com a assinatura ativa, o uso do conector não consome créditos.</p></details>
     <details class="faq"><summary>Quais IAs funcionam?</summary><p>Claude, ChatGPT e Gemini. Qualquer outra ferramenta que aceite conectores MCP personalizados também pode usar o mesmo endereço.</p></details>
