@@ -212,7 +212,7 @@ const HTML = String.raw`
         <p class="nota">Assinatura simples, sem créditos por uso. Dá para assinar só com o e-mail. Para usar na sua IA, use a conta da Suite (grátis) com o <strong>mesmo e-mail</strong> da assinatura.</p>
       </div>
       <div>
-        <div class="video"><iframe src="https://player.vimeo.com/video/1236227186?h=cdb3db2434&dnt=1" title="Como assinar o Calc Machine Connect" allow="fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+        <div class="video"><iframe src="https://player.vimeo.com/video/1236227186?h=cdb3db2434&dnt=1" title="Como assinar o Calc Machine Connect" allow="fullscreen; picture-in-picture" allowfullscreen></iframe></div><p style="margin:8px 0 0;font-size:.88rem;opacity:.85">Prefere abrir em outra janela? <a href="https://vimeo.com/1236227186/cdb3db2434" target="_blank" rel="noopener" style="text-decoration:underline">Abrir o vídeo (como assinar) no Vimeo</a></p>
         <p class="nota" id="como-assinar" style="text-align:center">Vídeo: como assinar</p>
       </div>
     </div>
@@ -259,21 +259,22 @@ const HTML = String.raw`
     <div class="eyebrow">Conectar</div>
     <h2>Veja como conectar na sua ferramenta</h2>
     <p class="lead">Escolha a IA que você usa. Cada vídeo mostra o caminho completo.</p>
+    <div style="margin-top:22px;background:#fff3ec;border:2px solid var(--signal);border-radius:12px;padding:16px 20px"><strong style="color:var(--signal)">⚠ Importante ao cadastrar:</strong> Ao cadastrar o conector, <strong>conceda as permissões</strong> das ferramentas do Calc Machine (escolha “Sempre permitir”, ou equivalente, quando a sua IA perguntar). Sem isso, ela pede a sua autorização a cada ferramenta usada, a toda hora.</div>
     <div class="abas" role="tablist" style="margin-top:24px">
       <button class="aba" role="tab" aria-selected="true" data-aba="claude" style="color:var(--ink);border-color:var(--line)">Claude</button>
       <button class="aba" role="tab" aria-selected="false" data-aba="gpt" style="color:var(--ink);border-color:var(--line)">ChatGPT</button>
       <button class="aba" role="tab" aria-selected="false" data-aba="gemini" style="color:var(--ink);border-color:var(--line)">Gemini</button>
     </div>
     <div class="painel" data-painel="claude"><div class="videos-lado">
-      <div class="video"><iframe src="https://player.vimeo.com/video/1236224305?h=f5024f5e15&dnt=1" title="Como conectar no Claude" loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+      <div class="video"><iframe src="https://player.vimeo.com/video/1236224305?h=f5024f5e15&dnt=1" title="Como conectar no Claude" loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen></iframe></div><p style="margin:8px 0 0;font-size:.88rem;opacity:.85">Prefere abrir em outra janela? <a href="https://vimeo.com/1236224305/f5024f5e15" target="_blank" rel="noopener" style="text-decoration:underline">Abrir o vídeo (Claude) no Vimeo</a></p>
       <ol class="passos" style="color:var(--muted)"><li>Abra <strong>Configurações → Conectores</strong>.</li><li>Escolha <strong>Adicionar conector personalizado</strong>.</li><li>Cole o endereço do servidor e entre com a sua conta da Suite.</li></ol>
     </div></div>
     <div class="painel" data-painel="gpt" hidden><div class="videos-lado">
-      <div class="video"><iframe src="https://player.vimeo.com/video/1236224304?h=8e50a4c008&dnt=1" title="Como conectar no ChatGPT" loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+      <div class="video"><iframe src="https://player.vimeo.com/video/1236224304?h=8e50a4c008&dnt=1" title="Como conectar no ChatGPT" loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen></iframe></div><p style="margin:8px 0 0;font-size:.88rem;opacity:.85">Prefere abrir em outra janela? <a href="https://vimeo.com/1236224304/8e50a4c008" target="_blank" rel="noopener" style="text-decoration:underline">Abrir o vídeo (ChatGPT) no Vimeo</a></p>
       <ol class="passos" style="color:var(--muted)"><li>Abra <strong>Configurações → Plugins → Explorar catálogo</strong>.</li><li>Clique em <strong>Adicionar → Adicionar servidor MCP personalizado</strong>.</li><li>Preencha o formulário com a URL do servidor.</li></ol>
     </div></div>
     <div class="painel" data-painel="gemini" hidden><div class="videos-lado">
-      <div class="video"><iframe src="https://player.vimeo.com/video/1236224300?h=491ad0377f&dnt=1" title="Como conectar no Gemini" loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+      <div class="video"><iframe src="https://player.vimeo.com/video/1236224300?h=491ad0377f&dnt=1" title="Como conectar no Gemini" loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen></iframe></div><p style="margin:8px 0 0;font-size:.88rem;opacity:.85">Prefere abrir em outra janela? <a href="https://vimeo.com/1236224300/491ad0377f" target="_blank" rel="noopener" style="text-decoration:underline">Abrir o vídeo (Gemini) no Vimeo</a></p>
       <ol class="passos" style="color:var(--muted)"><li>Abra <strong>Configurações → Habilidades → Conectores → Personalizado</strong>.</li><li>Cole o endereço do servidor.</li><li>O Google exige conta pessoal e o idioma da conta em <strong>English (United States)</strong> para liberar conectores personalizados.</li></ol>
     </div></div>
     <p style="margin-top:26px"><strong>Endereço do servidor:</strong> <code style="background:#fff;border:1px solid var(--line);padding:3px 8px;border-radius:6px">https://suite.ensinoplus.com.br/mcp-usuario</code></p>
