@@ -322,6 +322,7 @@ const HTML = String.raw`
   <div class="wrap">
     <div class="eyebrow">Dúvidas</div>
     <h2>Perguntas frequentes</h2>
+    <details class="faq"><summary>Como peço suporte?</summary><p>Com o conector ligado, peça à sua IA para abrir um chamado: a equipe é avisada e responde pelo e-mail ou WhatsApp da sua conta. Se ainda não conseguiu conectar, ou o conector estiver fora do ar, fale conosco pelo <a href="https://wa.me/5585996641461" target="_blank" rel="noopener">WhatsApp de suporte</a>.</p></details>
     <details class="faq"><summary>Preciso ter o PJe-Calc aberto para gerar o arquivo?</summary><p>Não. O arquivo .pjc é gerado pelo Calc Machine. Você abre o arquivo no PJe-Calc para ver, ajustar ou liquidar. Se preferir, o Calc Machine também pode liquidar e entregar o relatório por você.</p></details>
     <details class="faq"><summary>A IA calcula sozinha, sem eu ver?</summary><p>Não. Ela mostra o que encontrou nos documentos, pergunta o que for incerto e pede a sua confirmação antes de gerar. O resultado é um arquivo de cálculo que você confere e pode alterar no PJe-Calc.</p></details>
     <details class="faq"><summary>Quanto tempo leva?</summary><p>A geração do arquivo leva poucos segundos. O tempo total depende da leitura do processo pela sua IA e das perguntas que ela fizer.</p></details>
@@ -338,7 +339,7 @@ const HTML = String.raw`
   <div class="wrap">
     <img src="/calc-machine-connect/logo.svg" alt="Calc Machine Connect" style="border-radius:8px">
     <p>Um produto <strong>Ensino Plus</strong>. © 2026 Ensino Plus. Todos os direitos reservados.</p>
-    <p style="margin-top:8px"><a href="https://assinaturas.ensinoplus.com.br/assinar">Assinar</a> · <a href="https://suite.ensinoplus.com.br/conectar-ia">Conectar minha IA</a> · <a href="https://suiteplus.ensinoplus.com.br/register">Criar conta</a></p>
+    <p style="margin-top:8px"><a href="https://assinaturas.ensinoplus.com.br/assinar">Assinar</a> · <a href="https://suite.ensinoplus.com.br/conectar-ia">Conectar minha IA</a> · <a href="https://suiteplus.ensinoplus.com.br/register">Criar conta</a> · <a href="https://wa.me/5585996641461" target="_blank" rel="noopener">Suporte</a></p>
   </div>
 </footer>
 
