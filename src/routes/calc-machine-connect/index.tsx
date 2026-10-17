@@ -281,7 +281,7 @@ const HTML = String.raw`
     <div class="eyebrow">Conectar</div>
     <h2>Veja como conectar na sua ferramenta</h2>
     <p class="lead">Escolha a IA que você usa. Cada vídeo mostra o caminho completo.</p>
-    <div style="margin-top:22px;background:#fff3ec;border:2px solid var(--signal);border-radius:12px;padding:16px 20px"><strong style="color:var(--signal)">⚠ Importante ao cadastrar:</strong> Ao cadastrar o conector, <strong>conceda as permissões</strong> das ferramentas do Calc Machine (escolha “Sempre permitir”, ou equivalente, quando a sua IA perguntar). Sem isso, ela pede a sua autorização a cada ferramenta usada, a toda hora.</div>
+    <div style="margin-top:22px;background:#fff3ec;border:2px solid var(--signal);border-radius:12px;padding:16px 20px"><strong style="color:var(--signal)">⚠ Importante ao cadastrar:</strong> Ao cadastrar o conector, <strong>conceda as permissões</strong> das ferramentas do Calc Machine (escolha “Sempre permitir”, ou equivalente, quando a sua IA perguntar). Sem isso, ela pede a sua autorização a cada ferramenta usada, a toda hora. <strong>No Claude:</strong> Configurações → Conectores → Calc Machine Connect → permissões das ferramentas; deixe os dois grupos, “Ferramentas somente leitura” e “Ferramentas de gravação/exclusão”, em “Sempre permitir” (se o menu do grupo mostrar “Personalizado”, é porque há ferramentas com permissões diferentes).</div>
     <div class="abas" role="tablist" style="margin-top:24px">
       <button class="aba" role="tab" aria-selected="true" data-aba="claude" style="color:var(--ink);border-color:var(--line)">Claude</button>
       <button class="aba" role="tab" aria-selected="false" data-aba="gpt" style="color:var(--ink);border-color:var(--line)">ChatGPT</button>
