@@ -11,6 +11,7 @@ import {
   FileText,
   GraduationCap,
   MessageSquare,
+  Plug,
   ShoppingCart,
   Wallet,
 } from "lucide-react";
@@ -26,6 +27,18 @@ export const Route = createFileRoute("/")({
 });
 
 const products = [
+  {
+    slug: "calc-machine-connect",
+    title: "Calc Machine Connect",
+    subtitle: "Conector MCP · IA",
+    description:
+      "Monte cálculos trabalhistas no PJe-Calc direto do Claude, ChatGPT ou Gemini: a sentença entra e o arquivo .pjc sai. Assinatura sem créditos por uso.",
+    price: "Teste grátis",
+    oldPrice: null as string | null,
+    cover: null as string | null,
+    icon: Plug,
+    href: "/calc-machine-connect/" as const,
+  },
   {
     slug: "livro-pjecalc-vicelmo",
     title: "Manual PJe-Calc (Livro Físico)",
