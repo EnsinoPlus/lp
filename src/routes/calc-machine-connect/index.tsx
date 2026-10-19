@@ -253,6 +253,16 @@ const HTML = String.raw`
   <li>Sem pagar por crédito a cada uso</li>
 </ul></div></div>
 
+<section id="como-funciona-video">
+  <div class="wrap" style="text-align:center">
+    <div class="eyebrow">Veja funcionando</div>
+    <h2>Como o sistema funciona</h2>
+    <p class="lead" style="margin-inline:auto">Neste vídeo, o Prof. Vicelmo explica o funcionamento do Calc Machine Connect, do envio da sentença ao arquivo de cálculo pronto.</p>
+    <div style="max-width:860px;margin:30px auto 0"><div class="video"><iframe src="https://www.youtube-nocookie.com/embed/MSy2zWvv9V8" title="Como o Calc Machine Connect funciona" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div></div>
+    <p class="nota" style="text-align:center"><a href="https://youtu.be/MSy2zWvv9V8" target="_blank" rel="noopener" style="text-decoration:underline">Abrir o vídeo no YouTube</a></p>
+  </div>
+</section>
+
 <section id="recursos">
   <div class="wrap">
     <div class="eyebrow">O que você faz com ele</div>
