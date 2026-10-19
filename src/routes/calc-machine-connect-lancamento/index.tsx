@@ -83,10 +83,18 @@ const CONECTORES = [
   { aba: "gemini", nome: "Gemini", video: "https://player.vimeo.com/video/1236224300?h=491ad0377f&dnt=1", passos: ["Abra Configurações → Habilidades → Conectores → Personalizado.", "Cole o endereço do servidor.", "O Google exige conta pessoal e idioma em English (United States) para liberar conectores personalizados."] },
 ];
 
-const LAUNCH_TIERS = [
+type Tier = { preco: string; lote: string; status: string; desc: string };
+
+const LAUNCH_TIERS: Tier[] = [
   { preco: "97", lote: "1º lote", status: "aberto", desc: "As primeiras 20 pessoas entram por este valor. Trava assim que as 20 vagas forem preenchidas." },
   { preco: "197", lote: "2º lote", status: "bloqueado", desc: "Bloqueado. Abre automaticamente quando o 1º lote (R$ 97) esgotar as 20 vagas." },
   { preco: "297", lote: "3º lote", status: "bloqueado", desc: "Bloqueado. Abre quando o 2º lote (R$ 197) esgotar." },
+];
+
+const ANNUAL_TIERS: Tier[] = [
+  { preco: "970", lote: "1º lote anual", status: "aberto", desc: "Corre: as primeiras 20 pessoas levam o anual por este valor. Ao fechar as 20 vagas, trava e o preço sobe." },
+  { preco: "1.970", lote: "2º lote anual", status: "bloqueado", desc: "Bloqueado. Abre quando o 1º lote (R$ 970) esgotar as 20 vagas." },
+  { preco: "2.970", lote: "3º lote anual", status: "bloqueado", desc: "Bloqueado. Abre quando o 2º lote (R$ 1.970) esgotar." },
 ];
 
 const PAGAMENTOS = ["Pix à vista", "Pix automático (recorrente)", "Cartão de crédito"];
@@ -118,6 +126,48 @@ function VideoBox({ src, title }: { src: string; title: string }) {
   );
 }
 
+function TierCard({ t, unidade, cta }: { t: Tier; unidade: string; cta: string }) {
+  const locked = t.status === "bloqueado";
+  return (
+    <div
+      className={`relative rounded-2xl p-7 flex flex-col ${
+        locked ? "bg-secondary border-2 border-dashed border-border opacity-80" : "bg-card border-2 border-[#E8552B] shadow-cta"
+      }`}
+    >
+      <span
+        className={`absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider inline-flex items-center gap-1 ${
+          locked ? "bg-muted text-muted-foreground" : "bg-[#E8552B] text-white"
+        }`}
+      >
+        {locked ? (<><Lock className="w-3 h-3" /> Bloqueado</>) : (<><Zap className="w-3 h-3" /> Aberto agora</>)}
+      </span>
+      <p className={`text-sm font-bold uppercase tracking-wider ${locked ? "text-muted-foreground" : "text-[#E8552B]"}`}>{t.lote}</p>
+      <p className={`text-5xl font-black mt-2 ${locked ? "text-muted-foreground" : ""}`}>
+        R$ {t.preco}
+        <span className="text-lg font-bold text-muted-foreground">{unidade}</span>
+      </p>
+      <p className="text-sm text-muted-foreground mt-3 flex-1">{t.desc}</p>
+      <p className={`text-xs font-bold uppercase tracking-wider mt-4 mb-4 inline-flex items-center gap-1 ${locked ? "text-muted-foreground" : "text-[#E8552B]"}`}>
+        {locked ? (<><Lock className="w-3.5 h-3.5" /> Aguardando o lote anterior esgotar</>) : "Apenas 20 vagas · trava ao esgotar"}
+      </p>
+      {locked ? (
+        <span className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-muted text-muted-foreground font-bold uppercase tracking-wide h-12 px-6 cursor-not-allowed select-none">
+          <Lock className="w-4 h-4" /> Bloqueado
+        </span>
+      ) : (
+        <a
+          href={CHECKOUT_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#E8552B] text-white font-bold uppercase tracking-wide shadow-cta hover:brightness-110 transition-all h-12 px-6"
+        >
+          <Zap className="w-5 h-5" /> {cta}
+        </a>
+      )}
+    </div>
+  );
+}
+
 function Lancamento() {
   const [tab, setTab] = useState<"claude" | "gpt" | "gemini">("claude");
   const ativo = CONECTORES.find((c) => c.aba === tab) ?? CONECTORES[0];
@@ -128,7 +178,7 @@ function Lancamento() {
       <WhatsAppFloat href="https://wa.me/5585996641461" label="Tirar dúvidas" />
 
       {/* Barra de lançamento */}
-      <div className="bg-red-600 text-white py-2.5 px-4 text-center text-sm font-bold">
+      <div className="bg-[#E8552B] text-white py-2.5 px-4 text-center text-sm font-bold">
         <div className="flex items-center justify-center gap-2 flex-wrap">
           <Sparkles className="w-4 h-4" />
           <span className="uppercase tracking-wider">Lançamento · Vagas limitadas por lote</span>
@@ -136,7 +186,7 @@ function Lancamento() {
       </div>
 
       {/* HERO claro */}
-      <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-red-50 to-background">
+      <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-[#FDF3EF] to-background">
         <div className="container mx-auto px-4 py-12 md:py-20">
           <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
             <div className="text-center lg:text-left">
@@ -145,15 +195,15 @@ function Lancamento() {
                 alt="Calc Machine Connect"
                 className="h-11 w-auto mx-auto lg:mx-0 mb-6 rounded-lg"
               />
-              <div className="inline-flex items-center gap-2 bg-red-100 text-red-700 border border-red-200 rounded-full px-4 py-1.5 text-xs font-black uppercase tracking-wider mb-4">
+              <div className="inline-flex items-center gap-2 bg-[#F7E0D6] text-[#E8552B] border border-[#E8552B]/25 rounded-full px-4 py-1.5 text-xs font-black uppercase tracking-wider mb-4">
                 <Zap className="w-4 h-4" /> Calc Machine Connect
               </div>
               <h1 className="text-4xl md:text-6xl font-black leading-[1.05] mb-4">
                 Monte seus cálculos trabalhistas{" "}
-                <span className="text-red-600">sem limite ou moderação de IA</span>
+                <span className="text-[#E8552B]">sem limite ou moderação de IA</span>
               </h1>
               <p className="text-xl md:text-2xl font-black text-foreground mb-3">
-                A sentença entra, o <span className="text-red-600">.pjc</span> sai — pela sua IA.
+                A sentença entra, o <span className="text-[#E8552B]">.pjc</span> sai — pela sua IA.
               </p>
               <p className="text-lg md:text-xl text-muted-foreground mb-8">
                 No PJe-Calc, direto do Claude, ChatGPT ou Gemini — sem digitar verba por verba e sem
@@ -162,7 +212,7 @@ function Lancamento() {
               <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
                 <a
                   href="#planos"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-cta text-primary-foreground font-bold uppercase tracking-wide shadow-cta hover:brightness-110 transition-all animate-pulse-cta h-12 px-7"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#E8552B] text-white font-bold uppercase tracking-wide shadow-cta hover:brightness-110 transition-all animate-pulse-cta h-12 px-7"
                 >
                   <Zap className="w-5 h-5" /> Garantir vaga de lançamento
                 </a>
@@ -174,9 +224,9 @@ function Lancamento() {
                 </a>
               </div>
               <div className="flex flex-wrap gap-5 mt-7 text-sm text-muted-foreground justify-center lg:justify-start">
-                <span className="inline-flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-red-600" /> Garantia de 7 dias</span>
-                <span className="inline-flex items-center gap-2"><CalendarClock className="w-5 h-5 text-red-600" /> Teste grátis de 2 dias</span>
-                <span className="inline-flex items-center gap-2"><CreditCard className="w-5 h-5 text-red-600" /> Pix ou cartão</span>
+                <span className="inline-flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-[#E8552B]" /> Garantia de 7 dias</span>
+                <span className="inline-flex items-center gap-2"><CalendarClock className="w-5 h-5 text-[#E8552B]" /> Teste grátis de 2 dias</span>
+                <span className="inline-flex items-center gap-2"><CreditCard className="w-5 h-5 text-[#E8552B]" /> Pix ou cartão</span>
               </div>
             </div>
 
@@ -197,10 +247,10 @@ function Lancamento() {
       <section className="bg-card border-b border-border py-6">
         <div className="container mx-auto px-4">
           <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm font-semibold">
-            <li className="inline-flex items-center gap-2"><Check className="w-4 h-4 text-red-600" /> Claude, ChatGPT e Gemini</li>
-            <li className="inline-flex items-center gap-2"><Check className="w-4 h-4 text-red-600" /> Arquivo .pjc pronto para o PJe-Calc</li>
-            <li className="inline-flex items-center gap-2"><Check className="w-4 h-4 text-red-600" /> Sem crédito por uso</li>
-            <li className="inline-flex items-center gap-2"><Check className="w-4 h-4 text-red-600" /> Arquivos salvos na plataforma</li>
+            <li className="inline-flex items-center gap-2"><Check className="w-4 h-4 text-[#E8552B]" /> Claude, ChatGPT e Gemini</li>
+            <li className="inline-flex items-center gap-2"><Check className="w-4 h-4 text-[#E8552B]" /> Arquivo .pjc pronto para o PJe-Calc</li>
+            <li className="inline-flex items-center gap-2"><Check className="w-4 h-4 text-[#E8552B]" /> Sem crédito por uso</li>
+            <li className="inline-flex items-center gap-2"><Check className="w-4 h-4 text-[#E8552B]" /> Arquivos salvos na plataforma</li>
           </ul>
         </div>
       </section>
@@ -209,7 +259,7 @@ function Lancamento() {
       <section id="como-funciona" className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <p className="text-sm font-bold uppercase tracking-wider text-red-600 mb-2">O que você faz com ele</p>
+            <p className="text-sm font-bold uppercase tracking-wider text-[#E8552B] mb-2">O que você faz com ele</p>
             <h2 className="text-3xl md:text-5xl font-black mb-3">Do documento ao cálculo, sem retrabalho</h2>
             <p className="text-muted-foreground text-lg">
               O Calc Machine Connect liga a sua IA ao Calc Machine, o gerador de cálculos da Ensino Plus.
@@ -219,7 +269,7 @@ function Lancamento() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {FEATURES.map((f) => (
               <div key={f.title} className="bg-card border border-border rounded-2xl p-6 hover:shadow-card transition">
-                <div className="w-12 h-12 rounded-xl bg-gradient-cta flex items-center justify-center text-primary-foreground mb-4">
+                <div className="w-12 h-12 rounded-xl bg-[#E8552B] flex items-center justify-center text-white mb-4">
                   <f.icon className="w-6 h-6" />
                 </div>
                 <h3 className="font-black text-lg mb-2">{f.title}</h3>
@@ -234,13 +284,13 @@ function Lancamento() {
       <section className="py-16 md:py-24 bg-secondary">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <p className="text-sm font-bold uppercase tracking-wider text-red-600 mb-2">Como funciona</p>
+            <p className="text-sm font-bold uppercase tracking-wider text-[#E8552B] mb-2">Como funciona</p>
             <h2 className="text-3xl md:text-5xl font-black">Três passos</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {STEPS.map((s) => (
               <div key={s.n} className="bg-card border border-border rounded-2xl p-7">
-                <div className="w-10 h-10 rounded-full bg-red-600 text-white font-black flex items-center justify-center mb-4">{s.n}</div>
+                <div className="w-10 h-10 rounded-full bg-[#E8552B] text-white font-black flex items-center justify-center mb-4">{s.n}</div>
                 <h3 className="font-black text-lg mb-2">{s.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{s.desc}</p>
               </div>
@@ -253,7 +303,7 @@ function Lancamento() {
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <p className="text-sm font-bold uppercase tracking-wider text-red-600 mb-2">Na prática</p>
+            <p className="text-sm font-bold uppercase tracking-wider text-[#E8552B] mb-2">Na prática</p>
             <h2 className="text-3xl md:text-5xl font-black mb-3">Como é usar, do processo ao cálculo</h2>
             <p className="text-muted-foreground text-lg">
               Você conversa com a sua IA como já faz hoje. A diferença é que ela passa a ter as
@@ -263,7 +313,7 @@ function Lancamento() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {PRATICA.map((p) => (
               <div key={p.n} className="bg-card border border-border rounded-2xl p-6">
-                <div className="w-9 h-9 rounded-full bg-red-600 text-white font-black text-sm flex items-center justify-center mb-3">{p.n}</div>
+                <div className="w-9 h-9 rounded-full bg-[#E8552B] text-white font-black text-sm flex items-center justify-center mb-3">{p.n}</div>
                 <h3 className="font-black text-base mb-2">{p.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{p.desc}</p>
               </div>
@@ -272,7 +322,7 @@ function Lancamento() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mt-6">
             {INFO.map((i) => (
               <div key={i.title} className="bg-secondary border border-border rounded-2xl p-6">
-                <h3 className="font-black text-sm uppercase tracking-wide text-red-600 mb-2">{i.title}</h3>
+                <h3 className="font-black text-sm uppercase tracking-wide text-[#E8552B] mb-2">{i.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{i.desc}</p>
               </div>
             ))}
@@ -284,13 +334,13 @@ function Lancamento() {
       <section id="conectar" className="py-16 md:py-24 bg-secondary">
         <div className="container mx-auto px-4 max-w-5xl">
           <div className="text-center mb-10">
-            <p className="text-sm font-bold uppercase tracking-wider text-red-600 mb-2">Conectar</p>
+            <p className="text-sm font-bold uppercase tracking-wider text-[#E8552B] mb-2">Conectar</p>
             <h2 className="text-3xl md:text-5xl font-black mb-3">Veja como conectar na sua ferramenta</h2>
             <p className="text-muted-foreground text-lg">Escolha a IA que você usa. Cada vídeo mostra o caminho completo.</p>
           </div>
 
-          <div className="rounded-xl border-2 border-red-300 bg-red-50 text-red-900 p-4 md:p-5 mb-8 text-sm">
-            <strong className="text-red-700">⚠ Importante ao cadastrar:</strong> conceda as permissões das
+          <div className="rounded-xl border-2 border-[#E8552B]/35 bg-[#FDF3EF] text-[#0F1F1A] p-4 md:p-5 mb-8 text-sm">
+            <strong className="text-[#E8552B]">⚠ Importante ao cadastrar:</strong> conceda as permissões das
             ferramentas do Calc Machine (escolha “Sempre permitir”, ou equivalente, quando a sua IA perguntar).
             Sem isso, ela pede autorização a cada ferramenta usada. No Claude: Configurações → Conectores →
             Calc Machine Connect → permissões; deixe os dois grupos em “Sempre permitir”.
@@ -304,8 +354,8 @@ function Lancamento() {
                 onClick={() => setTab(c.aba as typeof tab)}
                 className={`rounded-full px-5 py-2 font-bold text-sm border-2 transition ${
                   tab === c.aba
-                    ? "bg-red-600 text-white border-red-600"
-                    : "bg-card text-foreground border-border hover:border-red-300"
+                    ? "bg-[#E8552B] text-white border-[#E8552B]"
+                    : "bg-card text-foreground border-border hover:border-[#E8552B]/35"
                 }`}
               >
                 {c.nome}
@@ -333,7 +383,7 @@ function Lancamento() {
       <section id="planos" className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-4">
-            <p className="text-sm font-bold uppercase tracking-wider text-red-600 mb-2">Oferta de lançamento</p>
+            <p className="text-sm font-bold uppercase tracking-wider text-[#E8552B] mb-2">Oferta de lançamento</p>
             <h2 className="text-3xl md:text-5xl font-black mb-3">Entre agora pelo menor preço</h2>
             <p className="text-muted-foreground text-lg">
               <span className="font-bold text-foreground">Só o lote atual fica aberto.</span> Ao preencher as
@@ -347,48 +397,9 @@ function Lancamento() {
             Mensal promocional de lançamento · 20 vagas por lote
           </p>
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mt-5">
-            {LAUNCH_TIERS.map((t) => {
-              const locked = t.status === "bloqueado";
-              return (
-                <div
-                  key={t.preco}
-                  className={`relative rounded-2xl p-7 flex flex-col ${
-                    locked ? "bg-secondary border-2 border-dashed border-border opacity-80" : "bg-card border-2 border-red-500 shadow-cta"
-                  }`}
-                >
-                  <span
-                    className={`absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider inline-flex items-center gap-1 ${
-                      locked ? "bg-muted text-muted-foreground" : "bg-red-600 text-white"
-                    }`}
-                  >
-                    {locked ? (<><Lock className="w-3 h-3" /> Bloqueado</>) : (<><Zap className="w-3 h-3" /> Aberto agora</>)}
-                  </span>
-                  <p className={`text-sm font-bold uppercase tracking-wider ${locked ? "text-muted-foreground" : "text-red-600"}`}>{t.lote}</p>
-                  <p className={`text-5xl font-black mt-2 ${locked ? "text-muted-foreground" : ""}`}>
-                    R$ {t.preco}
-                    <span className="text-lg font-bold text-muted-foreground">/mês</span>
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-3 flex-1">{t.desc}</p>
-                  <p className={`text-xs font-bold uppercase tracking-wider mt-4 mb-4 inline-flex items-center gap-1 ${locked ? "text-muted-foreground" : "text-red-600"}`}>
-                    {locked ? (<><Lock className="w-3.5 h-3.5" /> Aguardando o lote anterior esgotar</>) : "Apenas 20 vagas · trava ao esgotar"}
-                  </p>
-                  {locked ? (
-                    <span className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-muted text-muted-foreground font-bold uppercase tracking-wide h-12 px-6 cursor-not-allowed select-none">
-                      <Lock className="w-4 h-4" /> Bloqueado
-                    </span>
-                  ) : (
-                    <a
-                      href={CHECKOUT_URL}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-cta text-primary-foreground font-bold uppercase tracking-wide shadow-cta hover:brightness-110 transition-all h-12 px-6"
-                    >
-                      <Zap className="w-5 h-5" /> Assinar por R$ {t.preco}
-                    </a>
-                  )}
-                </div>
-              );
-            })}
+            {LAUNCH_TIERS.map((t) => (
+              <TierCard key={t.preco} t={t} unidade="/mês" cta={`Assinar por R$ ${t.preco}`} />
+            ))}
           </div>
           <p className="text-center text-sm text-muted-foreground mt-5 max-w-2xl mx-auto">
             Os valores de R$ 197 e R$ 297 estão <strong className="text-foreground">bloqueados</strong> — só
@@ -396,34 +407,24 @@ function Lancamento() {
             trava</strong> assim que as 20 primeiras vagas forem preenchidas.
           </p>
 
-          {/* Anual (o mensal cheio de R$ 397 é só âncora, não é assinável) */}
-          <div className="max-w-3xl mx-auto mt-10">
-            <div className="bg-card border-2 border-border rounded-2xl p-8 text-center">
-              <p className="text-sm font-bold uppercase tracking-wider text-red-600">Prefere pagar uma vez no ano?</p>
-              <h3 className="text-2xl md:text-3xl font-black mt-1">Planos anuais</h3>
-              <div className="flex flex-wrap items-end justify-center gap-x-6 gap-y-2 mt-4">
-                <span className="text-3xl md:text-4xl font-black">R$ 970</span>
-                <span className="text-muted-foreground font-bold">·</span>
-                <span className="text-3xl md:text-4xl font-black">R$ 1.970</span>
-                <span className="text-muted-foreground font-bold">·</span>
-                <span className="text-3xl md:text-4xl font-black">R$ 2.970</span>
-              </div>
-              <p className="text-sm text-muted-foreground mt-3">Três níveis anuais — escolha o seu no checkout. Pix ou cartão.</p>
-              <a
-                href={CHECKOUT_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-6 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-cta text-primary-foreground font-bold uppercase tracking-wide shadow-cta hover:brightness-110 transition-all h-12 px-8"
-              >
-                <Zap className="w-5 h-5" /> Ver planos anuais
-              </a>
-            </div>
+          {/* Anual com escassez — mesma lógica de urgência dos lotes (R$ 397/mês é só âncora) */}
+          <p className="text-center text-sm font-bold uppercase tracking-wider text-muted-foreground mt-12">
+            Anual promocional de lançamento · 20 vagas por lote
+          </p>
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mt-5">
+            {ANNUAL_TIERS.map((t) => (
+              <TierCard key={t.preco} t={t} unidade="/ano" cta={`Garantir anual · R$ ${t.preco}`} />
+            ))}
           </div>
+          <p className="text-center text-sm text-muted-foreground mt-5 max-w-2xl mx-auto">
+            O anual por <strong className="text-foreground">R$ 970/ano</strong> é o 1º lote (20 vagas):
+            corre antes de esgotar — ao fechar, o preço sobe para R$ 1.970 e depois R$ 2.970.
+          </p>
 
           {/* Créditos + pagamentos */}
           <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto mt-6">
             <div className="bg-card border border-border rounded-2xl p-6 flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-cta flex items-center justify-center text-primary-foreground shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-[#E8552B] flex items-center justify-center text-white shrink-0">
                 <Gift className="w-6 h-6" />
               </div>
               <div>
@@ -435,13 +436,13 @@ function Lancamento() {
             </div>
             <div className="bg-card border border-border rounded-2xl p-6">
               <div className="flex items-center gap-2 mb-3">
-                <CreditCard className="w-5 h-5 text-red-600" />
+                <CreditCard className="w-5 h-5 text-[#E8552B]" />
                 <h3 className="font-black text-lg">Formas de pagamento</h3>
               </div>
               <ul className="flex flex-wrap gap-2">
                 {PAGAMENTOS.map((p) => (
                   <li key={p} className="inline-flex items-center gap-1.5 bg-secondary border border-border rounded-full px-3 py-1 text-sm font-semibold">
-                    <Repeat className="w-3.5 h-3.5 text-red-600" /> {p}
+                    <Repeat className="w-3.5 h-3.5 text-[#E8552B]" /> {p}
                   </li>
                 ))}
               </ul>
@@ -451,14 +452,14 @@ function Lancamento() {
           {/* Garantia + teste */}
           <div className="max-w-5xl mx-auto mt-6 grid sm:grid-cols-2 gap-6">
             <div className="bg-card border border-border rounded-2xl p-6 flex items-center gap-4">
-              <ShieldCheck className="w-10 h-10 text-red-600 shrink-0" />
+              <ShieldCheck className="w-10 h-10 text-[#E8552B] shrink-0" />
               <div>
                 <p className="font-black">Garantia de 7 dias</p>
                 <p className="text-sm text-muted-foreground">Não gostou? Devolvemos seu dinheiro.</p>
               </div>
             </div>
             <div className="bg-card border border-border rounded-2xl p-6 flex items-center gap-4">
-              <BadgeCheck className="w-10 h-10 text-red-600 shrink-0" />
+              <BadgeCheck className="w-10 h-10 text-[#E8552B] shrink-0" />
               <div>
                 <p className="font-black">Teste grátis de 2 dias</p>
                 <p className="text-sm text-muted-foreground">Experimente antes de assinar.</p>
@@ -468,14 +469,14 @@ function Lancamento() {
         </div>
       </section>
 
-      {/* Slogan (único bloco vermelho) */}
-      <section className="py-16 bg-gradient-cta text-primary-foreground text-center">
+      {/* Slogan (bloco verde da logo) */}
+      <section className="py-16 bg-[#0F1F1A] text-[#F3EFE6] text-center">
         <div className="container mx-auto px-4">
           <p className="text-3xl md:text-5xl font-black">
-            Monte seus cálculos trabalhistas sem limite ou moderação de IA.
+            Monte seus cálculos trabalhistas <span className="text-[#E8552B]">sem limite ou moderação de IA</span>.
           </p>
-          <p className="opacity-90 mt-3 max-w-xl mx-auto">Assinatura sem crédito por uso: gere quantos cálculos precisar.</p>
-          <a href="#planos" className="mt-7 inline-flex items-center justify-center gap-2 rounded-xl bg-white text-red-700 font-bold uppercase tracking-wide shadow-cta hover:brightness-95 transition-all h-12 px-8">
+          <p className="opacity-80 mt-3 max-w-xl mx-auto">Assinatura sem crédito por uso: gere quantos cálculos precisar.</p>
+          <a href="#planos" className="mt-7 inline-flex items-center justify-center gap-2 rounded-xl bg-[#E8552B] text-white font-bold uppercase tracking-wide shadow-cta hover:brightness-110 transition-all h-12 px-8">
             <Zap className="w-5 h-5" /> Garantir vaga de lançamento
           </a>
         </div>
@@ -485,7 +486,7 @@ function Lancamento() {
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="text-center mb-10">
-            <p className="text-sm font-bold uppercase tracking-wider text-red-600 mb-2">Dúvidas</p>
+            <p className="text-sm font-bold uppercase tracking-wider text-[#E8552B] mb-2">Dúvidas</p>
             <h2 className="text-3xl md:text-4xl font-black">Perguntas frequentes</h2>
           </div>
           <div className="space-y-3">
@@ -499,14 +500,14 @@ function Lancamento() {
         </div>
       </section>
 
-      <footer className="bg-secondary border-t border-border py-10 text-center text-sm text-muted-foreground">
+      <footer className="bg-[#0F1F1A] py-10 text-center text-sm text-[#F3EFE6]/70">
         <div className="container mx-auto px-4">
           <img src="/calc-machine-connect/logo.svg" alt="Calc Machine Connect" className="h-9 w-auto mx-auto mb-3 rounded" />
-          <p>Um produto <strong className="text-foreground">Ensino Plus</strong> · © 2026 Ensino Plus. Todos os direitos reservados.</p>
+          <p>Um produto <strong className="text-white">Ensino Plus</strong> · © 2026 Ensino Plus. Todos os direitos reservados.</p>
           <p className="mt-2">
-            <a href={CHECKOUT_URL} className="underline hover:text-foreground">Assinar</a> ·{" "}
-            <a href="#planos" className="underline hover:text-foreground">Planos</a> ·{" "}
-            <a href="https://wa.me/5585996641461" target="_blank" rel="noreferrer" className="underline hover:text-foreground">Suporte</a>
+            <a href={CHECKOUT_URL} className="underline hover:text-white">Assinar</a> ·{" "}
+            <a href="#planos" className="underline hover:text-white">Planos</a> ·{" "}
+            <a href="https://wa.me/5585996641461" target="_blank" rel="noreferrer" className="underline hover:text-white">Suporte</a>
           </p>
         </div>
       </footer>
