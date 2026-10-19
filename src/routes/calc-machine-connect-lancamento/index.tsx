@@ -148,15 +148,16 @@ function Lancamento() {
               <div className="inline-flex items-center gap-2 bg-red-100 text-red-700 border border-red-200 rounded-full px-4 py-1.5 text-xs font-black uppercase tracking-wider mb-4">
                 <Zap className="w-4 h-4" /> Calc Machine Connect
               </div>
-              <h1 className="text-4xl md:text-6xl font-black leading-[1.05] mb-5">
-                A sentença entra, o <span className="text-red-600">.pjc</span> sai — pela sua IA
+              <h1 className="text-4xl md:text-6xl font-black leading-[1.05] mb-4">
+                Monte seus cálculos trabalhistas{" "}
+                <span className="text-red-600">sem limite ou moderação de IA</span>
               </h1>
-              <p className="text-lg md:text-xl text-muted-foreground mb-4">
-                Monte cálculos trabalhistas no PJe-Calc direto do Claude, ChatGPT ou Gemini. Sem
-                digitar verba por verba, sem pagar crédito por uso.
+              <p className="text-xl md:text-2xl font-black text-foreground mb-3">
+                A sentença entra, o <span className="text-red-600">.pjc</span> sai — pela sua IA.
               </p>
-              <p className="text-xl md:text-2xl font-black text-red-600 mb-8">
-                Monte seus cálculos trabalhistas sem limite ou moderação de IA.
+              <p className="text-lg md:text-xl text-muted-foreground mb-8">
+                No PJe-Calc, direto do Claude, ChatGPT ou Gemini — sem digitar verba por verba e sem
+                pagar crédito por uso.
               </p>
               <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
                 <a
