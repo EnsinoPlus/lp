@@ -66,6 +66,25 @@ function CalcMachineConnect() {
     });
     abas[0]?.style.setProperty("color", "#fff");
 
+    const copiar = Array.from(raiz.querySelectorAll<HTMLButtonElement>("#conectores .conector .copiar"));
+    const ligarCopiar = (b: HTMLButtonElement) => async () => {
+      const original = b.textContent;
+      try {
+        await navigator.clipboard.writeText(b.parentElement?.querySelector("code")?.textContent ?? "");
+        b.textContent = "Copiado";
+      } catch {
+        b.textContent = "Selecione e copie";
+      }
+      setTimeout(() => {
+        b.textContent = original;
+      }, 1500);
+    };
+    const handlersCopiar = copiar.map((b) => {
+      const h = ligarCopiar(b);
+      b.addEventListener("click", h);
+      return [b, h] as const;
+    });
+
     let cancelado = false;
     (async () => {
       const msg = raiz.querySelector<HTMLElement>("#planos-msg");
@@ -111,6 +130,7 @@ function CalcMachineConnect() {
     return () => {
       cancelado = true;
       handlers.forEach(([b, h]) => b.removeEventListener("click", h));
+      handlersCopiar.forEach(([b, h]) => b.removeEventListener("click", h));
     };
   }, []);
 
@@ -157,6 +177,12 @@ const CSS = String.raw`.cmc { --ink:#0F1F1A; --paper:#F3EFE6; --signal:#E8552B; 
 .cmc .cartao h3 { font-size: 1.15rem; margin-bottom: 8px; }
 .cmc .cartao p { color: var(--muted); font-size: .98rem; }
 .cmc .num { display: inline-flex; width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: var(--paper); font-weight: 700; align-items: center; justify-content: center; margin-bottom: 14px; font-family: "Space Grotesk", sans-serif; }
+.cmc .conector { display: flex; flex-direction: column; gap: 10px; }
+.cmc .conector .sel { align-self: flex-start; font-size: .78rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: #e6f4ea; color: #1b6e3a; }
+.cmc .conector .sel.breve { background: #f1ece0; color: #7a6a3a; }
+.cmc .conector .end { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: auto; }
+.cmc .conector code { flex: 1 1 200px; min-width: 0; overflow-wrap: anywhere; background: #fff; border: 1px solid var(--line); padding: 6px 9px; border-radius: 8px; font-size: .82rem; }
+.cmc .conector .copiar { cursor: pointer; border: 1px solid var(--line); background: var(--card); border-radius: 8px; padding: 6px 12px; font-weight: 700; font-size: .85rem; }
 .cmc .escuro { background: var(--ink); color: var(--paper); }
 .cmc .escuro .lead, .cmc .escuro .cartao p { color: #b7c2bc; }
 .cmc .escuro .cartao { background: #16302a; border-color: #2b4a42; }
@@ -199,7 +225,7 @@ const HTML = String.raw`
   <div class="wrap">
     <div class="topo">
       <img src="/calc-machine-connect/logo.svg" alt="Calc Machine Connect" style="border-radius:8px">
-      <nav><a class="oculta" href="#recursos">Recursos</a><a class="oculta" href="#conectar">Conectar</a><a href="#planos">Planos</a><a class="oculta" href="https://suiteplus.ensinoplus.com.br/register">Criar conta</a><a class="btn" href="https://assinaturas.ensinoplus.com.br/assinar" style="padding:9px 18px;opacity:1">Assinar</a></nav>
+      <nav><a class="oculta" href="#recursos">Recursos</a><a class="oculta" href="#conectar">Conectar</a><a class="oculta" href="#conectores">Todos os conectores</a><a href="#planos">Planos</a><a class="oculta" href="https://suiteplus.ensinoplus.com.br/register">Criar conta</a><a class="btn" href="https://assinaturas.ensinoplus.com.br/assinar" style="padding:9px 18px;opacity:1">Assinar</a></nav>
     </div>
     <div class="hero">
       <div>
@@ -318,6 +344,28 @@ const HTML = String.raw`
   </div>
 </section>
 
+<section id="conectores">
+  <div class="wrap">
+    <div class="eyebrow">Conectores</div>
+    <h2>Todos os conectores da Ensino Plus</h2>
+    <p class="lead">Cada conector é um endereço que você cola no Claude, ChatGPT ou Gemini (Configurações → Conectores → Adicionar conector personalizado). Entre com a sua conta da Suite quando a IA pedir.</p>
+    <div class="grade">
+      <div class="cartao conector"><span class="sel">Disponível</span><h3>Calc Machine Connect</h3><p>Monte cálculos trabalhistas no PJe-Calc pela sua IA: a sentença entra e o arquivo .pjc sai. Inclui contracheques, cartão de ponto, FGTS e ausências. Requer assinatura (há teste grátis).</p>
+        <div class="end"><code>https://suite.ensinoplus.com.br/mcp-usuario</code><button class="copiar" type="button">Copiar</button></div></div>
+      <div class="cartao conector"><span class="sel">Disponível</span><h3>DataJud e Comunica PJe (CNJ)</h3><p>Consulte processos públicos de 91 tribunais e as publicações oficiais do Diário de Justiça Eletrônico Nacional, por número do processo ou pela OAB, com linha do tempo. Gratuito.</p>
+        <div class="end"><code>https://suite.ensinoplus.com.br/mcp-datajud</code><button class="copiar" type="button">Copiar</button></div></div>
+      <div class="cartao conector"><span class="sel">Disponível</span><h3>CCT — Clube do Cálculo Trabalhista</h3><p>Cursos do Prof. Vicelmo: consulte aulas, favoritas e certificados pela sua IA. O conteúdo depende do seu plano no CCT. Somente leitura.</p>
+        <div class="end"><code>https://suite.ensinoplus.com.br/mcp-cct</code><button class="copiar" type="button">Copiar</button></div></div>
+      <div class="cartao conector"><span class="sel">Disponível</span><h3>Financeiro Ensino Plus</h3><p>Consulte lançamentos, relatórios, categorias e transferências do financeiro da sua instituição pela sua IA.</p>
+        <div class="end"><code>https://financeiro.ensinoplus.com.br/mcp</code><button class="copiar" type="button">Copiar</button></div></div>
+      <div class="cartao conector"><span class="sel">Disponível</span><h3>Ferramentas Ensino Plus</h3><p>Catálogo gratuito, sem login: a IA conhece todos os conectores e explica como instalar cada um, com listas em cartões.</p>
+        <div class="end"><code>https://suite.ensinoplus.com.br/mcp-ensinoplus</code><button class="copiar" type="button">Copiar</button></div></div>
+      <div class="cartao conector"><span class="sel breve">Em breve</span><h3>Dossiê Jud</h3><p>Consulta de dados cadastrais de pessoas e empresas pela sua IA. O conector está pronto e aguarda a abertura da venda.</p></div>
+    </div>
+    <p class="nota" style="color:var(--muted)">Para o passo a passo e as skills que ensinam a IA a usar cada conector, veja a página <a href="https://suite.ensinoplus.com.br/conectar-ia">Conecte sua IA</a>.</p>
+  </div>
+</section>
+
 <section>
   <div class="wrap">
     <div class="eyebrow">Dúvidas</div>
@@ -339,7 +387,7 @@ const HTML = String.raw`
   <div class="wrap">
     <img src="/calc-machine-connect/logo.svg" alt="Calc Machine Connect" style="border-radius:8px">
     <p>Um produto <strong>Ensino Plus</strong>. © 2026 Ensino Plus. Todos os direitos reservados.</p>
-    <p style="margin-top:8px"><a href="https://assinaturas.ensinoplus.com.br/assinar">Assinar</a> · <a href="https://suite.ensinoplus.com.br/conectar-ia">Conectar minha IA</a> · <a href="https://suiteplus.ensinoplus.com.br/register">Criar conta</a> · <a href="https://wa.me/5585996641461" target="_blank" rel="noopener">Suporte</a></p>
+    <p style="margin-top:8px"><a href="https://assinaturas.ensinoplus.com.br/assinar">Assinar</a> · <a href="https://suite.ensinoplus.com.br/conectar-ia">Conectar minha IA</a> · <a href="#conectores">Todos os conectores</a> · <a href="https://suiteplus.ensinoplus.com.br/register">Criar conta</a> · <a href="https://wa.me/5585996641461" target="_blank" rel="noopener">Suporte</a></p>
   </div>
 </footer>
 
