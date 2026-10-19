@@ -31,12 +31,12 @@ export const Route = createFileRoute("/calc-machine-connect-lancamento/")({
       {
         name: "description",
         content:
-          "Seus cálculos trabalhistas no PJe-Calc direto do Claude, ChatGPT ou Gemini. A sentença entra, o .pjc sai. Oferta de lançamento com vagas limitadas. Use sem moderação.",
+          "Seus cálculos trabalhistas no PJe-Calc direto do Claude, ChatGPT ou Gemini. A sentença entra, o .pjc sai. Oferta de lançamento com vagas limitadas. Monte seus cálculos trabalhistas sem limite ou moderação de IA.",
       },
       { property: "og:title", content: "Calc Machine Connect — Lançamento" },
       {
         property: "og:description",
-        content: "A sentença entra, o .pjc sai. Oferta de lançamento, vagas limitadas. Use sem moderação.",
+        content: "A sentença entra, o .pjc sai. Oferta de lançamento, vagas limitadas. Monte seus cálculos trabalhistas sem limite ou moderação de IA.",
       },
     ],
     links: [
@@ -93,7 +93,7 @@ const PAGAMENTOS = ["Pix à vista", "Pix automático (recorrente)", "Cartão de 
 
 const FAQ = [
   { q: "Como funcionam os lotes de lançamento?", a: "Só o lote atual fica aberto. Quando ele preenche as 20 vagas, trava e o próximo lote abre pelo valor seguinte. Depois dos 3 lotes, a assinatura volta para R$ 397/mês." },
-  { q: "Tem cobrança por crédito a cada cálculo?", a: "Não. Com a assinatura ativa, o uso do conector não consome créditos — use sem moderação." },
+  { q: "Tem cobrança por crédito a cada cálculo?", a: "Não. Com a assinatura ativa, o uso do conector não consome créditos — sem limite de uso." },
   { q: "Quais IAs funcionam?", a: "Claude, ChatGPT e Gemini (e qualquer ferramenta que aceite conectores MCP personalizados usando o mesmo endereço)." },
   { q: "Como funciona a garantia?", a: "Você tem 7 dias de garantia. Se não for pra você, é só pedir o reembolso dentro do prazo." },
   { q: "E o teste grátis?", a: "Dá pra experimentar por 2 dias antes de assinar, com até 5 gerações de .pjc, 1 uso do PJe-Calc e 10 anexos." },
@@ -155,7 +155,9 @@ function Lancamento() {
                 Monte cálculos trabalhistas no PJe-Calc direto do Claude, ChatGPT ou Gemini. Sem
                 digitar verba por verba, sem pagar crédito por uso.
               </p>
-              <p className="text-xl md:text-2xl font-black text-red-600 mb-8">“Use sem moderação.”</p>
+              <p className="text-xl md:text-2xl font-black text-red-600 mb-8">
+                Monte seus cálculos trabalhistas sem limite ou moderação de IA.
+              </p>
               <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
                 <a
                   href="#planos"
@@ -340,7 +342,10 @@ function Lancamento() {
           </div>
 
           {/* Lotes com bloqueio */}
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mt-10">
+          <p className="text-center text-sm font-bold uppercase tracking-wider text-muted-foreground mt-10">
+            Mensal promocional de lançamento · 20 vagas por lote
+          </p>
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mt-5">
             {LAUNCH_TIERS.map((t) => {
               const locked = t.status === "bloqueado";
               return (
@@ -390,25 +395,26 @@ function Lancamento() {
             trava</strong> assim que as 20 primeiras vagas forem preenchidas.
           </p>
 
-          {/* Mensal + Anual */}
-          <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto mt-8">
-            <div className="bg-card border border-border rounded-2xl p-7">
-              <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Mensal (valor cheio)</p>
-              <p className="text-4xl font-black mt-2">R$ 397<span className="text-lg font-bold text-muted-foreground">/mês</span></p>
-              <p className="text-sm text-muted-foreground mt-3">O valor normal da assinatura mensal, após o lançamento.</p>
-              <a href={CHECKOUT_URL} target="_blank" rel="noreferrer" className="mt-5 w-full inline-flex items-center justify-center rounded-xl border-2 border-red-500 text-red-600 font-bold uppercase tracking-wide hover:bg-red-50 transition-all h-12 px-6">
-                Assinar mensal
-              </a>
-            </div>
-            <div className="bg-card border border-border rounded-2xl p-7">
-              <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Anual</p>
-              <div className="flex flex-wrap items-end gap-x-4 gap-y-1 mt-2">
-                <p className="text-4xl font-black">R$ 970</p>
-                <p className="text-lg font-bold text-muted-foreground">· R$ 1.970 · R$ 2.970</p>
+          {/* Anual (o mensal cheio de R$ 397 é só âncora, não é assinável) */}
+          <div className="max-w-3xl mx-auto mt-10">
+            <div className="bg-card border-2 border-border rounded-2xl p-8 text-center">
+              <p className="text-sm font-bold uppercase tracking-wider text-red-600">Prefere pagar uma vez no ano?</p>
+              <h3 className="text-2xl md:text-3xl font-black mt-1">Planos anuais</h3>
+              <div className="flex flex-wrap items-end justify-center gap-x-6 gap-y-2 mt-4">
+                <span className="text-3xl md:text-4xl font-black">R$ 970</span>
+                <span className="text-muted-foreground font-bold">·</span>
+                <span className="text-3xl md:text-4xl font-black">R$ 1.970</span>
+                <span className="text-muted-foreground font-bold">·</span>
+                <span className="text-3xl md:text-4xl font-black">R$ 2.970</span>
               </div>
-              <p className="text-sm text-muted-foreground mt-3">Planos anuais para travar o preço o ano todo. Escolha o nível no checkout.</p>
-              <a href={CHECKOUT_URL} target="_blank" rel="noreferrer" className="mt-5 w-full inline-flex items-center justify-center rounded-xl border-2 border-red-500 text-red-600 font-bold uppercase tracking-wide hover:bg-red-50 transition-all h-12 px-6">
-                Ver planos anuais
+              <p className="text-sm text-muted-foreground mt-3">Três níveis anuais — escolha o seu no checkout. Pix ou cartão.</p>
+              <a
+                href={CHECKOUT_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-6 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-cta text-primary-foreground font-bold uppercase tracking-wide shadow-cta hover:brightness-110 transition-all h-12 px-8"
+              >
+                <Zap className="w-5 h-5" /> Ver planos anuais
               </a>
             </div>
           </div>
@@ -464,7 +470,9 @@ function Lancamento() {
       {/* Slogan (único bloco vermelho) */}
       <section className="py-16 bg-gradient-cta text-primary-foreground text-center">
         <div className="container mx-auto px-4">
-          <p className="text-3xl md:text-5xl font-black">Use sem moderação.</p>
+          <p className="text-3xl md:text-5xl font-black">
+            Monte seus cálculos trabalhistas sem limite ou moderação de IA.
+          </p>
           <p className="opacity-90 mt-3 max-w-xl mx-auto">Assinatura sem crédito por uso: gere quantos cálculos precisar.</p>
           <a href="#planos" className="mt-7 inline-flex items-center justify-center gap-2 rounded-xl bg-white text-red-700 font-bold uppercase tracking-wide shadow-cta hover:brightness-95 transition-all h-12 px-8">
             <Zap className="w-5 h-5" /> Garantir vaga de lançamento
