@@ -31,6 +31,7 @@ import { Route as EbookPjecalc2026ObrigadoAnaliseCreditoRouteImport } from './ro
 import { Route as EbookPjecalc2026ObrigadoAguardandoPagamentoRouteImport } from './routes/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
 import { Route as EbookPjecalc2026ObrigadoRouteImport } from './routes/ebook-pjecalc-2026/obrigado'
 import { Route as CctObrigadoRouteImport } from './routes/cct/obrigado'
+import { Route as CalcMachineConnectAssinarIndexRouteImport } from './routes/calc-machine-connect/assinar/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -152,6 +153,12 @@ const CctObrigadoRoute = CctObrigadoRouteImport.update({
   path: '/cct/obrigado',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CalcMachineConnectAssinarIndexRoute =
+  CalcMachineConnectAssinarIndexRouteImport.update({
+    id: '/calc-machine-connect/assinar/',
+    path: '/calc-machine-connect/assinar/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -176,6 +183,7 @@ export interface FileRoutesByFullPath {
   '/suiteplus-promo-1010-oferta/': typeof SuiteplusPromo1010OfertaIndexRoute
   '/suiteplus-promo-1010-ressaca/': typeof SuiteplusPromo1010RessacaIndexRoute
   '/suiteplus-promo-1010/': typeof SuiteplusPromo1010IndexRoute
+  '/calc-machine-connect/assinar/': typeof CalcMachineConnectAssinarIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -200,6 +208,7 @@ export interface FileRoutesByTo {
   '/suiteplus-promo-1010-oferta': typeof SuiteplusPromo1010OfertaIndexRoute
   '/suiteplus-promo-1010-ressaca': typeof SuiteplusPromo1010RessacaIndexRoute
   '/suiteplus-promo-1010': typeof SuiteplusPromo1010IndexRoute
+  '/calc-machine-connect/assinar': typeof CalcMachineConnectAssinarIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -225,6 +234,7 @@ export interface FileRoutesById {
   '/suiteplus-promo-1010-oferta/': typeof SuiteplusPromo1010OfertaIndexRoute
   '/suiteplus-promo-1010-ressaca/': typeof SuiteplusPromo1010RessacaIndexRoute
   '/suiteplus-promo-1010/': typeof SuiteplusPromo1010IndexRoute
+  '/calc-machine-connect/assinar/': typeof CalcMachineConnectAssinarIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -251,6 +261,7 @@ export interface FileRouteTypes {
     | '/suiteplus-promo-1010-oferta/'
     | '/suiteplus-promo-1010-ressaca/'
     | '/suiteplus-promo-1010/'
+    | '/calc-machine-connect/assinar/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -275,6 +286,7 @@ export interface FileRouteTypes {
     | '/suiteplus-promo-1010-oferta'
     | '/suiteplus-promo-1010-ressaca'
     | '/suiteplus-promo-1010'
+    | '/calc-machine-connect/assinar'
   id:
     | '__root__'
     | '/'
@@ -299,6 +311,7 @@ export interface FileRouteTypes {
     | '/suiteplus-promo-1010-oferta/'
     | '/suiteplus-promo-1010-ressaca/'
     | '/suiteplus-promo-1010/'
+    | '/calc-machine-connect/assinar/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -324,6 +337,7 @@ export interface RootRouteChildren {
   SuiteplusPromo1010OfertaIndexRoute: typeof SuiteplusPromo1010OfertaIndexRoute
   SuiteplusPromo1010RessacaIndexRoute: typeof SuiteplusPromo1010RessacaIndexRoute
   SuiteplusPromo1010IndexRoute: typeof SuiteplusPromo1010IndexRoute
+  CalcMachineConnectAssinarIndexRoute: typeof CalcMachineConnectAssinarIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -482,6 +496,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CctObrigadoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/calc-machine-connect/assinar/': {
+      id: '/calc-machine-connect/assinar/'
+      path: '/calc-machine-connect/assinar'
+      fullPath: '/calc-machine-connect/assinar/'
+      preLoaderRoute: typeof CalcMachineConnectAssinarIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -511,6 +532,7 @@ const rootRouteChildren: RootRouteChildren = {
   SuiteplusPromo1010OfertaIndexRoute: SuiteplusPromo1010OfertaIndexRoute,
   SuiteplusPromo1010RessacaIndexRoute: SuiteplusPromo1010RessacaIndexRoute,
   SuiteplusPromo1010IndexRoute: SuiteplusPromo1010IndexRoute,
+  CalcMachineConnectAssinarIndexRoute: CalcMachineConnectAssinarIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

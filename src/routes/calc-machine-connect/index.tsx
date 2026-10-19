@@ -30,6 +30,7 @@ const ASSINATURAS_API = "https://assinaturas.ensinoplus.com.br/api/public/mcp/pl
 const REGISTRO_URL = "https://suiteplus.ensinoplus.com.br/register";
 
 type Plano = {
+  id: string | number;
   label: string;
   description?: string;
   name: string;
@@ -101,7 +102,7 @@ function CalcMachineConnect() {
               const renova = (p.renovam_sozinhas || []).length
                 ? "Renova sozinho no Pix Automático ou cartão."
                 : "Pagamento sem renovação automática.";
-              return `<div class="plano" style="color:var(--ink)"><h3>${esc(p.label)}</h3><div class="preco">${brl(menor)}<small> a partir de</small></div><p>${p.description ? esc(p.description) + " " : ""}${renova}</p><a class="btn" href="${esc(p.link)}">Assinar ${esc(p.label.toLowerCase())}</a></div>`;
+              return `<div class="plano" style="color:var(--ink)"><h3>${esc(p.label)}</h3><div class="preco">${brl(menor)}<small> a partir de</small></div><p>${p.description ? esc(p.description) + " " : ""}${renova}</p><a class="btn" href="/calc-machine-connect/assinar?plano=${encodeURIComponent(String(p.id))}">Assinar ${esc(p.label.toLowerCase())}</a></div>`;
             })
             .join("");
         }
@@ -123,7 +124,7 @@ function CalcMachineConnect() {
         }
       } catch {
         msg.innerHTML =
-          'Veja os planos e valores atuais na página de assinatura.<br><br><a class="btn" href="https://assinaturas.ensinoplus.com.br/assinar">Ver planos e assinar</a>';
+          'Veja os planos e valores atuais na página de assinatura.<br><br><a class="btn" href="/calc-machine-connect/assinar">Ver planos e assinar</a>';
       }
     })();
 
@@ -225,14 +226,14 @@ const HTML = String.raw`
   <div class="wrap">
     <div class="topo">
       <img src="/calc-machine-connect/logo.svg" alt="Calc Machine Connect" style="border-radius:8px">
-      <nav><a class="oculta" href="#recursos">Recursos</a><a class="oculta" href="#conectar">Conectar</a><a class="oculta" href="#conectores">Todos os conectores</a><a href="#planos">Planos</a><a class="oculta" href="https://suiteplus.ensinoplus.com.br/register">Criar conta</a><a class="btn" href="https://assinaturas.ensinoplus.com.br/assinar" style="padding:9px 18px;opacity:1">Assinar</a></nav>
+      <nav><a class="oculta" href="#recursos">Recursos</a><a class="oculta" href="#conectar">Conectar</a><a class="oculta" href="#conectores">Todos os conectores</a><a href="#planos">Planos</a><a class="oculta" href="https://suiteplus.ensinoplus.com.br/register">Criar conta</a><a class="btn" href="/calc-machine-connect/assinar" style="padding:9px 18px;opacity:1">Assinar</a></nav>
     </div>
     <div class="hero">
       <div>
         <h1>Seu cálculo trabalhista <em>pronto no PJe-Calc</em>, pela sua IA.</h1>
         <p>Entregue a sentença ao Claude, ChatGPT ou Gemini e receba o arquivo <strong>.pjc</strong> montado, liquidado e conferido. Sem digitar verba por verba.</p>
         <div class="botoes">
-          <a class="btn" id="cta-principal" href="https://assinaturas.ensinoplus.com.br/assinar">Assinar agora</a>
+          <a class="btn" id="cta-principal" href="/calc-machine-connect/assinar">Assinar agora</a>
           <a class="btn sec" href="#planos">Ver planos</a>
         </div>
         <p class="nota">Assinatura simples, sem créditos por uso. Dá para assinar só com o e-mail. Para usar na sua IA, use a conta da Suite (grátis) com o <strong>mesmo e-mail</strong> da assinatura.</p>
@@ -387,7 +388,7 @@ const HTML = String.raw`
   <div class="wrap">
     <img src="/calc-machine-connect/logo.svg" alt="Calc Machine Connect" style="border-radius:8px">
     <p>Um produto <strong>Ensino Plus</strong>. © 2026 Ensino Plus. Todos os direitos reservados.</p>
-    <p style="margin-top:8px"><a href="https://assinaturas.ensinoplus.com.br/assinar">Assinar</a> · <a href="https://suite.ensinoplus.com.br/conectar-ia">Conectar minha IA</a> · <a href="#conectores">Todos os conectores</a> · <a href="https://suiteplus.ensinoplus.com.br/register">Criar conta</a> · <a href="https://wa.me/5585996641461" target="_blank" rel="noopener">Suporte</a></p>
+    <p style="margin-top:8px"><a href="/calc-machine-connect/assinar">Assinar</a> · <a href="https://suite.ensinoplus.com.br/conectar-ia">Conectar minha IA</a> · <a href="#conectores">Todos os conectores</a> · <a href="https://suiteplus.ensinoplus.com.br/register">Criar conta</a> · <a href="https://wa.me/5585996641461" target="_blank" rel="noopener">Suporte</a></p>
   </div>
 </footer>
 
