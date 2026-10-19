@@ -27,11 +27,11 @@ import { Route as CctIndexRouteImport } from './routes/cct/index'
 import { Route as CalcMachineIndexRouteImport } from './routes/calc-machine/index'
 import { Route as CalcMachineConnectIndexRouteImport } from './routes/calc-machine-connect/index'
 import { Route as CalcMachineConnectLancamentoIndexRouteImport } from './routes/calc-machine-connect-lancamento/index'
-import { Route as AssinarIndexRouteImport } from './routes/assinar/index'
 import { Route as EbookPjecalc2026ObrigadoAnaliseCreditoRouteImport } from './routes/ebook-pjecalc-2026/obrigado-analise-credito'
 import { Route as EbookPjecalc2026ObrigadoAguardandoPagamentoRouteImport } from './routes/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
 import { Route as EbookPjecalc2026ObrigadoRouteImport } from './routes/ebook-pjecalc-2026/obrigado'
 import { Route as CctObrigadoRouteImport } from './routes/cct/obrigado'
+import { Route as CalcMachineConnectAssinarIndexRouteImport } from './routes/calc-machine-connect/assinar/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -130,11 +130,6 @@ const CalcMachineConnectLancamentoIndexRoute =
     path: '/calc-machine-connect-lancamento/',
     getParentRoute: () => rootRouteImport,
   } as any)
-const AssinarIndexRoute = AssinarIndexRouteImport.update({
-  id: '/assinar/',
-  path: '/assinar/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const EbookPjecalc2026ObrigadoAnaliseCreditoRoute =
   EbookPjecalc2026ObrigadoAnaliseCreditoRouteImport.update({
     id: '/ebook-pjecalc-2026/obrigado-analise-credito',
@@ -158,6 +153,12 @@ const CctObrigadoRoute = CctObrigadoRouteImport.update({
   path: '/cct/obrigado',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CalcMachineConnectAssinarIndexRoute =
+  CalcMachineConnectAssinarIndexRouteImport.update({
+    id: '/calc-machine-connect/assinar/',
+    path: '/calc-machine-connect/assinar/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -165,7 +166,6 @@ export interface FileRoutesByFullPath {
   '/ebook-pjecalc-2026/obrigado': typeof EbookPjecalc2026ObrigadoRoute
   '/ebook-pjecalc-2026/obrigado-aguardando-pagamento': typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
   '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
-  '/assinar/': typeof AssinarIndexRoute
   '/calc-machine-connect-lancamento/': typeof CalcMachineConnectLancamentoIndexRoute
   '/calc-machine-connect/': typeof CalcMachineConnectIndexRoute
   '/calc-machine/': typeof CalcMachineIndexRoute
@@ -183,6 +183,7 @@ export interface FileRoutesByFullPath {
   '/suiteplus-promo-1010-oferta/': typeof SuiteplusPromo1010OfertaIndexRoute
   '/suiteplus-promo-1010-ressaca/': typeof SuiteplusPromo1010RessacaIndexRoute
   '/suiteplus-promo-1010/': typeof SuiteplusPromo1010IndexRoute
+  '/calc-machine-connect/assinar/': typeof CalcMachineConnectAssinarIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -190,7 +191,6 @@ export interface FileRoutesByTo {
   '/ebook-pjecalc-2026/obrigado': typeof EbookPjecalc2026ObrigadoRoute
   '/ebook-pjecalc-2026/obrigado-aguardando-pagamento': typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
   '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
-  '/assinar': typeof AssinarIndexRoute
   '/calc-machine-connect-lancamento': typeof CalcMachineConnectLancamentoIndexRoute
   '/calc-machine-connect': typeof CalcMachineConnectIndexRoute
   '/calc-machine': typeof CalcMachineIndexRoute
@@ -208,6 +208,7 @@ export interface FileRoutesByTo {
   '/suiteplus-promo-1010-oferta': typeof SuiteplusPromo1010OfertaIndexRoute
   '/suiteplus-promo-1010-ressaca': typeof SuiteplusPromo1010RessacaIndexRoute
   '/suiteplus-promo-1010': typeof SuiteplusPromo1010IndexRoute
+  '/calc-machine-connect/assinar': typeof CalcMachineConnectAssinarIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -216,7 +217,6 @@ export interface FileRoutesById {
   '/ebook-pjecalc-2026/obrigado': typeof EbookPjecalc2026ObrigadoRoute
   '/ebook-pjecalc-2026/obrigado-aguardando-pagamento': typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
   '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
-  '/assinar/': typeof AssinarIndexRoute
   '/calc-machine-connect-lancamento/': typeof CalcMachineConnectLancamentoIndexRoute
   '/calc-machine-connect/': typeof CalcMachineConnectIndexRoute
   '/calc-machine/': typeof CalcMachineIndexRoute
@@ -234,6 +234,7 @@ export interface FileRoutesById {
   '/suiteplus-promo-1010-oferta/': typeof SuiteplusPromo1010OfertaIndexRoute
   '/suiteplus-promo-1010-ressaca/': typeof SuiteplusPromo1010RessacaIndexRoute
   '/suiteplus-promo-1010/': typeof SuiteplusPromo1010IndexRoute
+  '/calc-machine-connect/assinar/': typeof CalcMachineConnectAssinarIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -243,7 +244,6 @@ export interface FileRouteTypes {
     | '/ebook-pjecalc-2026/obrigado'
     | '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
     | '/ebook-pjecalc-2026/obrigado-analise-credito'
-    | '/assinar/'
     | '/calc-machine-connect-lancamento/'
     | '/calc-machine-connect/'
     | '/calc-machine/'
@@ -261,6 +261,7 @@ export interface FileRouteTypes {
     | '/suiteplus-promo-1010-oferta/'
     | '/suiteplus-promo-1010-ressaca/'
     | '/suiteplus-promo-1010/'
+    | '/calc-machine-connect/assinar/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -268,7 +269,6 @@ export interface FileRouteTypes {
     | '/ebook-pjecalc-2026/obrigado'
     | '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
     | '/ebook-pjecalc-2026/obrigado-analise-credito'
-    | '/assinar'
     | '/calc-machine-connect-lancamento'
     | '/calc-machine-connect'
     | '/calc-machine'
@@ -286,6 +286,7 @@ export interface FileRouteTypes {
     | '/suiteplus-promo-1010-oferta'
     | '/suiteplus-promo-1010-ressaca'
     | '/suiteplus-promo-1010'
+    | '/calc-machine-connect/assinar'
   id:
     | '__root__'
     | '/'
@@ -293,7 +294,6 @@ export interface FileRouteTypes {
     | '/ebook-pjecalc-2026/obrigado'
     | '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
     | '/ebook-pjecalc-2026/obrigado-analise-credito'
-    | '/assinar/'
     | '/calc-machine-connect-lancamento/'
     | '/calc-machine-connect/'
     | '/calc-machine/'
@@ -311,6 +311,7 @@ export interface FileRouteTypes {
     | '/suiteplus-promo-1010-oferta/'
     | '/suiteplus-promo-1010-ressaca/'
     | '/suiteplus-promo-1010/'
+    | '/calc-machine-connect/assinar/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -319,7 +320,6 @@ export interface RootRouteChildren {
   EbookPjecalc2026ObrigadoRoute: typeof EbookPjecalc2026ObrigadoRoute
   EbookPjecalc2026ObrigadoAguardandoPagamentoRoute: typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
   EbookPjecalc2026ObrigadoAnaliseCreditoRoute: typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
-  AssinarIndexRoute: typeof AssinarIndexRoute
   CalcMachineConnectLancamentoIndexRoute: typeof CalcMachineConnectLancamentoIndexRoute
   CalcMachineConnectIndexRoute: typeof CalcMachineConnectIndexRoute
   CalcMachineIndexRoute: typeof CalcMachineIndexRoute
@@ -337,6 +337,7 @@ export interface RootRouteChildren {
   SuiteplusPromo1010OfertaIndexRoute: typeof SuiteplusPromo1010OfertaIndexRoute
   SuiteplusPromo1010RessacaIndexRoute: typeof SuiteplusPromo1010RessacaIndexRoute
   SuiteplusPromo1010IndexRoute: typeof SuiteplusPromo1010IndexRoute
+  CalcMachineConnectAssinarIndexRoute: typeof CalcMachineConnectAssinarIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -467,13 +468,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalcMachineConnectLancamentoIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/assinar/': {
-      id: '/assinar/'
-      path: '/assinar'
-      fullPath: '/assinar/'
-      preLoaderRoute: typeof AssinarIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/ebook-pjecalc-2026/obrigado-analise-credito': {
       id: '/ebook-pjecalc-2026/obrigado-analise-credito'
       path: '/ebook-pjecalc-2026/obrigado-analise-credito'
@@ -502,6 +496,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CctObrigadoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/calc-machine-connect/assinar/': {
+      id: '/calc-machine-connect/assinar/'
+      path: '/calc-machine-connect/assinar'
+      fullPath: '/calc-machine-connect/assinar/'
+      preLoaderRoute: typeof CalcMachineConnectAssinarIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -513,7 +514,6 @@ const rootRouteChildren: RootRouteChildren = {
     EbookPjecalc2026ObrigadoAguardandoPagamentoRoute,
   EbookPjecalc2026ObrigadoAnaliseCreditoRoute:
     EbookPjecalc2026ObrigadoAnaliseCreditoRoute,
-  AssinarIndexRoute: AssinarIndexRoute,
   CalcMachineConnectLancamentoIndexRoute:
     CalcMachineConnectLancamentoIndexRoute,
   CalcMachineConnectIndexRoute: CalcMachineConnectIndexRoute,
@@ -532,6 +532,7 @@ const rootRouteChildren: RootRouteChildren = {
   SuiteplusPromo1010OfertaIndexRoute: SuiteplusPromo1010OfertaIndexRoute,
   SuiteplusPromo1010RessacaIndexRoute: SuiteplusPromo1010RessacaIndexRoute,
   SuiteplusPromo1010IndexRoute: SuiteplusPromo1010IndexRoute,
+  CalcMachineConnectAssinarIndexRoute: CalcMachineConnectAssinarIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

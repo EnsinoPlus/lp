@@ -6,7 +6,7 @@ import { useEffect } from "react";
 // que aceita chamadas de outros sites (CORS aberto). O CSS fica isolado em .asn.
 // Aceita ?plano=<id> para já deixar um plano marcado.
 
-export const Route = createFileRoute("/assinar/")({
+export const Route = createFileRoute("/calc-machine-connect/assinar/")({
   head: () => ({
     meta: [
       { title: "Assinar Calc Machine Connect" },
