@@ -18,9 +18,10 @@ import {
 
 // Página de LANÇAMENTO do Calc Machine Connect — identidade Ensino Plus (vermelho/branco), fundos claros.
 // Conteúdo baseado na página informativa /calc-machine-connect (que fica intacta) + camada de oferta.
-// Sem integração de pagamento aqui: todos os botões de plano vão para CHECKOUT_URL (troque pelo seu checkout).
+// Checkout interno (criado pelo time): /calc-machine-connect/assinar — puxa os planos da API,
+// aceita ?plano=<id>. Todos os botões apontam pra ele (a pessoa escolhe plano + Pix/cartão lá).
 // Os vídeos do Vimeo só tocam em domínios liberados na privacidade de cada vídeo — libere o domínio desta LP lá.
-const CHECKOUT_URL = "https://assinaturas.ensinoplus.com.br/assinar";
+const CHECKOUT_URL = "/calc-machine-connect/assinar";
 const SERVIDOR_MCP = "https://suite.ensinoplus.com.br/mcp-usuario";
 
 export const Route = createFileRoute("/calc-machine-connect-lancamento/")({
