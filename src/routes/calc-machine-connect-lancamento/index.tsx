@@ -193,11 +193,8 @@ function Lancamento() {
               <img
                 src="/calc-machine-connect/logo.svg"
                 alt="Calc Machine Connect"
-                className="h-11 w-auto mx-auto lg:mx-0 mb-6 rounded-lg"
+                className="h-11 w-auto mx-auto lg:mx-0 mb-7 rounded-lg"
               />
-              <div className="inline-flex items-center gap-2 bg-[#F7E0D6] text-[#E8552B] border border-[#E8552B]/25 rounded-full px-4 py-1.5 text-xs font-black uppercase tracking-wider mb-4">
-                <Zap className="w-4 h-4" /> Calc Machine Connect
-              </div>
               <h1 className="text-4xl md:text-6xl font-black leading-[1.05] mb-4">
                 Monte seus cálculos trabalhistas{" "}
                 <span className="text-[#E8552B]">sem limite ou moderação de IA</span>
