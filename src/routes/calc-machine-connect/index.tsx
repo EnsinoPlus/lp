@@ -286,7 +286,7 @@ const HTML = String.raw`
     <div class="grade">
       <div class="cartao"><div class="num">1</div><h3>Crie sua conta</h3><p>A conta da Suite é grátis e é com ela que você entra no conector. <strong>Use o mesmo e-mail</strong> da assinatura.</p><p style="margin-top:14px"><a class="btn" href="https://suiteplus.ensinoplus.com.br/register" style="padding:10px 18px;font-size:.95rem">Criar conta grátis</a></p></div>
       <div class="cartao"><div class="num">2</div><h3>Teste ou assine</h3><p>Experimente por <span class="dias-teste">2</span> dias ou assine direto com Pix ou cartão. Dá para assinar só informando o e-mail.</p><p style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="#planos" style="padding:10px 18px;font-size:.95rem">Ver planos</a><a class="btn sec" id="btn-teste" href="https://assinaturas.ensinoplus.com.br" hidden style="padding:10px 18px;font-size:.95rem">Testar grátis</a></p></div>
-      <div class="cartao"><div class="num">3</div><h3>Conecte a sua IA</h3><p>Cole o endereço do servidor no Claude, ChatGPT ou Gemini e entre com a sua conta da Suite. Os vídeos abaixo mostram cada passo.</p><p style="margin-top:14px"><a class="btn" href="#conectar" style="padding:10px 18px;font-size:.95rem">Ver vídeos</a></p></div>
+      <div class="cartao"><div class="num">3</div><h3>Conecte a sua IA</h3><p>Cole o endereço do servidor no Claude, ChatGPT ou Gemini e entre com a sua conta da Suite. Os vídeos abaixo mostram cada passo.</p><p style="margin-top:14px"><a class="btn" href="#conectar" style="padding:10px 18px;font-size:.95rem">Ver vídeos</a></p><p style="margin-top:10px"><a href="https://suite.ensinoplus.com.br/calc-machine-connect/manual" target="_blank" rel="noopener">Manual com imagens (Claude)</a> · <a href="https://suite.ensinoplus.com.br/calc-machine-connect/manual-chatgpt" target="_blank" rel="noopener">Manual com imagens (ChatGPT)</a> · <a href="https://suite.ensinoplus.com.br/calc-machine-connect/faq" target="_blank" rel="noopener">Perguntas frequentes</a></p></div>
     </div>
   </div>
 </section>
@@ -398,7 +398,7 @@ const HTML = String.raw`
   <div class="wrap">
     <img src="/calc-machine-connect/logo.svg" alt="Calc Machine Connect" style="border-radius:8px">
     <p>Um produto <strong>Ensino Plus</strong>. © 2026 Ensino Plus. Todos os direitos reservados.</p>
-    <p style="margin-top:8px"><a href="/calc-machine-connect/assinar">Assinar</a> · <a href="https://suite.ensinoplus.com.br/conectar-ia">Conectar minha IA</a> · <a href="#conectores">Todos os conectores</a> · <a href="https://suiteplus.ensinoplus.com.br/register">Criar conta</a> · <a href="https://wa.me/5585996641461" target="_blank" rel="noopener">Suporte</a></p>
+    <p style="margin-top:8px"><a href="/calc-machine-connect/assinar">Assinar</a> · <a href="https://suite.ensinoplus.com.br/conectar-ia">Conectar minha IA</a> · <a href="https://suite.ensinoplus.com.br/calc-machine-connect/manual" target="_blank" rel="noopener">Manual (Claude)</a> · <a href="https://suite.ensinoplus.com.br/calc-machine-connect/manual-chatgpt" target="_blank" rel="noopener">Manual (ChatGPT)</a> · <a href="#conectores">Todos os conectores</a> · <a href="https://suiteplus.ensinoplus.com.br/register">Criar conta</a> · <a href="https://wa.me/5585996641461" target="_blank" rel="noopener">Suporte</a></p>
   </div>
 </footer>
 
