@@ -208,6 +208,7 @@ function Assinar() {
 const CSS = String.raw`.asn { --ink:#0F1F1A; --paper:#F3EFE6; --signal:#E8552B; --muted:#5C6B64; --card:#fff; --line:#d9d3c4; min-height: 100vh; background: var(--paper); color: var(--ink); font: 16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; }
 @media (prefers-color-scheme: dark) { .asn { --ink:#F3EFE6; --paper:#0F1F1A; --muted:#a9b5af; --card:#16302a; --line:#2b4a42; } }
 .asn *, .asn *::before, .asn *::after { box-sizing: border-box; }
+.asn .faixa-promo { background:var(--signal); color:#fff; text-align:center; font-weight:800; letter-spacing:.04em; text-transform:uppercase; font-size:.9rem; padding:12px 16px; }
 .asn main { max-width:560px; margin:0 auto; padding:32px 16px 64px; }
 .asn h1 { font-size:1.6rem; margin:0 0 4px; } .asn p.sub { color:var(--muted); margin:0 0 24px; }
 .asn .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px; margin-bottom:16px; }
@@ -227,7 +228,8 @@ const CSS = String.raw`.asn { --ink:#0F1F1A; --paper:#F3EFE6; --signal:#E8552B; 
 .asn [hidden] { display:none !important; }
 `;
 
-const HTML = String.raw`<main>
+const HTML = String.raw`<div class="faixa-promo" role="note">PREÇO PROMOCIONAL DE LANÇAMENTO POR TEMPO LIMITADO</div>
+<main>
   <h1>Assinar Calc Machine Connect</h1>
   <p class="sub">Informe seus dados e escolha o plano. Não precisa de login para assinar.</p>
 
