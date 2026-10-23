@@ -37,6 +37,7 @@ type Plano = {
   link: string;
   prices: Record<string, number>;
   renovam_sozinhas?: string[];
+  cartao_parcelas_max?: number;
 };
 type RespostaPlanos = { plans?: Plano[]; teste_gratis?: { disponivel: boolean; dias: number } };
 
@@ -99,10 +100,17 @@ function CalcMachineConnect() {
           lista.innerHTML = d.plans
             .map((p) => {
               const menor = Math.min(...Object.values(p.prices));
-              const renova = (p.renovam_sozinhas || []).length
-                ? "Renova sozinho no Pix Automático ou cartão."
-                : "Pagamento sem renovação automática.";
-              return `<div class="plano" style="color:var(--ink)"><h3>${esc(p.label)}</h3><div class="preco">${brl(menor)}<small> a partir de</small></div><p>${p.description ? esc(p.description) + " " : ""}${renova}</p><a class="btn" href="/calc-machine-connect/assinar?plano=${encodeURIComponent(String(p.id))}">Assinar ${esc(p.label.toLowerCase())}</a></div>`;
+              const rs = p.renovam_sozinhas || [];
+              const renova = rs.length
+                ? `Renova sozinho ${rs.includes("pix_recorrente") && rs.includes("card") ? "no Pix Automático ou cartão" : rs.includes("card") ? "no cartão" : "no Pix Automático"}.`
+                : "Pagamento único, sem renovação automática.";
+              // cartao parcelado (plano anual): destaca a parcela sem juros
+              const max = Number(p.cartao_parcelas_max) || 1;
+              const nx =
+                max > 1 && p.prices.card
+                  ? `<p style="margin:0 0 6px;font-weight:600">ou ${max}x de ${brl(p.prices.card / max)} sem juros no cartão</p>`
+                  : "";
+              return `<div class="plano" style="color:var(--ink)"><h3>${esc(p.label)}</h3><div class="preco">${brl(menor)}<small> a partir de</small></div>${nx}<p>${p.description ? esc(p.description) + " " : ""}${renova}</p><a class="btn" href="/calc-machine-connect/assinar?plano=${encodeURIComponent(String(p.id))}">Assinar ${esc(p.label.toLowerCase())}</a></div>`;
             })
             .join("");
         }

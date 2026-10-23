@@ -30,6 +30,7 @@ type Plano = {
   name: string;
   prices: Record<string, number>;
   formas_disponiveis?: string[];
+  cartao_parcelas_max?: number; // > 1 = cartao em ate N vezes sem juros (cobranca unica, nao renova)
 };
 
 const ROTULO: Record<string, string> = {
@@ -60,19 +61,35 @@ function Assinar() {
       $("erro").hidden = !msg;
     };
 
+    const maxParcelas = () => Number(plano?.cartao_parcelas_max) || 1;
+    const parcelado = () => forma === "card" && maxParcelas() > 1;
+    const rotulo = (f: string) => (f === "card" && maxParcelas() > 1 ? `Cartão em até ${maxParcelas()}x sem juros` : ROTULO[f] || f);
+
+    const renderParcelas = () => {
+      $("boxParcelas").hidden = !parcelado();
+      if (!parcelado()) return;
+      const total = plano!.prices.card;
+      const max = maxParcelas();
+      $("parcelas").innerHTML = Array.from({ length: max }, (_, i) => i + 1)
+        .map((n) => `<option value="${n}" ${n === max ? "selected" : ""}>${n === 1 ? `À vista: ${brl(total)}` : `${n}x de ${brl(total / n)} sem juros`}</option>`)
+        .join("");
+    };
+
     const renderFormas = () => {
       const el = $("formas");
       el.innerHTML = "";
       (plano?.formas_disponiveis || []).forEach((f, i) => {
         const l = document.createElement("label");
         l.className = "opcao";
-        l.innerHTML = `<input type="radio" name="forma" value="${esc(f)}" ${i === 0 ? "checked" : ""}><div>${esc(ROTULO[f] || f)}</div><span class="v">${brl(plano!.prices[f])}</span>`;
+        l.innerHTML = `<input type="radio" name="forma" value="${esc(f)}" ${i === 0 ? "checked" : ""}><div>${esc(rotulo(f))}</div><span class="v">${brl(plano!.prices[f])}</span>`;
         el.appendChild(l);
       });
       forma = plano?.formas_disponiveis?.[0] || null;
       el.onchange = (e) => {
         forma = (e.target as HTMLInputElement).value;
+        renderParcelas();
       };
+      renderParcelas();
     };
 
     const renderPlanos = (preferido: string | null) => {
@@ -82,7 +99,7 @@ function Assinar() {
         const menor = Math.min(...Object.values(p.prices));
         const l = document.createElement("label");
         l.className = "opcao";
-        l.innerHTML = `<input type="radio" name="plano" value="${esc(p.id)}"><div>${esc(p.label)}<small>${esc(p.description || p.name)}</small></div><span class="v">a partir de ${brl(menor)}</span>`;
+        l.innerHTML = `<input type="radio" name="plano" value="${esc(p.id)}"><div>${esc(p.label)}<small>${esc(p.description || p.name)}</small></div><span class="v">a partir de ${brl(menor)}${(p.cartao_parcelas_max || 1) > 1 && p.prices.card ? `<small>ou ${p.cartao_parcelas_max}x de ${brl(p.prices.card / p.cartao_parcelas_max!)} sem juros</small>` : ""}</span>`;
         el.appendChild(l);
       });
       plano = planos.find((p) => String(p.id) === String(preferido)) || planos[0];
@@ -148,6 +165,7 @@ function Assinar() {
             cpfCnpj: $<HTMLInputElement>("cpf").value.replace(/\D/g, ""),
             productId: plano.id,
             method: forma,
+            ...(parcelado() ? { parcelas: Number($<HTMLSelectElement>("parcelas").value) } : {}),
             website: raiz.querySelector<HTMLInputElement>("[name=website]")?.value ?? "",
           }),
         });
@@ -168,6 +186,8 @@ function Assinar() {
         if (d.checkoutUrl) {
           $("cartao").hidden = false;
           ($("linkCartao") as HTMLAnchorElement).href = d.checkoutUrl;
+          if (d.parcelas)
+            $("txtCartao").textContent = `Total de ${brl(d.valor)} em ${d.parcelas}x de ${brl(d.valorParcela)} sem juros. Abra a página segura de pagamento para informar o cartão. Pagamento único: não renova sozinho.`;
         }
         acompanhar();
       } catch (err) {
@@ -213,7 +233,7 @@ const CSS = String.raw`.asn { --ink:#0F1F1A; --paper:#F3EFE6; --signal:#E8552B; 
 .asn h1 { font-size:1.6rem; margin:0 0 4px; } .asn p.sub { color:var(--muted); margin:0 0 24px; }
 .asn .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px; margin-bottom:16px; }
 .asn label { display:block; font-weight:600; margin:14px 0 6px; font-size:.92rem; }
-.asn input[type=text], .asn input[type=email] { width:100%; padding:12px; border:1px solid var(--line); border-radius:10px; background:var(--paper); color:var(--ink); font:inherit; }
+.asn input[type=text], .asn input[type=email], .asn select { width:100%; padding:12px; border:1px solid var(--line); border-radius:10px; background:var(--paper); color:var(--ink); font:inherit; }
 .asn .opcao { display:flex; gap:10px; align-items:center; padding:12px; border:1px solid var(--line); border-radius:10px; margin:0 0 8px; cursor:pointer; font-weight:400; font-size:1rem; }
 .asn .opcao:has(input:checked) { border-color:var(--signal); box-shadow:0 0 0 1px var(--signal); }
 .asn .opcao span.v { margin-left:auto; font-weight:700; }
@@ -241,6 +261,10 @@ const HTML = String.raw`<div class="faixa-promo" role="note">PREÇO PROMOCIONAL 
     <div id="planos" style="margin-top:10px"></div>
     <strong>2. Forma de pagamento</strong>
     <div id="formas" style="margin-top:10px"></div>
+    <div id="boxParcelas" hidden>
+      <label for="parcelas">Parcelas no cartão (sem juros)</label>
+      <select id="parcelas"></select>
+    </div>
     <strong>3. Seus dados</strong>
     <label for="nome">Nome completo</label>
     <input id="nome" type="text" required minlength="3" autocomplete="name">
@@ -262,7 +286,7 @@ const HTML = String.raw`<div class="faixa-promo" role="note">PREÇO PROMOCIONAL 
     </div>
     <div id="cartao" hidden>
       <strong>Pagamento com cartão</strong>
-      <p>Abra a página segura de pagamento para informar o cartão.</p>
+      <p id="txtCartao">Abra a página segura de pagamento para informar o cartão.</p>
       <a id="linkCartao" href="#" target="_blank" rel="noopener"><button type="button">Abrir pagamento seguro</button></a>
     </div>
     <p id="status" class="nota">Aguardando o pagamento…</p>
