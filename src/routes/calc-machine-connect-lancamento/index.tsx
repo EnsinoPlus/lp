@@ -1,15 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
+import { trackMetaCustomEvent } from "@/lib/meta-pixel";
 import {
   BadgeCheck,
-  CalendarClock,
   Check,
   CreditCard,
   FileCheck,
   Gift,
   Infinity as InfinityIcon,
-  Lock,
   Repeat,
   ShieldCheck,
   Sparkles,
@@ -83,32 +82,18 @@ const CONECTORES = [
   { aba: "gemini", nome: "Gemini", video: "https://player.vimeo.com/video/1236224300?h=491ad0377f&dnt=1", passos: ["Abra Configurações → Habilidades → Conectores → Personalizado.", "Cole o endereço do servidor.", "O Google exige conta pessoal e idioma em English (United States) para liberar conectores personalizados."] },
 ];
 
-type Tier = { preco: string; lote: string; status: string; desc: string };
-
-const LAUNCH_TIERS: Tier[] = [
-  { preco: "97", lote: "1º lote", status: "aberto", desc: "As primeiras 20 pessoas entram por este valor. Trava assim que as 20 vagas forem preenchidas." },
-  { preco: "197", lote: "2º lote", status: "bloqueado", desc: "Bloqueado. Abre automaticamente quando o 1º lote (R$ 97) esgotar as 20 vagas." },
-  { preco: "297", lote: "3º lote", status: "bloqueado", desc: "Bloqueado. Abre quando o 2º lote (R$ 197) esgotar." },
-];
-
-const ANNUAL_TIERS: Tier[] = [
-  { preco: "970", lote: "1º lote anual", status: "aberto", desc: "Corre: as primeiras 20 pessoas levam o anual por este valor. Ao fechar as 20 vagas, trava e o preço sobe." },
-  { preco: "1.970", lote: "2º lote anual", status: "bloqueado", desc: "Bloqueado. Abre quando o 1º lote (R$ 970) esgotar as 20 vagas." },
-  { preco: "2.970", lote: "3º lote anual", status: "bloqueado", desc: "Bloqueado. Abre quando o 2º lote (R$ 1.970) esgotar." },
-];
-
-const PAGAMENTOS = ["Pix à vista", "Pix automático (recorrente)", "Cartão de crédito"];
+const PAGAMENTOS = ["Pix", "Cartão (até 10× no lançamento)", "Boleto"];
 
 const FAQ = [
-  { q: "Como funcionam os lotes de lançamento?", a: "Só o lote atual fica aberto. Quando ele preenche as 20 vagas, trava e o próximo lote abre pelo valor seguinte. Depois dos 3 lotes, a assinatura volta para R$ 397/mês." },
-  { q: "Tem cobrança por crédito a cada cálculo?", a: "Não. Com a assinatura ativa, o uso do conector não consome créditos — sem limite de uso." },
+  { q: "Como funciona a oferta de lançamento?", a: "Na 1ª onda, o acesso ilimitado (R$ 1.997) sai por metade: R$ 997 à vista ou 10× R$ 99,70, e com 2 meses grátis de bônus. As vagas são limitadas — quando a onda fecha, o preço volta a R$ 1.997 (ou 12× R$ 197)." },
+  { q: "O que está incluso no acesso?", a: "Uso ilimitado do Calc Machine pela sua IA, sem crédito por cálculo: gere quantos .pjc precisar, com cartão de ponto, FGTS, ausências, liquidação e conferência." },
+  { q: "Quais formas de pagamento?", a: "Pix, cartão de crédito (até 10× no lançamento) e boleto." },
   { q: "Quais IAs funcionam?", a: "Claude, ChatGPT e Gemini (e qualquer ferramenta que aceite conectores MCP personalizados usando o mesmo endereço)." },
   { q: "Como funciona a garantia?", a: "Você tem 7 dias de garantia. Se não for pra você, é só pedir o reembolso dentro do prazo." },
-  { q: "E o teste grátis?", a: "Dá pra experimentar por 2 dias antes de assinar, com até 5 gerações de .pjc, 1 uso do PJe-Calc e 10 anexos." },
   { q: "Preciso ter o PJe-Calc aberto para gerar o arquivo?", a: "Não. O .pjc é gerado pelo Calc Machine. Você abre no PJe-Calc para ver, ajustar ou liquidar — ou pede a liquidação direto por ele." },
   { q: "A IA calcula sozinha, sem eu ver?", a: "Não. Ela mostra o que encontrou, pergunta o que for incerto e pede a sua confirmação antes de gerar. A revisão final é sua." },
   { q: "Preciso de conta na Suite?", a: "Para assinar, não: basta o e-mail. Para usar o conector na IA, você entra com uma conta da Suite (grátis) com o mesmo e-mail da assinatura." },
-  { q: "Posso cancelar?", a: "Sim. Nos planos com renovação automática, você desliga a renovação quando quiser e segue com acesso até o fim do período pago." },
+  { q: "Posso cancelar?", a: "Sim. Você desliga a renovação quando quiser e segue com acesso até o fim do período pago." },
 ];
 
 function VideoBox({ src, title }: { src: string; title: string }) {
@@ -126,51 +111,17 @@ function VideoBox({ src, title }: { src: string; title: string }) {
   );
 }
 
-function TierCard({ t, unidade, cta }: { t: Tier; unidade: string; cta: string }) {
-  const locked = t.status === "bloqueado";
-  return (
-    <div
-      className={`relative rounded-2xl p-7 flex flex-col ${
-        locked ? "bg-secondary border-2 border-dashed border-border opacity-80" : "bg-card border-2 border-[#E8552B] shadow-cta"
-      }`}
-    >
-      <span
-        className={`absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider inline-flex items-center gap-1 ${
-          locked ? "bg-muted text-muted-foreground" : "bg-[#E8552B] text-white"
-        }`}
-      >
-        {locked ? (<><Lock className="w-3 h-3" /> Bloqueado</>) : (<><Zap className="w-3 h-3" /> Aberto agora</>)}
-      </span>
-      <p className={`text-sm font-bold uppercase tracking-wider ${locked ? "text-muted-foreground" : "text-[#E8552B]"}`}>{t.lote}</p>
-      <p className={`text-5xl font-black mt-2 ${locked ? "text-muted-foreground" : ""}`}>
-        R$ {t.preco}
-        <span className="text-lg font-bold text-muted-foreground">{unidade}</span>
-      </p>
-      <p className="text-sm text-muted-foreground mt-3 flex-1">{t.desc}</p>
-      <p className={`text-xs font-bold uppercase tracking-wider mt-4 mb-4 inline-flex items-center gap-1 ${locked ? "text-muted-foreground" : "text-[#E8552B]"}`}>
-        {locked ? (<><Lock className="w-3.5 h-3.5" /> Aguardando o lote anterior esgotar</>) : "Apenas 20 vagas · trava ao esgotar"}
-      </p>
-      {locked ? (
-        <span className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-muted text-muted-foreground font-bold uppercase tracking-wide h-12 px-6 cursor-not-allowed select-none">
-          <Lock className="w-4 h-4" /> Bloqueado
-        </span>
-      ) : (
-        <a
-          href={CHECKOUT_URL}
-          target="_blank"
-          rel="noreferrer"
-          className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#E8552B] text-white font-bold uppercase tracking-wide shadow-cta hover:brightness-110 transition-all h-12 px-6"
-        >
-          <Zap className="w-5 h-5" /> {cta}
-        </a>
-      )}
-    </div>
-  );
-}
-
 function Lancamento() {
   const [tab, setTab] = useState<"claude" | "gpt" | "gemini">("claude");
   const ativo = CONECTORES.find((c) => c.aba === tab) ?? CONECTORES[0];
+
+  // Evento Meta ao iniciar o checkout (clique em "Garantir na 1ª onda").
+  const initiateCheckout = () => {
+    trackMetaCustomEvent("InitiateCheckoutLancamento");
+    if (typeof window !== "undefined" && window.fbq) {
+      window.fbq("track", "InitiateCheckout", { value: 997, currency: "BRL" });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -222,8 +173,8 @@ function Lancamento() {
               </div>
               <div className="flex flex-wrap gap-5 mt-7 text-sm text-muted-foreground justify-center lg:justify-start">
                 <span className="inline-flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-[#E8552B]" /> Garantia de 7 dias</span>
-                <span className="inline-flex items-center gap-2"><CalendarClock className="w-5 h-5 text-[#E8552B]" /> Teste grátis de 2 dias</span>
-                <span className="inline-flex items-center gap-2"><CreditCard className="w-5 h-5 text-[#E8552B]" /> Pix ou cartão</span>
+                <span className="inline-flex items-center gap-2"><Gift className="w-5 h-5 text-[#E8552B]" /> + 2 meses grátis</span>
+                <span className="inline-flex items-center gap-2"><CreditCard className="w-5 h-5 text-[#E8552B]" /> Pix, cartão ou boleto</span>
               </div>
             </div>
 
@@ -380,86 +331,79 @@ function Lancamento() {
       <section id="planos" className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-4">
-            <p className="text-sm font-bold uppercase tracking-wider text-[#E8552B] mb-2">Oferta de lançamento</p>
-            <h2 className="text-3xl md:text-5xl font-black mb-3">Entre agora pelo menor preço</h2>
+            <p className="text-sm font-bold uppercase tracking-wider text-[#E8552B] mb-2">Oferta de lançamento · 1ª onda</p>
+            <h2 className="text-3xl md:text-5xl font-black mb-3">50% OFF na primeira onda</h2>
             <p className="text-muted-foreground text-lg">
-              <span className="font-bold text-foreground">Só o lote atual fica aberto.</span> Ao preencher as
-              20 vagas, ele trava e o próximo abre pelo valor seguinte. Depois dos 3 lotes, a assinatura volta
-              para <span className="font-bold text-foreground">R$ 397/mês</span>.
+              O acesso ilimitado custa <span className="font-bold text-foreground">R$ 1.997</span>. Na 1ª onda de
+              lançamento você garante por <span className="font-bold text-foreground">metade</span> — e ainda leva{" "}
+              <span className="font-bold text-foreground">2 meses grátis</span>. Quando a onda fechar, o preço volta
+              para R$ 1.997.
             </p>
           </div>
 
-          {/* Lotes com bloqueio */}
-          <p className="text-center text-sm font-bold uppercase tracking-wider text-muted-foreground mt-10">
-            Mensal promocional de lançamento · 20 vagas por lote
-          </p>
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mt-5">
-            {LAUNCH_TIERS.map((t) => (
-              <TierCard key={t.preco} t={t} unidade="/mês" cta={`Assinar por R$ ${t.preco}`} />
-            ))}
-          </div>
-          <p className="text-center text-sm text-muted-foreground mt-5 max-w-2xl mx-auto">
-            Os valores de R$ 197 e R$ 297 estão <strong className="text-foreground">bloqueados</strong> — só
-            abrem quando o lote anterior fechar as 20 vagas. O de <strong className="text-foreground">R$ 97
-            trava</strong> assim que as 20 primeiras vagas forem preenchidas.
-          </p>
-
-          {/* Anual com escassez — mesma lógica de urgência dos lotes (R$ 397/mês é só âncora) */}
-          <p className="text-center text-sm font-bold uppercase tracking-wider text-muted-foreground mt-12">
-            Anual promocional de lançamento · 20 vagas por lote
-          </p>
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mt-5">
-            {ANNUAL_TIERS.map((t) => (
-              <TierCard key={t.preco} t={t} unidade="/ano" cta={`Garantir anual · R$ ${t.preco}`} />
-            ))}
-          </div>
-          <p className="text-center text-sm text-muted-foreground mt-5 max-w-2xl mx-auto">
-            O anual por <strong className="text-foreground">R$ 970/ano</strong> é o 1º lote (20 vagas):
-            corre antes de esgotar — ao fechar, o preço sobe para R$ 1.970 e depois R$ 2.970.
-          </p>
-
-          {/* Créditos + pagamentos */}
-          <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto mt-6">
-            <div className="bg-card border border-border rounded-2xl p-6 flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-[#E8552B] flex items-center justify-center text-white shrink-0">
-                <Gift className="w-6 h-6" />
+          {/* Card da oferta de lançamento */}
+          <div className="max-w-xl mx-auto mt-10">
+            <div className="relative bg-card border-2 border-[#E8552B] rounded-2xl p-8 text-center shadow-cta">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#E8552B] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider inline-flex items-center gap-1">
+                <Zap className="w-3 h-3" /> 1ª onda · 50% OFF
+              </span>
+              <p className="text-muted-foreground">
+                <span className="line-through">De R$ 1.997</span> · por metade no lançamento
+              </p>
+              <p className="text-6xl md:text-7xl font-black mt-1">R$ 997</p>
+              <p className="text-lg font-bold text-[#E8552B] mt-1">ou 10× R$ 99,70 no cartão</p>
+              <div className="inline-flex items-center gap-2 bg-[#F7E0D6] text-[#E8552B] rounded-full px-4 py-1.5 text-sm font-bold mt-4">
+                <Gift className="w-4 h-4" /> + 2 meses grátis (bônus de lançamento)
               </div>
-              <div>
-                <h3 className="font-black text-lg">Créditos avulsos (plano mensal)</h3>
-                <p className="text-muted-foreground text-sm mt-1">
-                  Precisou de mais? <span className="font-bold text-foreground">R$ 100 = 300 créditos</span>, para quem está no plano mensal.
-                </p>
-              </div>
-            </div>
-            <div className="bg-card border border-border rounded-2xl p-6">
-              <div className="flex items-center gap-2 mb-3">
-                <CreditCard className="w-5 h-5 text-[#E8552B]" />
-                <h3 className="font-black text-lg">Formas de pagamento</h3>
-              </div>
-              <ul className="flex flex-wrap gap-2">
-                {PAGAMENTOS.map((p) => (
-                  <li key={p} className="inline-flex items-center gap-1.5 bg-secondary border border-border rounded-full px-3 py-1 text-sm font-semibold">
-                    <Repeat className="w-3.5 h-3.5 text-[#E8552B]" /> {p}
-                  </li>
-                ))}
+              <ul className="text-sm text-muted-foreground mt-5 space-y-2 text-left max-w-sm mx-auto">
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#E8552B] shrink-0" /> Acesso <strong className="text-foreground">ilimitado</strong>, sem crédito por uso</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#E8552B] shrink-0" /> Pix, cartão (até 10×) ou boleto</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#E8552B] shrink-0" /> Garantia de 7 dias</li>
               </ul>
+              <a
+                href={CHECKOUT_URL}
+                onClick={initiateCheckout}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#E8552B] text-white font-bold uppercase tracking-wide shadow-cta hover:brightness-110 transition-all py-4 px-6 text-lg"
+              >
+                <Zap className="w-5 h-5" /> Garantir na 1ª onda
+              </a>
+              <p className="text-xs text-muted-foreground mt-3">
+                Vagas limitadas. Quando a 1ª onda fechar, o preço sobe.
+              </p>
             </div>
           </div>
 
-          {/* Garantia + teste */}
-          <div className="max-w-5xl mx-auto mt-6 grid sm:grid-cols-2 gap-6">
-            <div className="bg-card border border-border rounded-2xl p-6 flex items-center gap-4">
+          {/* Depois da 1ª onda */}
+          <p className="text-center text-sm text-muted-foreground mt-6 max-w-2xl mx-auto">
+            Depois que a 1ª onda fechar, o acesso passa a{" "}
+            <strong className="text-foreground">R$ 1.997 à vista</strong> ou{" "}
+            <strong className="text-foreground">12× R$ 197</strong>. Por isso: corra enquanto está pela metade.
+          </p>
+
+          {/* Formas de pagamento */}
+          <div className="max-w-xl mx-auto mt-8 bg-card border border-border rounded-2xl p-6">
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <CreditCard className="w-5 h-5 text-[#E8552B]" />
+              <h3 className="font-black text-lg">Formas de pagamento</h3>
+            </div>
+            <ul className="flex flex-wrap gap-2 justify-center">
+              {PAGAMENTOS.map((p) => (
+                <li key={p} className="inline-flex items-center gap-1.5 bg-secondary border border-border rounded-full px-3 py-1 text-sm font-semibold">
+                  <Repeat className="w-3.5 h-3.5 text-[#E8552B]" /> {p}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Garantia */}
+          <div className="max-w-xl mx-auto mt-6">
+            <div className="bg-card border border-border rounded-2xl p-6 flex items-center gap-4 justify-center text-center">
               <ShieldCheck className="w-10 h-10 text-[#E8552B] shrink-0" />
               <div>
                 <p className="font-black">Garantia de 7 dias</p>
-                <p className="text-sm text-muted-foreground">Não gostou? Devolvemos seu dinheiro.</p>
-              </div>
-            </div>
-            <div className="bg-card border border-border rounded-2xl p-6 flex items-center gap-4">
-              <BadgeCheck className="w-10 h-10 text-[#E8552B] shrink-0" />
-              <div>
-                <p className="font-black">Teste grátis de 2 dias</p>
-                <p className="text-sm text-muted-foreground">Experimente antes de assinar.</p>
+                <p className="text-sm text-muted-foreground">Não gostou? Devolvemos seu dinheiro em até 7 dias.</p>
               </div>
             </div>
           </div>

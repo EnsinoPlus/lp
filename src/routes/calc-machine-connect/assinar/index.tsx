@@ -53,8 +53,18 @@ function Assinar() {
     let forma: string | null = null;
     let chargeId: string | null = null;
     let emailCobranca = "";
+    let valorCompra = 0;
     let timer: ReturnType<typeof setInterval> | null = null;
     let cancelado = false;
+
+    // Pixel Meta (carregado globalmente no app).
+    const fbq = (...args: unknown[]) => {
+      try {
+        (window as unknown as { fbq?: (...a: unknown[]) => void }).fbq?.(...args);
+      } catch {
+        /* pixel ausente */
+      }
+    };
 
     const mostrarErro = (msg: string) => {
       $("erro").textContent = msg;
@@ -138,6 +148,13 @@ function Assinar() {
             if (timer) clearInterval(timer);
             $("pagamento").hidden = true;
             $("fim").hidden = false;
+            // Evento Meta de COMPRA (confirmação do Asaas).
+            fbq("track", "Purchase", {
+              value: valorCompra,
+              currency: "BRL",
+              content_name: plano?.label || "Calc Machine Connect",
+            });
+            fbq("trackCustom", "CompraCalcMachine", { plano: plano?.label || "", valor: valorCompra });
           } else if (d.status === "expired" || d.status === "canceled") {
             if (timer) clearInterval(timer);
             $("status").textContent = "Este pagamento expirou. Recarregue a página para gerar outro.";
@@ -172,6 +189,9 @@ function Assinar() {
         const d = await r.json().catch(() => ({}));
         if (!r.ok) throw new Error(d.error || "Não foi possível gerar o pagamento.");
         chargeId = d.chargeId;
+        valorCompra = Number(d.valor) || (plano && forma ? Number(plano.prices[forma]) : 0);
+        // Evento Meta: iniciou o checkout (gerou a cobrança).
+        fbq("track", "InitiateCheckout", { value: valorCompra, currency: "BRL" });
         $("form").hidden = true;
         $("pagamento").hidden = false;
         if (d.pix) {
