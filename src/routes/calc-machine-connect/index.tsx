@@ -141,16 +141,7 @@ function CalcMachineConnect() {
           forwardUtm(); // botões de plano recém-criados
         }
         msg.hidden = true;
-        // Teste grátis: mostra o botão só quando o backend oferece (some sozinho se desligar).
-        if (d.teste_gratis?.disponivel) {
-          const bt = raiz.querySelector<HTMLAnchorElement>("#btn-teste");
-          if (bt) {
-            const dias = Number(d.teste_gratis.dias) || 0;
-            bt.textContent = dias ? `Testar grátis por ${dias} dias` : "Testar grátis";
-            // href fixo (suite.ensinoplus.com.br/?app=assinaturas); não usa o link da API.
-            bt.hidden = false;
-          }
-        }
+        // Botão "Testar grátis" é fixo no hero (sem esperar a API, sem layout shift).
       } catch {
         msg.innerHTML =
           'Veja os planos e valores atuais na página de assinatura.<br><br><a class="btn" href="/calc-machine-connect/assinar">Ver planos e assinar</a>';
@@ -265,7 +256,7 @@ const HTML = String.raw`
         <p>Entregue a sentença ao Claude, ChatGPT ou Gemini e receba o arquivo <strong>.pjc</strong> montado, liquidado e conferido. Sem digitar verba por verba.</p>
         <div class="botoes">
           <a class="btn" id="cta-principal" href="/calc-machine-connect/assinar">Assinar agora</a>
-          <a class="btn sec" id="btn-teste" href="https://suite.ensinoplus.com.br/?app=assinaturas" hidden>Testar grátis</a>
+          <a class="btn sec" id="btn-teste" href="https://suite.ensinoplus.com.br/?app=assinaturas">Testar grátis por 2 dias</a>
           <a class="btn sec" href="#planos">Ver planos</a>
         </div>
         <p class="nota">Assinatura simples, sem créditos por uso. Dá para assinar só com o e-mail. Para usar na sua IA, use a conta da Suite (grátis) com o <strong>mesmo e-mail</strong> da assinatura.</p>
