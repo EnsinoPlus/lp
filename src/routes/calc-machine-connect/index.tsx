@@ -27,7 +27,6 @@ export const Route = createFileRoute("/calc-machine-connect/")({
 });
 
 const ASSINATURAS_API = "https://assinaturas.ensinoplus.com.br/api/public/mcp/plans";
-const REGISTRO_URL = "https://suiteplus.ensinoplus.com.br/register";
 
 type Plano = {
   id: string | number;
@@ -115,21 +114,7 @@ function CalcMachineConnect() {
             .join("");
         }
         msg.hidden = true;
-        if (d.teste_gratis?.disponivel) {
-          const dias = String(d.teste_gratis.dias);
-          const el = raiz.querySelector<HTMLElement>("#teste-dias");
-          if (el) el.textContent = dias;
-          const caixa = raiz.querySelector<HTMLElement>("#teste");
-          if (caixa) caixa.hidden = false;
-          raiz.querySelectorAll<HTMLElement>(".dias-teste").forEach((e) => (e.textContent = dias));
-          const bt = raiz.querySelector<HTMLElement>("#btn-teste");
-          if (bt) bt.hidden = false;
-          const cta = raiz.querySelector<HTMLAnchorElement>("#cta-principal");
-          if (cta) {
-            cta.textContent = `Testar grátis por ${dias} dias`;
-            cta.href = REGISTRO_URL;
-          }
-        }
+        // Teste grátis removido: CTA continua "Assinar agora".
       } catch {
         msg.innerHTML =
           'Veja os planos e valores atuais na página de assinatura.<br><br><a class="btn" href="/calc-machine-connect/assinar">Ver planos e assinar</a>';
@@ -293,7 +278,7 @@ const HTML = String.raw`
     <h2>Três passos</h2>
     <div class="grade">
       <div class="cartao"><div class="num">1</div><h3>Crie sua conta</h3><p>A conta da Suite é grátis e é com ela que você entra no conector. <strong>Use o mesmo e-mail</strong> da assinatura.</p><p style="margin-top:14px"><a class="btn" href="https://suiteplus.ensinoplus.com.br/register" style="padding:10px 18px;font-size:.95rem">Criar conta grátis</a></p></div>
-      <div class="cartao"><div class="num">2</div><h3>Teste ou assine</h3><p>Experimente por <span class="dias-teste">2</span> dias ou assine direto com Pix ou cartão. Dá para assinar só informando o e-mail.</p><p style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="#planos" style="padding:10px 18px;font-size:.95rem">Ver planos</a><a class="btn sec" id="btn-teste" href="https://assinaturas.ensinoplus.com.br" hidden style="padding:10px 18px;font-size:.95rem">Testar grátis</a></p></div>
+      <div class="cartao"><div class="num">2</div><h3>Assine</h3><p>Assine direto com Pix, cartão ou boleto. Dá para assinar só informando o e-mail.</p><p style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="#planos" style="padding:10px 18px;font-size:.95rem">Ver planos</a></p></div>
       <div class="cartao"><div class="num">3</div><h3>Conecte a sua IA</h3><p>Cole o endereço do servidor no Claude, ChatGPT ou Gemini e entre com a sua conta da Suite. Os vídeos abaixo mostram cada passo.</p><p style="margin-top:14px"><a class="btn" href="#conectar" style="padding:10px 18px;font-size:.95rem">Ver vídeos</a></p><p style="margin-top:10px"><a href="https://suite.ensinoplus.com.br/calc-machine-connect/manual" target="_blank" rel="noopener">Manual com imagens (Claude)</a> · <a href="https://suite.ensinoplus.com.br/calc-machine-connect/manual-chatgpt" target="_blank" rel="noopener">Manual com imagens (ChatGPT)</a> · <a href="https://suite.ensinoplus.com.br/calc-machine-connect/faq" target="_blank" rel="noopener">Perguntas frequentes</a></p></div>
     </div>
   </div>
@@ -313,9 +298,9 @@ const HTML = String.raw`
       <div class="cartao"><div class="num">6</div><h3>Atualização depois</h3><p>Mais tarde, peça a atualização do cálculo informando pagamentos e depósitos. O arquivo anterior continua guardado.</p></div>
     </div>
     <div class="grade" style="margin-top:26px">
-      <div class="cartao"><h3>O que você precisa</h3><p>Uma assinatura (ou o teste grátis), uma conta na Suite com o mesmo e-mail e uma IA conectada (Claude, ChatGPT ou Gemini). Para ver o cálculo no PJe-Calc, o programa instalado no seu computador.</p></div>
+      <div class="cartao"><h3>O que você precisa</h3><p>Uma assinatura, uma conta na Suite com o mesmo e-mail e uma IA conectada (Claude, ChatGPT ou Gemini). Para ver o cálculo no PJe-Calc, o programa instalado no seu computador.</p></div>
       <div class="cartao"><h3>O que você recebe</h3><p>O arquivo .pjc do cálculo, o PDF ou HTML da liquidação (quando pedir), arquivos de importação de histórico salarial, cartão de ponto, FGTS e férias, e a conferência da planilha.</p></div>
-      <div class="cartao"><h3>O que o teste grátis inclui</h3><p>Dois dias corridos, com até 5 gerações de .pjc, 1 uso do PJe-Calc pelo Calc Machine e 10 anexos processados. Guias e validações são livres.</p></div>
+      <div class="cartao"><h3>Acesso ilimitado</h3><p>Sem crédito por uso: gere quantos .pjc precisar, atualize cálculos, faça conferências e embargos — tudo incluso na assinatura.</p></div>
       <div class="cartao"><h3>O que continua com você</h3><p>A IA não decide no seu lugar: quando a sentença é ambígua ou falta documento, ela pergunta em vez de supor. A revisão final do cálculo é sua, como sempre.</p></div>
     </div>
   </div>
@@ -356,10 +341,6 @@ const HTML = String.raw`
     <p class="lead">Pix ou cartão. Nos planos com renovação automática, você não precisa lembrar de pagar de novo.</p>
     <div id="planos-lista" class="planos"></div>
     <p id="planos-msg" class="carregando">Carregando planos…</p>
-    <div id="teste" class="teste" hidden style="color:var(--ink)">
-      <div><strong>Teste grátis por <span id="teste-dias">2</span> dias</strong><p>Para quem ainda não assinou: algumas gerações de .pjc, um uso do PJe-Calc e anexos incluídos, para você experimentar. Crie a conta da Suite, entre na plataforma de assinaturas e clique em "Testar grátis".</p></div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="https://assinaturas.ensinoplus.com.br">Começar o teste</a><a class="btn sec" href="https://suiteplus.ensinoplus.com.br/register" style="color:var(--ink);border-color:var(--ink)">Criar conta grátis</a></div>
-    </div>
   </div>
 </section>
 
@@ -369,7 +350,7 @@ const HTML = String.raw`
     <h2>Todos os conectores da Ensino Plus</h2>
     <p class="lead">Cada conector é um endereço que você cola no Claude, ChatGPT ou Gemini (Configurações → Conectores → Adicionar conector personalizado). Entre com a sua conta da Suite quando a IA pedir.</p>
     <div class="grade">
-      <div class="cartao conector"><span class="sel">Disponível</span><h3>Calc Machine Connect</h3><p>Monte cálculos trabalhistas no PJe-Calc pela sua IA: a sentença entra e o arquivo .pjc sai. Inclui contracheques, cartão de ponto, FGTS e ausências. Requer assinatura (há teste grátis).</p>
+      <div class="cartao conector"><span class="sel">Disponível</span><h3>Calc Machine Connect</h3><p>Monte cálculos trabalhistas no PJe-Calc pela sua IA: a sentença entra e o arquivo .pjc sai. Inclui contracheques, cartão de ponto, FGTS e ausências. Requer assinatura.</p>
         <div class="end"><code>https://suite.ensinoplus.com.br/mcp-usuario</code><button class="copiar" type="button">Copiar</button></div></div>
       <div class="cartao conector"><span class="sel">Disponível</span><h3>DataJud e Comunica PJe (CNJ)</h3><p>Consulte processos públicos de 91 tribunais e as publicações oficiais do Diário de Justiça Eletrônico Nacional, por número do processo ou pela OAB, com linha do tempo. Gratuito.</p>
         <div class="end"><code>https://suite.ensinoplus.com.br/mcp-datajud</code><button class="copiar" type="button">Copiar</button></div></div>
