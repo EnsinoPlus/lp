@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 
 // Página de venda do Calc Machine Connect (conector MCP do Calc Machine para Claude, ChatGPT e Gemini).
 // Conteúdo e estilo copiados da página do gateway (suite.ensinoplus.com.br/calc-machine-connect); o CSS fica isolado em .cmc.
@@ -48,6 +49,27 @@ function CalcMachineConnect() {
   useEffect(() => {
     const raiz = document.querySelector(".cmc");
     if (!raiz) return;
+
+    // Repassa as UTMs (e fbclid/gclid) da URL atual para TODOS os links de checkout,
+    // para a origem do lead não se perder ao ir para /assinar.
+    const forwardUtm = () => {
+      const atual = new URLSearchParams(window.location.search);
+      const utm = new URLSearchParams();
+      atual.forEach((v, k) => {
+        if (/^utm_/i.test(k) || k === "fbclid" || k === "gclid") utm.set(k, v);
+      });
+      const extra = utm.toString();
+      if (!extra) return;
+      raiz
+        .querySelectorAll<HTMLAnchorElement>('a[href*="/calc-machine-connect/assinar"]')
+        .forEach((a) => {
+          const href = a.getAttribute("href") || "";
+          if (/[?&]utm_/i.test(href)) return; // já tem utm, não duplica
+          a.setAttribute("href", href + (href.includes("?") ? "&" : "?") + extra);
+        });
+    };
+    forwardUtm(); // links estáticos (nav / hero)
+
     const abas = Array.from(raiz.querySelectorAll<HTMLButtonElement>(".aba"));
     const ligarAba = (b: HTMLButtonElement) => () => {
       abas.forEach((x) => {
@@ -113,12 +135,14 @@ function CalcMachineConnect() {
               return `<div class="plano" style="color:var(--ink)"><h3>${esc(p.label)}</h3><div class="preco">${brl(menor)}<small> a partir de</small></div>${nx}<p style="margin:6px 0 0;color:var(--signal);font-weight:800">🎁 + 2 meses grátis no lançamento</p><p>${p.description ? esc(p.description) + " " : ""}${renova}</p><a class="btn" href="/calc-machine-connect/assinar?plano=${encodeURIComponent(String(p.id))}">Assinar ${esc(p.label.toLowerCase())}</a></div>`;
             })
             .join("");
+          forwardUtm(); // botões de plano recém-criados
         }
         msg.hidden = true;
         // Teste grátis removido: CTA continua "Assinar agora".
       } catch {
         msg.innerHTML =
           'Veja os planos e valores atuais na página de assinatura.<br><br><a class="btn" href="/calc-machine-connect/assinar">Ver planos e assinar</a>';
+        forwardUtm();
       }
     })();
 
@@ -133,6 +157,7 @@ function CalcMachineConnect() {
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
       <div className="cmc" dangerouslySetInnerHTML={{ __html: HTML }} />
+      <WhatsAppFloat href="https://wa.me/5585996641461" label="Tirar dúvidas" />
     </>
   );
 }
