@@ -56,7 +56,7 @@ const FEATURES = [
 
 const STEPS = [
   { n: "1", title: "Crie sua conta", desc: "A conta da Suite é grátis e é com ela que você entra no conector. Use o mesmo e-mail da assinatura." },
-  { n: "2", title: "Teste ou assine", desc: "Experimente por 2 dias ou assine direto com Pix ou cartão. Dá para assinar só com o e-mail." },
+  { n: "2", title: "Garanta sua vaga", desc: "Assine na 1ª onda com Pix, cartão (até 10×) ou boleto. Dá para assinar só com o e-mail." },
   { n: "3", title: "Conecte a sua IA", desc: "Cole o endereço do servidor no Claude, ChatGPT ou Gemini e entre com a sua conta da Suite." },
 ];
 
@@ -70,9 +70,9 @@ const PRATICA = [
 ];
 
 const INFO = [
-  { title: "O que você precisa", desc: "Uma assinatura (ou o teste grátis), uma conta na Suite com o mesmo e-mail e uma IA conectada (Claude, ChatGPT ou Gemini). Para ver no PJe-Calc, o programa instalado no seu computador." },
+  { title: "O que você precisa", desc: "Uma assinatura, uma conta na Suite com o mesmo e-mail e uma IA conectada (Claude, ChatGPT ou Gemini). Para ver no PJe-Calc, o programa instalado no seu computador." },
   { title: "O que você recebe", desc: "O arquivo .pjc do cálculo, o PDF ou HTML da liquidação (quando pedir), arquivos de importação de histórico salarial, cartão de ponto, FGTS e férias, e a conferência da planilha." },
-  { title: "O que o teste grátis inclui", desc: "Dois dias corridos, com até 5 gerações de .pjc, 1 uso do PJe-Calc pelo Calc Machine e 10 anexos processados. Guias e validações são livres." },
+  { title: "Acesso ilimitado", desc: "Sem crédito por uso: gere quantos .pjc precisar, atualize cálculos, faça conferências e embargos — tudo incluso na assinatura." },
   { title: "O que continua com você", desc: "A IA não decide no seu lugar: quando a sentença é ambígua ou falta documento, ela pergunta em vez de supor. A revisão final é sua, como sempre." },
 ];
 
