@@ -269,7 +269,7 @@ const CSS = String.raw`.asn { --ink:#0F1F1A; --paper:#F3EFE6; --signal:#E8552B; 
 .asn [hidden] { display:none !important; }
 `;
 
-const HTML = String.raw`<div class="faixa-promo" role="note">PREÇO PROMOCIONAL DE LANÇAMENTO POR TEMPO LIMITADO</div>
+const HTML = String.raw`<div class="faixa-promo" role="note">🎁 Lançamento: 10× R$ 99,70 + 2 MESES GRÁTIS · por tempo limitado</div>
 <main>
   <h1>Assinar Calc Machine Connect</h1>
   <p class="sub">Informe seus dados e escolha o plano. Não precisa de login para assinar.</p>

@@ -97,6 +97,7 @@ function CalcMachineConnect() {
         const lista = raiz.querySelector<HTMLElement>("#planos-lista");
         if (lista) {
           lista.innerHTML = d.plans
+            .filter((p) => !/mensal/i.test(`${p.label} ${p.name}`))
             .map((p) => {
               const menor = Math.min(...Object.values(p.prices));
               const rs = p.renovam_sozinhas || [];
@@ -109,7 +110,7 @@ function CalcMachineConnect() {
                 max > 1 && p.prices.card
                   ? `<p style="margin:0 0 6px;font-weight:600">ou ${max}x de ${brl(p.prices.card / max)} sem juros no cartão</p>`
                   : "";
-              return `<div class="plano" style="color:var(--ink)"><h3>${esc(p.label)}</h3><div class="preco">${brl(menor)}<small> a partir de</small></div>${nx}<p>${p.description ? esc(p.description) + " " : ""}${renova}</p><a class="btn" href="/calc-machine-connect/assinar?plano=${encodeURIComponent(String(p.id))}">Assinar ${esc(p.label.toLowerCase())}</a></div>`;
+              return `<div class="plano" style="color:var(--ink)"><h3>${esc(p.label)}</h3><div class="preco">${brl(menor)}<small> a partir de</small></div>${nx}<p style="margin:6px 0 0;color:var(--signal);font-weight:800">🎁 + 2 meses grátis no lançamento</p><p>${p.description ? esc(p.description) + " " : ""}${renova}</p><a class="btn" href="/calc-machine-connect/assinar?plano=${encodeURIComponent(String(p.id))}">Assinar ${esc(p.label.toLowerCase())}</a></div>`;
             })
             .join("");
         }
