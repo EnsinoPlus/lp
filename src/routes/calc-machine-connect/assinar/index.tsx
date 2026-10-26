@@ -126,7 +126,8 @@ function Assinar() {
       try {
         const d = await (await fetch(`${API}/plans`)).json();
         if (cancelado) return;
-        planos = d.plans || [];
+        // Mostra apenas o plano Anual (esconde o Mensal) — oferta de lançamento.
+        planos = (d.plans || []).filter((p: Plano) => !/mensal/i.test(`${p.label} ${p.name}`));
         if (!planos.length) {
           $("carregando").textContent = "Nenhum plano disponível no momento.";
           return;
