@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { recordCmcCheckout } from "@/lib/cmc-checkout-db";
 
 // Página de assinatura do Calc Machine Connect (checkout): cópia da página assinaturas.ensinoplus.com.br/assinar.
 // Ela fala direto com a API pública do Assinaturas (planos, cobrança por Pix/cartão e acompanhamento do pagamento),
@@ -156,9 +157,12 @@ function Assinar() {
               content_name: plano?.label || "Calc Machine Connect",
             });
             fbq("trackCustom", "CompraCalcMachine", { plano: plano?.label || "", valor: valorCompra });
+            // Marca a compra como paga no nosso banco.
+            void recordCmcCheckout({ chargeId, email: emailCobranca, valor: valorCompra, status: "pago" });
           } else if (d.status === "expired" || d.status === "canceled") {
             if (timer) clearInterval(timer);
             $("status").textContent = "Este pagamento expirou. Recarregue a página para gerar outro.";
+            void recordCmcCheckout({ chargeId, email: emailCobranca, status: "expirado" });
           }
         } catch {
           /* tenta de novo no próximo ciclo */
@@ -193,6 +197,19 @@ function Assinar() {
         valorCompra = Number(d.valor) || (plano && forma ? Number(plano.prices[forma]) : 0);
         // Evento Meta: iniciou o checkout (gerou a cobrança).
         fbq("track", "InitiateCheckout", { value: valorCompra, currency: "BRL" });
+        // Salva o lead no NOSSO banco (best-effort, não trava o checkout).
+        void recordCmcCheckout({
+          chargeId,
+          nome: $<HTMLInputElement>("nome").value,
+          email: emailCobranca,
+          cpfCnpj: $<HTMLInputElement>("cpf").value.replace(/\D/g, ""),
+          productId: plano.id,
+          planoLabel: plano.label,
+          forma,
+          parcelas: parcelado() ? Number($<HTMLSelectElement>("parcelas").value) : null,
+          valor: valorCompra,
+          status: "iniciado",
+        });
         $("form").hidden = true;
         $("pagamento").hidden = false;
         if (d.pix) {
