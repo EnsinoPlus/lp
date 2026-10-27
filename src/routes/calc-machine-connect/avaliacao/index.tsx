@@ -89,9 +89,9 @@ function Avaliacao() {
       <main className="max-w-xl mx-auto px-4 py-10">
         <header className="mb-8">
           <img
-            src="https://suite.ensinoplus.com.br/calc-machine-connect/logo.png"
+            src="/calc-machine-connect/logo.svg"
             alt="Calc Machine Connect"
-            className="h-8 mb-6"
+            className="h-9 w-auto mb-6"
             onError={(ev) => {
               (ev.currentTarget as HTMLImageElement).style.display = "none";
             }}
