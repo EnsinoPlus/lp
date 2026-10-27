@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
+import { trackMetaCustomEvent } from "@/lib/meta-pixel";
 
 // Página de venda do Calc Machine Connect (conector MCP do Calc Machine para Claude, ChatGPT e Gemini).
 // Conteúdo e estilo copiados da página do gateway (suite.ensinoplus.com.br/calc-machine-connect); o CSS fica isolado em .cmc.
@@ -72,6 +73,22 @@ function CalcMachineConnect() {
         });
     };
     forwardUtm(); // links estáticos (nav / hero)
+
+    // Eventos Meta dos 3 botões (delegação: pega hero, menu e botões de plano).
+    const onClickMeta = (ev: Event) => {
+      const a = (ev.target as HTMLElement | null)?.closest("a");
+      if (!a || !raiz.contains(a)) return;
+      const href = a.getAttribute("href") || "";
+      if (a.id === "btn-teste" || /app=assinaturas/i.test(href)) {
+        trackMetaCustomEvent("CMC_TesteGratis");
+      } else if (/\/calc-machine-connect\/assinar/i.test(href)) {
+        const plano = new URLSearchParams(href.split("?")[1] || "").get("plano") || "";
+        trackMetaCustomEvent("CMC_Assinar", plano ? { plano } : undefined);
+      } else if (href === "#planos") {
+        trackMetaCustomEvent("CMC_VerPlanos");
+      }
+    };
+    raiz.addEventListener("click", onClickMeta);
 
     const abas = Array.from(raiz.querySelectorAll<HTMLButtonElement>(".aba"));
     const ligarAba = (b: HTMLButtonElement) => () => {
@@ -151,6 +168,7 @@ function CalcMachineConnect() {
 
     return () => {
       cancelado = true;
+      raiz.removeEventListener("click", onClickMeta);
       handlers.forEach(([b, h]) => b.removeEventListener("click", h));
       handlersCopiar.forEach(([b, h]) => b.removeEventListener("click", h));
     };
