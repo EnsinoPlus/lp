@@ -131,12 +131,13 @@ export type AvaliacaoRow = {
 };
 
 export async function listCmcAvaliacoes(
-  token: string,
+  email: string,
+  senha: string,
 ): Promise<{ ok: true; rows: AvaliacaoRow[] } | { ok: false; status: number }> {
   const resp = await fetch(`${LEADS_URL}/rest/v1/rpc/cmc_avaliacoes_list`, {
     method: "POST",
     headers: headers(),
-    body: JSON.stringify({ p_token: token, p_limit: 2000 }),
+    body: JSON.stringify({ p_email: email, p_senha: senha, p_limit: 2000 }),
   });
   if (!resp.ok) return { ok: false, status: resp.status };
   const rows = (await resp.json()) as AvaliacaoRow[];
@@ -144,14 +145,15 @@ export async function listCmcAvaliacoes(
 }
 
 export async function setCmcAvaliacaoStatus(
-  token: string,
+  email: string,
+  senha: string,
   id: string,
   status: "recebida" | "liberada" | "rejeitada",
 ): Promise<boolean> {
   const resp = await fetch(`${LEADS_URL}/rest/v1/rpc/cmc_avaliacoes_set_status`, {
     method: "POST",
     headers: headers(),
-    body: JSON.stringify({ p_token: token, p_id: id, p_status: status }),
+    body: JSON.stringify({ p_email: email, p_senha: senha, p_id: id, p_status: status }),
   });
   return resp.ok;
 }
