@@ -31,7 +31,9 @@ import { Route as EbookPjecalc2026ObrigadoAnaliseCreditoRouteImport } from './ro
 import { Route as EbookPjecalc2026ObrigadoAguardandoPagamentoRouteImport } from './routes/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
 import { Route as EbookPjecalc2026ObrigadoRouteImport } from './routes/ebook-pjecalc-2026/obrigado'
 import { Route as CctObrigadoRouteImport } from './routes/cct/obrigado'
+import { Route as CalcMachineConnectAvaliacaoIndexRouteImport } from './routes/calc-machine-connect/avaliacao/index'
 import { Route as CalcMachineConnectAssinarIndexRouteImport } from './routes/calc-machine-connect/assinar/index'
+import { Route as CalcMachineConnectAvaliacaoPainelIndexRouteImport } from './routes/calc-machine-connect/avaliacao/painel/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -153,10 +155,22 @@ const CctObrigadoRoute = CctObrigadoRouteImport.update({
   path: '/cct/obrigado',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CalcMachineConnectAvaliacaoIndexRoute =
+  CalcMachineConnectAvaliacaoIndexRouteImport.update({
+    id: '/calc-machine-connect/avaliacao/',
+    path: '/calc-machine-connect/avaliacao/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const CalcMachineConnectAssinarIndexRoute =
   CalcMachineConnectAssinarIndexRouteImport.update({
     id: '/calc-machine-connect/assinar/',
     path: '/calc-machine-connect/assinar/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const CalcMachineConnectAvaliacaoPainelIndexRoute =
+  CalcMachineConnectAvaliacaoPainelIndexRouteImport.update({
+    id: '/calc-machine-connect/avaliacao/painel/',
+    path: '/calc-machine-connect/avaliacao/painel/',
     getParentRoute: () => rootRouteImport,
   } as any)
 
@@ -184,6 +198,8 @@ export interface FileRoutesByFullPath {
   '/suiteplus-promo-1010-ressaca/': typeof SuiteplusPromo1010RessacaIndexRoute
   '/suiteplus-promo-1010/': typeof SuiteplusPromo1010IndexRoute
   '/calc-machine-connect/assinar/': typeof CalcMachineConnectAssinarIndexRoute
+  '/calc-machine-connect/avaliacao/': typeof CalcMachineConnectAvaliacaoIndexRoute
+  '/calc-machine-connect/avaliacao/painel/': typeof CalcMachineConnectAvaliacaoPainelIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -209,6 +225,8 @@ export interface FileRoutesByTo {
   '/suiteplus-promo-1010-ressaca': typeof SuiteplusPromo1010RessacaIndexRoute
   '/suiteplus-promo-1010': typeof SuiteplusPromo1010IndexRoute
   '/calc-machine-connect/assinar': typeof CalcMachineConnectAssinarIndexRoute
+  '/calc-machine-connect/avaliacao': typeof CalcMachineConnectAvaliacaoIndexRoute
+  '/calc-machine-connect/avaliacao/painel': typeof CalcMachineConnectAvaliacaoPainelIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -235,6 +253,8 @@ export interface FileRoutesById {
   '/suiteplus-promo-1010-ressaca/': typeof SuiteplusPromo1010RessacaIndexRoute
   '/suiteplus-promo-1010/': typeof SuiteplusPromo1010IndexRoute
   '/calc-machine-connect/assinar/': typeof CalcMachineConnectAssinarIndexRoute
+  '/calc-machine-connect/avaliacao/': typeof CalcMachineConnectAvaliacaoIndexRoute
+  '/calc-machine-connect/avaliacao/painel/': typeof CalcMachineConnectAvaliacaoPainelIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -262,6 +282,8 @@ export interface FileRouteTypes {
     | '/suiteplus-promo-1010-ressaca/'
     | '/suiteplus-promo-1010/'
     | '/calc-machine-connect/assinar/'
+    | '/calc-machine-connect/avaliacao/'
+    | '/calc-machine-connect/avaliacao/painel/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -287,6 +309,8 @@ export interface FileRouteTypes {
     | '/suiteplus-promo-1010-ressaca'
     | '/suiteplus-promo-1010'
     | '/calc-machine-connect/assinar'
+    | '/calc-machine-connect/avaliacao'
+    | '/calc-machine-connect/avaliacao/painel'
   id:
     | '__root__'
     | '/'
@@ -312,6 +336,8 @@ export interface FileRouteTypes {
     | '/suiteplus-promo-1010-ressaca/'
     | '/suiteplus-promo-1010/'
     | '/calc-machine-connect/assinar/'
+    | '/calc-machine-connect/avaliacao/'
+    | '/calc-machine-connect/avaliacao/painel/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -338,6 +364,8 @@ export interface RootRouteChildren {
   SuiteplusPromo1010RessacaIndexRoute: typeof SuiteplusPromo1010RessacaIndexRoute
   SuiteplusPromo1010IndexRoute: typeof SuiteplusPromo1010IndexRoute
   CalcMachineConnectAssinarIndexRoute: typeof CalcMachineConnectAssinarIndexRoute
+  CalcMachineConnectAvaliacaoIndexRoute: typeof CalcMachineConnectAvaliacaoIndexRoute
+  CalcMachineConnectAvaliacaoPainelIndexRoute: typeof CalcMachineConnectAvaliacaoPainelIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -496,11 +524,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CctObrigadoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/calc-machine-connect/avaliacao/': {
+      id: '/calc-machine-connect/avaliacao/'
+      path: '/calc-machine-connect/avaliacao'
+      fullPath: '/calc-machine-connect/avaliacao/'
+      preLoaderRoute: typeof CalcMachineConnectAvaliacaoIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/calc-machine-connect/assinar/': {
       id: '/calc-machine-connect/assinar/'
       path: '/calc-machine-connect/assinar'
       fullPath: '/calc-machine-connect/assinar/'
       preLoaderRoute: typeof CalcMachineConnectAssinarIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calc-machine-connect/avaliacao/painel/': {
+      id: '/calc-machine-connect/avaliacao/painel/'
+      path: '/calc-machine-connect/avaliacao/painel'
+      fullPath: '/calc-machine-connect/avaliacao/painel/'
+      preLoaderRoute: typeof CalcMachineConnectAvaliacaoPainelIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -533,6 +575,9 @@ const rootRouteChildren: RootRouteChildren = {
   SuiteplusPromo1010RessacaIndexRoute: SuiteplusPromo1010RessacaIndexRoute,
   SuiteplusPromo1010IndexRoute: SuiteplusPromo1010IndexRoute,
   CalcMachineConnectAssinarIndexRoute: CalcMachineConnectAssinarIndexRoute,
+  CalcMachineConnectAvaliacaoIndexRoute: CalcMachineConnectAvaliacaoIndexRoute,
+  CalcMachineConnectAvaliacaoPainelIndexRoute:
+    CalcMachineConnectAvaliacaoPainelIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
