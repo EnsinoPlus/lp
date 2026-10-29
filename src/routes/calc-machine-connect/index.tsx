@@ -74,25 +74,54 @@ function CalcMachineConnect() {
     };
     forwardUtm(); // links estáticos (nav / hero)
 
-    // Eventos Meta dos 3 botões (delegação: pega hero, menu e botões de plano).
-    const onClickMeta = (ev: Event) => {
-      const a = (ev.target as HTMLElement | null)?.closest("a");
-      if (!a || !raiz.contains(a)) return;
-      const href = a.getAttribute("href") || "";
-      let evento = "";
-      let params: Record<string, string> | undefined;
-      if (a.id === "btn-teste" || /app=assinaturas/i.test(href)) {
-        evento = "CMC_TesteGratis";
-      } else if (/\/calc-machine-connect\/assinar/i.test(href)) {
-        evento = "CMC_Assinar";
-        const plano = new URLSearchParams(href.split("?")[1] || "").get("plano") || "";
-        params = plano ? { plano } : undefined;
-      } else if (href === "#planos") {
-        evento = "CMC_VerPlanos";
+    // Eventos Meta em TODOS os elementos clicáveis da página (delegação em .cmc):
+    // links, botões (copiar, abas de IA) e perguntas do FAQ. Cada tipo tem nome
+    // próprio; o que não se encaixar cai em CMC_Link / CMC_Botao.
+    const texto = (el: Element) => (el.textContent || "").replace(/\s+/g, " ").trim().slice(0, 80);
+    const classificar = (el: HTMLElement): [string, Record<string, string>] | null => {
+      const local =
+        el.closest("section")?.id || el.closest("header, nav, footer")?.tagName.toLowerCase() || "pagina";
+      if (el.tagName === "SUMMARY") {
+        const det = el.parentElement as HTMLDetailsElement | null;
+        return ["CMC_FAQ_Pergunta", { pergunta: texto(el), acao: det?.open ? "fechar" : "abrir" }];
       }
-      if (!evento) return;
+      if (el.tagName === "BUTTON") {
+        if (el.classList.contains("copiar")) {
+          const end = el.parentElement?.querySelector("code")?.textContent?.trim() || "";
+          return ["CMC_CopiarConector", { endereco: end, local }];
+        }
+        if (el.classList.contains("aba")) return ["CMC_AbaIA", { aba: texto(el), local }];
+        return ["CMC_Botao", { texto: texto(el), local }];
+      }
+      const href = el.getAttribute("href") || "";
+      const label = texto(el);
+      if (el.id === "btn-teste" || /app=assinaturas/i.test(href)) return ["CMC_TesteGratis", { local }];
+      if (/\/calc-machine-connect\/assinar/i.test(href)) {
+        const plano = new URLSearchParams(href.split("?")[1] || "").get("plano") || "";
+        return ["CMC_Assinar", { local, ...(plano ? { plano } : {}) }];
+      }
+      if (href === "#planos") return ["CMC_VerPlanos", { local }];
+      if (/\/register/i.test(href)) return ["CMC_CriarConta", { local }];
+      if (/vimeo\.com|youtu\.?be/i.test(href)) return ["CMC_VerVideo", { video: label, local }];
+      if (/wa\.me|whatsapp/i.test(href)) return ["CMC_Whatsapp", { local }];
+      if (/conectar-ia/i.test(href)) return ["CMC_ConectarIA", { local }];
+      if (/\/manual/i.test(href)) return ["CMC_Manual", { manual: label, local }];
+      if (/\/faq/i.test(href)) return ["CMC_FAQ", { local }];
+      if (href.startsWith("#")) return ["CMC_Navegar", { secao: href.slice(1), texto: label, local }];
+      return ["CMC_Link", { texto: label, destino: href.slice(0, 120), local }];
+    };
+
+    const onClickMeta = (ev: Event) => {
+      const el = (ev.target as HTMLElement | null)?.closest<HTMLElement>("a, button, summary");
+      if (!el || !raiz.contains(el)) return;
+      const c = classificar(el);
+      if (!c) return;
+      const [evento, params] = c;
       trackMetaCustomEvent(evento, params);
-      // Botões que trocam de página (Assinar/Testar): segura a navegação ~300ms
+      if (el.tagName !== "A") return;
+      const a = el as HTMLAnchorElement;
+      const href = a.getAttribute("href") || "";
+      // Links que trocam de página na mesma aba: segura a navegação ~300ms
       // para o beacon do Pixel sair antes do unload. Âncoras (#) e _blank não precisam.
       const mouse = ev as MouseEvent;
       const navegaFora =
