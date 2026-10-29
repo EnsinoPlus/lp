@@ -126,7 +126,7 @@ function Lancamento() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Botão flutuante de WhatsApp (tirar dúvidas) */}
-      <WhatsAppFloat href="https://wa.me/5585996641461" label="Tirar dúvidas" />
+      <WhatsAppFloat href="https://wa.me/5585996641461" label="Tirar dúvidas" event="CMC_Whatsapp" />
 
       {/* Barra de lançamento */}
       <div className="bg-[#E8552B] text-white py-2.5 px-4 text-center text-sm font-bold">

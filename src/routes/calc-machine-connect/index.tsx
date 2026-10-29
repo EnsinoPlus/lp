@@ -79,13 +79,40 @@ function CalcMachineConnect() {
       const a = (ev.target as HTMLElement | null)?.closest("a");
       if (!a || !raiz.contains(a)) return;
       const href = a.getAttribute("href") || "";
+      let evento = "";
+      let params: Record<string, string> | undefined;
       if (a.id === "btn-teste" || /app=assinaturas/i.test(href)) {
-        trackMetaCustomEvent("CMC_TesteGratis");
+        evento = "CMC_TesteGratis";
       } else if (/\/calc-machine-connect\/assinar/i.test(href)) {
+        evento = "CMC_Assinar";
         const plano = new URLSearchParams(href.split("?")[1] || "").get("plano") || "";
-        trackMetaCustomEvent("CMC_Assinar", plano ? { plano } : undefined);
+        params = plano ? { plano } : undefined;
       } else if (href === "#planos") {
-        trackMetaCustomEvent("CMC_VerPlanos");
+        evento = "CMC_VerPlanos";
+      }
+      if (!evento) return;
+      trackMetaCustomEvent(evento, params);
+      // Botões que trocam de página (Assinar/Testar): segura a navegação ~300ms
+      // para o beacon do Pixel sair antes do unload. Âncoras (#) e _blank não precisam.
+      const mouse = ev as MouseEvent;
+      const navegaFora =
+        !!href &&
+        !href.startsWith("#") &&
+        (a as HTMLAnchorElement).target !== "_blank" &&
+        !mouse.metaKey &&
+        !mouse.ctrlKey &&
+        !mouse.shiftKey &&
+        mouse.button === 0;
+      if (navegaFora) {
+        ev.preventDefault();
+        const destino = (a as HTMLAnchorElement).href;
+        let foi = false;
+        const ir = () => {
+          if (foi) return;
+          foi = true;
+          window.location.href = destino;
+        };
+        setTimeout(ir, 300);
       }
     };
     raiz.addEventListener("click", onClickMeta);
@@ -178,7 +205,7 @@ function CalcMachineConnect() {
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
       <div className="cmc" dangerouslySetInnerHTML={{ __html: HTML }} />
-      <WhatsAppFloat href="https://wa.me/5585996641461" label="Tirar dúvidas" />
+      <WhatsAppFloat href="https://wa.me/5585996641461" label="Tirar dúvidas" event="CMC_Whatsapp" />
     </>
   );
 }
