@@ -50,6 +50,11 @@ function readUrlParams(): Record<string, string> {
   return out;
 }
 
+function cookie(nome: string): string | null {
+  const m = document.cookie.match(new RegExp(`(?:^|; )${nome}=([^;]*)`));
+  return m ? decodeURIComponent(m[1]) : null;
+}
+
 export type CmcCheckoutInput = {
   chargeId?: string | null;
   nome?: string;
@@ -138,6 +143,10 @@ export async function recordCmcCheckout(input: CmcCheckoutInput): Promise<void> 
         p_url_params: Object.keys(params).length ? params : null,
         p_landing_page: `${window.location.pathname}${window.location.search}`.slice(0, 300),
         p_telefone: input.telefone || null,
+        // Identificadores do Meta para o envio da compra pelo servidor.
+        p_fbp: cookie("_fbp"),
+        p_fbc: cookie("_fbc") || (params.fbclid ? `fb.1.${Date.now()}.${params.fbclid}` : null),
+        p_user_agent: navigator.userAgent,
       }),
     });
   } catch {

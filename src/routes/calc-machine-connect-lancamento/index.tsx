@@ -120,13 +120,10 @@ function Lancamento() {
     trackCmcEvent("PageView");
   }, []);
 
-  // Evento Meta ao iniciar o checkout (clique em "Garantir na 1ª onda").
+  // Clique em "Garantir na 1ª onda". O InitiateCheckout dispara ao chegar no checkout.
   const initiateCheckout = () => {
     trackMetaCustomEvent("InitiateCheckoutLancamento");
     trackCmcEvent("CMC_Assinar", { local: "lancamento" });
-    if (typeof window !== "undefined" && window.fbq) {
-      window.fbq("track", "InitiateCheckout", { value: 997, currency: "BRL" });
-    }
   };
 
   return (

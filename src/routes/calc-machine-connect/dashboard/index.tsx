@@ -57,7 +57,8 @@ const NOME_EVENTO: Record<string, string> = {
   CMC_AbaIA: "Trocou aba de IA",
   CMC_Link: "Clique em outro link",
   CMC_Botao: "Clique em outro botão",
-  InitiateCheckout: "Gerou cobrança no checkout",
+  InitiateCheckout: "Chegou ao checkout",
+  AddPaymentInfo: "Gerou cobrança no checkout",
   Purchase: "Compra confirmada",
   AvaliacaoEnviada: "Enviou avaliação",
   CobrancaGerada: "Gerou cobrança",
@@ -506,7 +507,7 @@ function Dashboard() {
           <div style={{ display: "grid", gap: 16 }}>
             <ListaRecuperacao
               titulo="Gerou cobrança e não pagou"
-              ajuda="Confira no Asaas antes de chamar: quem pagou o Pix depois de fechar a página pode aparecer aqui."
+              ajuda="Status conferido a cada 5 minutos na plataforma de assinaturas."
               arquivo="cobranca-nao-paga"
               rows={recCobranca}
             />
@@ -672,7 +673,7 @@ function Dashboard() {
             </Tabela>
             <p style={{ color: C.muted, fontSize: ".8rem", margin: "12px 0 0" }}>
               &quot;Só preencheu&quot; começou a ser salvo em 03/11: quem preencheu antes não ficou registrado. &quot;—&quot; na UTM significa que o link usado não trazia aquele parâmetro.
-              &quot;Pago&quot; é marcado quando o comprador ainda está na página do checkout no momento da confirmação; quem pagou o Pix depois de fechar a página pode aparecer como &quot;Cobrança gerada&quot;: confira no Asaas.
+              O status é conferido automaticamente na plataforma de assinaturas a cada 5 minutos, mesmo com a página fechada.
             </p>
           </div>
         )}

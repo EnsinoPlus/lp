@@ -136,11 +136,21 @@ function Assinar() {
           return;
         }
         renderPlanos(new URLSearchParams(location.search).get("plano"));
+        // Chegou ao checkout. Dá à campanha um sinal bem mais frequente que a cobrança gerada.
+        fbq("track", "InitiateCheckout", {
+          value: plano && forma ? Number(plano.prices[forma]) : 0,
+          currency: "BRL",
+          content_name: plano?.label || "Calc Machine Connect",
+        });
+        trackCmcEvent("InitiateCheckout", { plano: plano?.label || "" });
         ($("linkPlataforma") as HTMLAnchorElement).href = PLATAFORMA_URL;
         $("carregando").hidden = true;
         $("form").hidden = false;
       } catch {
-        if (!cancelado) $("carregando").textContent = "Não foi possível carregar os planos. Tente novamente em instantes.";
+        if (cancelado) return;
+        $("carregando").textContent = "Não foi possível carregar os planos. Tente novamente em instantes.";
+        fbq("track", "InitiateCheckout", { currency: "BRL" });
+        trackCmcEvent("InitiateCheckout", { plano: "" });
       }
     })();
 
@@ -186,11 +196,13 @@ function Assinar() {
             $("pagamento").hidden = true;
             $("fim").hidden = false;
             // Evento Meta de COMPRA (confirmação do Asaas).
-            fbq("track", "Purchase", {
-              value: valorCompra,
-              currency: "BRL",
-              content_name: plano?.label || "Calc Machine Connect",
-            });
+            // Mesmo event_id do envio pelo servidor (cmc-verifica-pagamentos): o Meta não conta duas vezes.
+            fbq(
+              "track",
+              "Purchase",
+              { value: valorCompra, currency: "BRL", content_name: plano?.label || "Calc Machine Connect" },
+              { eventID: `purchase_${chargeId}` },
+            );
             fbq("trackCustom", "CompraCalcMachine", { plano: plano?.label || "", valor: valorCompra });
             trackCmcEvent("Purchase", { plano: plano?.label || "", valor: String(valorCompra), forma: forma || "" });
             // Marca a compra como paga no nosso banco.
@@ -233,9 +245,9 @@ function Assinar() {
         if (!r.ok) throw new Error(d.error || "Não foi possível gerar o pagamento.");
         chargeId = d.chargeId;
         valorCompra = Number(d.valor) || (plano && forma ? Number(plano.prices[forma]) : 0);
-        // Evento Meta: iniciou o checkout (gerou a cobrança).
-        fbq("track", "InitiateCheckout", { value: valorCompra, currency: "BRL" });
-        trackCmcEvent("InitiateCheckout", { plano: plano.label, valor: String(valorCompra), forma: forma || "" });
+        // Evento Meta: gerou a cobrança.
+        fbq("track", "AddPaymentInfo", { value: valorCompra, currency: "BRL", content_name: plano.label });
+        trackCmcEvent("AddPaymentInfo", { plano: plano.label, valor: String(valorCompra), forma: forma || "" });
         // Salva o lead no NOSSO banco (best-effort, não trava o checkout).
         void recordCmcCheckout({
           chargeId,
