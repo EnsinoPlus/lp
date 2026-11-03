@@ -56,13 +56,13 @@ function CalcMachineConnect() {
     if (!raiz) return;
     trackCmcEvent("PageView");
 
-    // Repassa as UTMs (e fbclid/gclid) da URL atual para TODOS os links de checkout,
+    // Repassa as UTMs (e fbclid/gclid/placement/ad) da URL atual para TODOS os links de checkout,
     // para a origem do lead não se perder ao ir para /assinar.
     const forwardUtm = () => {
       const atual = new URLSearchParams(window.location.search);
       const utm = new URLSearchParams();
       atual.forEach((v, k) => {
-        if (/^utm_/i.test(k) || k === "fbclid" || k === "gclid") utm.set(k, v);
+        if (/^utm_/i.test(k) || k === "fbclid" || k === "gclid" || k === "placement" || k === "ad") utm.set(k, v);
       });
       const extra = utm.toString();
       if (!extra) return;

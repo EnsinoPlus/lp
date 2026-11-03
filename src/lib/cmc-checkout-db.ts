@@ -6,6 +6,8 @@
  * direto fica bloqueado. Best-effort: nunca lança nem trava o checkout.
  */
 
+import { cmcAtribuicao } from "@/lib/cmc-attribution";
+
 const LEADS_URL = "https://rartcafydsaocdzshqcx.supabase.co";
 const LEADS_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcnRjYWZ5ZHNhb2NkenNocWN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTM5ODgsImV4cCI6MjEwNDUyOTk4OH0.kM0xlo6YjKWY1i7jqrYwwG1RkkVHMFte12K9_AHuT-I";
@@ -37,7 +39,7 @@ function getVisitorId(): string {
 
 function readUrlParams(): Record<string, string> {
   if (typeof window === "undefined") return {};
-  const out: Record<string, string> = {};
+  const out: Record<string, string> = { ...cmcAtribuicao() };
   try {
     new URLSearchParams(window.location.search).forEach((v, k) => {
       if (k) out[k.slice(0, 100)] = String(v).slice(0, 500);

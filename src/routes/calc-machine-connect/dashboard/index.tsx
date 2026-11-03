@@ -3,9 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 import {
   fetchCmcContatos,
   fetchCmcDashboard,
+  fetchCmcLeads,
   type CmcContato,
   type CmcDashboard,
   type CmcEtapa,
+  type CmcLead,
 } from "@/lib/cmc-events";
 import { listCmcAvaliacoes, setCmcAvaliacaoStatus, type AvaliacaoRow } from "@/lib/cmc-avaliacao-db";
 import { CmcAvaliacoesLista } from "@/components/CmcAvaliacoesLista";
@@ -131,11 +133,11 @@ function Kpi({ titulo, valor, sub }: { titulo: string; valor: string; sub?: stri
   );
 }
 
-function baixarCsv(rows: CmcDashboard["checkouts"]) {
-  const cab = ["data", "nome", "email", "whatsapp", "plano", "forma", "parcelas", "valor", "status", "origem", "campanha"];
+function baixarCsv(rows: CmcLead[]) {
+  const cab = ["data", "nome", "email", "whatsapp", "plano", "forma", "parcelas", "valor", "status", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "placement", "ad", "fbclid"];
   const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
   const linhas = rows.map((r) =>
-    [fmtData(r.created_at), r.nome, r.email, r.telefone, r.plano_label, r.forma, r.parcelas, String(r.valor ?? "").replace(".", ","), r.status, r.utm_source, r.utm_campaign]
+    [fmtData(r.created_at), r.nome, r.email, r.telefone, r.plano_label, r.forma, r.parcelas, String(r.valor ?? "").replace(".", ","), r.status, r.utm_source, r.utm_medium, r.utm_campaign, r.utm_content, r.utm_term, r.placement, r.ad, r.tem_fbclid ? "sim" : ""]
       .map(esc)
       .join(";"),
   );
@@ -229,6 +231,7 @@ function Dashboard() {
   const [filtroStatus, setFiltroStatus] = useState<"todos" | "parcial" | "iniciado" | "pago" | "expirado">("todos");
   const [busca, setBusca] = useState("");
   const [contatos, setContatos] = useState<CmcContato[]>([]);
+  const [leads, setLeads] = useState<CmcLead[]>([]);
   const [filtroEtapa, setFiltroEtapa] = useState<CmcEtapa | "todas">("todas");
   const [buscaContato, setBuscaContato] = useState("");
   const [aberto, setAberto] = useState<string | null>(null);
@@ -237,10 +240,11 @@ function Dashboard() {
     setCarregando(true);
     setErro("");
     const desde = desdeDe(p);
-    const [r, av, ct] = await Promise.all([
+    const [r, av, ct, ld] = await Promise.all([
       fetchCmcDashboard(em, se, desde),
       listCmcAvaliacoes(em, se),
       fetchCmcContatos(em, se, desde),
+      fetchCmcLeads(em, se, desde),
     ]);
     setCarregando(false);
     if (!r.ok) {
@@ -256,6 +260,7 @@ function Dashboard() {
     setDados(r.data);
     if (av.ok) setAvaliacoes(av.rows);
     if (ct.ok) setContatos(ct.data);
+    if (ld.ok) setLeads(ld.data);
     setLogado(true);
     try {
       localStorage.setItem(CRED_KEY, JSON.stringify({ email: em, senha: se }));
@@ -303,16 +308,17 @@ function Dashboard() {
     setDados(null);
     setAvaliacoes([]);
     setContatos([]);
+    setLeads([]);
   };
 
   const leadsFiltrados = useMemo(() => {
     const q = busca.trim().toLowerCase();
-    return (dados?.checkouts || []).filter(
+    return leads.filter(
       (r) =>
         (filtroStatus === "todos" || r.status === filtroStatus) &&
-        (!q || `${r.nome || ""} ${r.email || ""} ${r.telefone || ""} ${r.utm_source || ""}`.toLowerCase().includes(q)),
+        (!q || `${r.nome || ""} ${r.email || ""} ${r.telefone || ""} ${r.utm_source || ""} ${r.utm_medium || ""} ${r.utm_campaign || ""} ${r.utm_content || ""} ${r.utm_term || ""}`.toLowerCase().includes(q)),
     );
-  }, [dados, filtroStatus, busca]);
+  }, [leads, filtroStatus, busca]);
 
   const contatosFiltrados = useMemo(() => {
     const q = buscaContato.trim().toLowerCase();
@@ -377,7 +383,7 @@ function Dashboard() {
     { id: "geral", txt: "Visão geral" },
     { id: "recuperacao", txt: `Recuperação (${recCobranca.length + recForm.length})` },
     { id: "contatos", txt: `Contatos (${contatos.length})` },
-    { id: "leads", txt: `Leads do checkout (${dados?.checkouts.length ?? 0})` },
+    { id: "leads", txt: `Leads do checkout (${leads.length})` },
     { id: "avaliacoes", txt: `Avaliações${pendentes ? ` (${pendentes} pendente${pendentes > 1 ? "s" : ""})` : ""}` },
   ];
 
@@ -596,15 +602,20 @@ function Dashboard() {
 
         {aba === "leads" && dados && (
           <div style={card}>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12 }}>
+              {(["todos", "parcial", "iniciado", "pago", "expirado"] as const).map((st) => {
+                const n = st === "todos" ? leads.length : leads.filter((l) => l.status === st).length;
+                const ativo = filtroStatus === st;
+                return (
+                  <button key={st} onClick={() => setFiltroStatus(st)}
+                    style={{ ...btn, borderRadius: 999, fontSize: ".85rem", background: ativo ? C.ink : "#fff", color: ativo ? "#fff" : C.ink }}>
+                    {st === "todos" ? "Todos" : STATUS_LEAD[st].txt} ({n})
+                  </button>
+                );
+              })}
+            </div>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", marginBottom: 12 }}>
-              <select value={filtroStatus} onChange={(e) => setFiltroStatus(e.target.value as typeof filtroStatus)} style={btn} aria-label="Status">
-                <option value="todos">Todos os status</option>
-                <option value="parcial">Só preencheu</option>
-                <option value="iniciado">Cobrança gerada</option>
-                <option value="pago">Pago</option>
-                <option value="expirado">Expirado</option>
-              </select>
-              <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar nome, e-mail, WhatsApp ou origem"
+              <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar nome, e-mail, WhatsApp ou UTM"
                 style={{ ...btn, flex: "1 1 220px", cursor: "text" }} />
               <span style={{ color: C.muted, fontSize: ".9rem" }}>{leadsFiltrados.length} leads</span>
               <button onClick={() => baixarCsv(leadsFiltrados)} style={btn} disabled={!leadsFiltrados.length}>Baixar CSV</button>
@@ -613,22 +624,30 @@ function Dashboard() {
               <thead>
                 <tr>
                   <th style={th}>Data</th>
+                  <th style={th}>Status</th>
                   <th style={th}>Nome</th>
                   <th style={th}>E-mail</th>
                   <th style={th}>WhatsApp</th>
                   <th style={th}>Plano / forma</th>
                   <th style={th}>Valor</th>
-                  <th style={th}>Status</th>
-                  <th style={th}>Origem</th>
+                  <th style={th}>utm_source</th>
+                  <th style={th}>utm_medium</th>
+                  <th style={th}>utm_campaign</th>
+                  <th style={th}>utm_content</th>
+                  <th style={th}>utm_term</th>
+                  <th style={th}>placement</th>
+                  <th style={th}>ad</th>
+                  <th style={th}>Meta (fbclid)</th>
                 </tr>
               </thead>
               <tbody>
                 {leadsFiltrados.length === 0 && (
-                  <tr><td style={td} colSpan={8}>Nenhum lead no filtro.</td></tr>
+                  <tr><td style={td} colSpan={15}>Nenhum lead no filtro.</td></tr>
                 )}
                 {leadsFiltrados.map((l) => (
-                  <tr key={`${l.charge_id}-${l.created_at}`}>
+                  <tr key={l.id}>
                     <td style={{ ...td, whiteSpace: "nowrap" }}>{fmtData(l.created_at)}</td>
+                    <td style={{ ...td, color: STATUS_LEAD[l.status]?.cor, fontWeight: 700, whiteSpace: "nowrap" }}>{STATUS_LEAD[l.status]?.txt || l.status}</td>
                     <td style={td}>{l.nome || "—"}</td>
                     <td style={td}>{l.email || "—"}</td>
                     <td style={{ ...td, whiteSpace: "nowrap" }}>{l.telefone || "—"}</td>
@@ -639,17 +658,21 @@ function Dashboard() {
                       </div>
                     </td>
                     <td style={{ ...td, whiteSpace: "nowrap" }}>{l.valor ? brl(l.valor) : "—"}</td>
-                    <td style={{ ...td, color: STATUS_LEAD[l.status]?.cor, fontWeight: 700 }}>{STATUS_LEAD[l.status]?.txt || l.status}</td>
-                    <td style={td}>
-                      {l.utm_source || "(direto)"}
-                      {l.utm_campaign && <div style={{ color: C.muted, fontSize: ".8rem" }}>{l.utm_campaign}</div>}
-                    </td>
+                    <td style={td}>{l.utm_source || "—"}</td>
+                    <td style={td}>{l.utm_medium || "—"}</td>
+                    <td style={td}>{l.utm_campaign || "—"}</td>
+                    <td style={td}>{l.utm_content || "—"}</td>
+                    <td style={td}>{l.utm_term || "—"}</td>
+                    <td style={td}>{l.placement || "—"}</td>
+                    <td style={td}>{l.ad || "—"}</td>
+                    <td style={td}>{l.tem_fbclid ? "Sim" : "—"}</td>
                   </tr>
                 ))}
               </tbody>
             </Tabela>
             <p style={{ color: C.muted, fontSize: ".8rem", margin: "12px 0 0" }}>
-              &quot;Pago&quot; é marcado quando o comprador ainda está na página do checkout no momento da confirmação. Quem pagou o Pix depois de fechar a página pode aparecer como &quot;Cobrança gerada&quot;: confira no Asaas.
+              &quot;Só preencheu&quot; começou a ser salvo em 03/11: quem preencheu antes não ficou registrado. &quot;—&quot; na UTM significa que o link usado não trazia aquele parâmetro.
+              &quot;Pago&quot; é marcado quando o comprador ainda está na página do checkout no momento da confirmação; quem pagou o Pix depois de fechar a página pode aparecer como &quot;Cobrança gerada&quot;: confira no Asaas.
             </p>
           </div>
         )}

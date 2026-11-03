@@ -5,6 +5,8 @@
  * `cmc_track_event`; leitura só pela RPC `cmc_dashboard`, que exige e-mail + senha.
  */
 
+import { cmcAtribuicao } from "@/lib/cmc-attribution";
+
 const LEADS_URL = "https://rartcafydsaocdzshqcx.supabase.co";
 const LEADS_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhcnRjYWZ5ZHNhb2NkenNocWN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NTM5ODgsImV4cCI6MjEwNDUyOTk4OH0.kM0xlo6YjKWY1i7jqrYwwG1RkkVHMFte12K9_AHuT-I";
@@ -37,7 +39,13 @@ function getVisitorId(): string {
 export function trackCmcEvent(event: string, params?: Record<string, string>): void {
   if (typeof window === "undefined") return;
   try {
-    const url = new URLSearchParams(window.location.search);
+    const origem = cmcAtribuicao();
+    const todos = {
+      ...params,
+      ...(origem.fbclid ? { fbclid: origem.fbclid.slice(0, 200) } : {}),
+      ...(origem.placement ? { placement: origem.placement } : {}),
+      ...(origem.ad ? { ad: origem.ad } : {}),
+    };
     void fetch(`${LEADS_URL}/rest/v1/rpc/cmc_track_event`, {
       method: "POST",
       keepalive: true,
@@ -45,11 +53,11 @@ export function trackCmcEvent(event: string, params?: Record<string, string>): v
       body: JSON.stringify({
         p_event: event,
         p_page: window.location.pathname,
-        p_params: params && Object.keys(params).length ? params : null,
+        p_params: Object.keys(todos).length ? todos : null,
         p_visitor_id: getVisitorId() || null,
-        p_utm_source: url.get("utm_source"),
-        p_utm_medium: url.get("utm_medium"),
-        p_utm_campaign: url.get("utm_campaign"),
+        p_utm_source: origem.utm_source ?? null,
+        p_utm_medium: origem.utm_medium ?? null,
+        p_utm_campaign: origem.utm_campaign ?? null,
         p_referrer: document.referrer || null,
       }),
     }).catch(() => {});
@@ -164,6 +172,33 @@ async function rpcPainel<T>(fn: string, email: string, senha: string, desde: Dat
   if (!resp.ok) return { ok: false as const, status: resp.status };
   return { ok: true as const, data: (await resp.json()) as T };
 }
+
+export type CmcLead = {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  nome: string | null;
+  email: string | null;
+  telefone: string | null;
+  plano_label: string | null;
+  forma: string | null;
+  parcelas: number | null;
+  valor: number | null;
+  status: "parcial" | "iniciado" | "pago" | "expirado";
+  charge_id: string | null;
+  landing_page: string | null;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  utm_content: string | null;
+  utm_term: string | null;
+  placement: string | null;
+  ad: string | null;
+  tem_fbclid: boolean;
+};
+
+export const fetchCmcLeads = (email: string, senha: string, desde: Date | null) =>
+  rpcPainel<CmcLead[]>("cmc_dashboard_leads", email, senha, desde);
 
 export const fetchCmcContatos = (email: string, senha: string, desde: Date | null) =>
   rpcPainel<CmcContato[]>("cmc_dashboard_contatos", email, senha, desde);
