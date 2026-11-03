@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { trackMetaCustomEvent } from "@/lib/meta-pixel";
+import { trackCmcEvent } from "@/lib/cmc-events";
 
 // Página de venda do Calc Machine Connect (conector MCP do Calc Machine para Claude, ChatGPT e Gemini).
 // Conteúdo e estilo copiados da página do gateway (suite.ensinoplus.com.br/calc-machine-connect); o CSS fica isolado em .cmc.
@@ -53,6 +54,7 @@ function CalcMachineConnect() {
   useEffect(() => {
     const raiz = document.querySelector(".cmc");
     if (!raiz) return;
+    trackCmcEvent("PageView");
 
     // Repassa as UTMs (e fbclid/gclid) da URL atual para TODOS os links de checkout,
     // para a origem do lead não se perder ao ir para /assinar.
@@ -78,6 +80,18 @@ function CalcMachineConnect() {
     // links, botões (copiar, abas de IA) e perguntas do FAQ. Cada tipo tem nome
     // próprio; o que não se encaixar cai em CMC_Link / CMC_Botao.
     const texto = (el: Element) => (el.textContent || "").replace(/\s+/g, " ").trim().slice(0, 80);
+    // Âncora desta página (#secao). O linker global de UTM (signup-origin) reescreve
+    // "#planos" para a URL completa antes do clique chegar aqui, então compara o destino real.
+    const ancoraLocal = (a: HTMLAnchorElement): string => {
+      try {
+        const u = new URL(a.href, window.location.href);
+        return u.origin === window.location.origin && u.pathname === window.location.pathname && u.hash
+          ? u.hash.slice(1)
+          : "";
+      } catch {
+        return "";
+      }
+    };
     const classificar = (el: HTMLElement): [string, Record<string, string>] | null => {
       const local =
         el.closest("section")?.id || el.closest("header, nav, footer")?.tagName.toLowerCase() || "pagina";
@@ -95,19 +109,20 @@ function CalcMachineConnect() {
       }
       const href = el.getAttribute("href") || "";
       const label = texto(el);
+      const secao = ancoraLocal(el as HTMLAnchorElement);
       if (el.id === "btn-teste" || /app=assinaturas/i.test(href)) return ["CMC_TesteGratis", { local }];
       if (/\/calc-machine-connect\/assinar/i.test(href)) {
         const plano = new URLSearchParams(href.split("?")[1] || "").get("plano") || "";
         return ["CMC_Assinar", { local, ...(plano ? { plano } : {}) }];
       }
-      if (href === "#planos") return ["CMC_VerPlanos", { local }];
+      if (secao === "planos") return ["CMC_VerPlanos", { local }];
       if (/\/register/i.test(href)) return ["CMC_CriarConta", { local }];
       if (/vimeo\.com|youtu\.?be/i.test(href)) return ["CMC_VerVideo", { video: label, local }];
       if (/wa\.me|whatsapp/i.test(href)) return ["CMC_Whatsapp", { local }];
       if (/conectar-ia/i.test(href)) return ["CMC_ConectarIA", { local }];
       if (/\/manual/i.test(href)) return ["CMC_Manual", { manual: label, local }];
       if (/\/faq/i.test(href)) return ["CMC_FAQ", { local }];
-      if (href.startsWith("#")) return ["CMC_Navegar", { secao: href.slice(1), texto: label, local }];
+      if (secao) return ["CMC_Navegar", { secao, texto: label, local }];
       return ["CMC_Link", { texto: label, destino: href.slice(0, 120), local }];
     };
 
@@ -118,6 +133,7 @@ function CalcMachineConnect() {
       if (!c) return;
       const [evento, params] = c;
       trackMetaCustomEvent(evento, params);
+      trackCmcEvent(evento, params);
       if (el.tagName !== "A") return;
       const a = el as HTMLAnchorElement;
       const href = a.getAttribute("href") || "";
@@ -126,7 +142,7 @@ function CalcMachineConnect() {
       const mouse = ev as MouseEvent;
       const navegaFora =
         !!href &&
-        !href.startsWith("#") &&
+        !ancoraLocal(a) &&
         (a as HTMLAnchorElement).target !== "_blank" &&
         !mouse.metaKey &&
         !mouse.ctrlKey &&
@@ -234,7 +250,12 @@ function CalcMachineConnect() {
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
       <div className="cmc" dangerouslySetInnerHTML={{ __html: HTML }} />
-      <WhatsAppFloat href="https://wa.me/5585996641461" label="Tirar dúvidas" event="CMC_Whatsapp" />
+      <WhatsAppFloat
+        href="https://wa.me/5585996641461"
+        label="Tirar dúvidas"
+        event="CMC_Whatsapp"
+        onClick={() => trackCmcEvent("CMC_Whatsapp", { local: "flutuante" })}
+      />
     </>
   );
 }

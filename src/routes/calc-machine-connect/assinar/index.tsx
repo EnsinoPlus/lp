@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { recordCmcCheckout } from "@/lib/cmc-checkout-db";
+import { trackCmcEvent } from "@/lib/cmc-events";
 
 // Página de assinatura do Calc Machine Connect (checkout): cópia da página assinaturas.ensinoplus.com.br/assinar.
 // Ela fala direto com a API pública do Assinaturas (planos, cobrança por Pix/cartão e acompanhamento do pagamento),
@@ -47,6 +48,7 @@ function Assinar() {
   useEffect(() => {
     const raiz = document.querySelector<HTMLElement>(".asn");
     if (!raiz) return;
+    trackCmcEvent("PageView");
     const $ = <T extends HTMLElement = HTMLElement>(id: string) => raiz.querySelector<T>(`#${id}`)!;
 
     let planos: Plano[] = [];
@@ -157,6 +159,7 @@ function Assinar() {
               content_name: plano?.label || "Calc Machine Connect",
             });
             fbq("trackCustom", "CompraCalcMachine", { plano: plano?.label || "", valor: valorCompra });
+            trackCmcEvent("Purchase", { plano: plano?.label || "", valor: String(valorCompra), forma: forma || "" });
             // Marca a compra como paga no nosso banco.
             void recordCmcCheckout({ chargeId, email: emailCobranca, valor: valorCompra, status: "pago" });
           } else if (d.status === "expired" || d.status === "canceled") {
@@ -197,6 +200,7 @@ function Assinar() {
         valorCompra = Number(d.valor) || (plano && forma ? Number(plano.prices[forma]) : 0);
         // Evento Meta: iniciou o checkout (gerou a cobrança).
         fbq("track", "InitiateCheckout", { value: valorCompra, currency: "BRL" });
+        trackCmcEvent("InitiateCheckout", { plano: plano.label, valor: String(valorCompra), forma: forma || "" });
         // Salva o lead no NOSSO banco (best-effort, não trava o checkout).
         void recordCmcCheckout({
           chargeId,

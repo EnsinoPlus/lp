@@ -31,6 +31,7 @@ import { Route as EbookPjecalc2026ObrigadoAnaliseCreditoRouteImport } from './ro
 import { Route as EbookPjecalc2026ObrigadoAguardandoPagamentoRouteImport } from './routes/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
 import { Route as EbookPjecalc2026ObrigadoRouteImport } from './routes/ebook-pjecalc-2026/obrigado'
 import { Route as CctObrigadoRouteImport } from './routes/cct/obrigado'
+import { Route as CalcMachineConnectDashboardIndexRouteImport } from './routes/calc-machine-connect/dashboard/index'
 import { Route as CalcMachineConnectAvaliacaoIndexRouteImport } from './routes/calc-machine-connect/avaliacao/index'
 import { Route as CalcMachineConnectAssinarIndexRouteImport } from './routes/calc-machine-connect/assinar/index'
 import { Route as CalcMachineConnectAvaliacaoPainelIndexRouteImport } from './routes/calc-machine-connect/avaliacao/painel/index'
@@ -155,6 +156,12 @@ const CctObrigadoRoute = CctObrigadoRouteImport.update({
   path: '/cct/obrigado',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CalcMachineConnectDashboardIndexRoute =
+  CalcMachineConnectDashboardIndexRouteImport.update({
+    id: '/calc-machine-connect/dashboard/',
+    path: '/calc-machine-connect/dashboard/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const CalcMachineConnectAvaliacaoIndexRoute =
   CalcMachineConnectAvaliacaoIndexRouteImport.update({
     id: '/calc-machine-connect/avaliacao/',
@@ -199,6 +206,7 @@ export interface FileRoutesByFullPath {
   '/suiteplus-promo-1010/': typeof SuiteplusPromo1010IndexRoute
   '/calc-machine-connect/assinar/': typeof CalcMachineConnectAssinarIndexRoute
   '/calc-machine-connect/avaliacao/': typeof CalcMachineConnectAvaliacaoIndexRoute
+  '/calc-machine-connect/dashboard/': typeof CalcMachineConnectDashboardIndexRoute
   '/calc-machine-connect/avaliacao/painel/': typeof CalcMachineConnectAvaliacaoPainelIndexRoute
 }
 export interface FileRoutesByTo {
@@ -226,6 +234,7 @@ export interface FileRoutesByTo {
   '/suiteplus-promo-1010': typeof SuiteplusPromo1010IndexRoute
   '/calc-machine-connect/assinar': typeof CalcMachineConnectAssinarIndexRoute
   '/calc-machine-connect/avaliacao': typeof CalcMachineConnectAvaliacaoIndexRoute
+  '/calc-machine-connect/dashboard': typeof CalcMachineConnectDashboardIndexRoute
   '/calc-machine-connect/avaliacao/painel': typeof CalcMachineConnectAvaliacaoPainelIndexRoute
 }
 export interface FileRoutesById {
@@ -254,6 +263,7 @@ export interface FileRoutesById {
   '/suiteplus-promo-1010/': typeof SuiteplusPromo1010IndexRoute
   '/calc-machine-connect/assinar/': typeof CalcMachineConnectAssinarIndexRoute
   '/calc-machine-connect/avaliacao/': typeof CalcMachineConnectAvaliacaoIndexRoute
+  '/calc-machine-connect/dashboard/': typeof CalcMachineConnectDashboardIndexRoute
   '/calc-machine-connect/avaliacao/painel/': typeof CalcMachineConnectAvaliacaoPainelIndexRoute
 }
 export interface FileRouteTypes {
@@ -283,6 +293,7 @@ export interface FileRouteTypes {
     | '/suiteplus-promo-1010/'
     | '/calc-machine-connect/assinar/'
     | '/calc-machine-connect/avaliacao/'
+    | '/calc-machine-connect/dashboard/'
     | '/calc-machine-connect/avaliacao/painel/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -310,6 +321,7 @@ export interface FileRouteTypes {
     | '/suiteplus-promo-1010'
     | '/calc-machine-connect/assinar'
     | '/calc-machine-connect/avaliacao'
+    | '/calc-machine-connect/dashboard'
     | '/calc-machine-connect/avaliacao/painel'
   id:
     | '__root__'
@@ -337,6 +349,7 @@ export interface FileRouteTypes {
     | '/suiteplus-promo-1010/'
     | '/calc-machine-connect/assinar/'
     | '/calc-machine-connect/avaliacao/'
+    | '/calc-machine-connect/dashboard/'
     | '/calc-machine-connect/avaliacao/painel/'
   fileRoutesById: FileRoutesById
 }
@@ -365,6 +378,7 @@ export interface RootRouteChildren {
   SuiteplusPromo1010IndexRoute: typeof SuiteplusPromo1010IndexRoute
   CalcMachineConnectAssinarIndexRoute: typeof CalcMachineConnectAssinarIndexRoute
   CalcMachineConnectAvaliacaoIndexRoute: typeof CalcMachineConnectAvaliacaoIndexRoute
+  CalcMachineConnectDashboardIndexRoute: typeof CalcMachineConnectDashboardIndexRoute
   CalcMachineConnectAvaliacaoPainelIndexRoute: typeof CalcMachineConnectAvaliacaoPainelIndexRoute
 }
 
@@ -524,6 +538,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CctObrigadoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/calc-machine-connect/dashboard/': {
+      id: '/calc-machine-connect/dashboard/'
+      path: '/calc-machine-connect/dashboard'
+      fullPath: '/calc-machine-connect/dashboard/'
+      preLoaderRoute: typeof CalcMachineConnectDashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/calc-machine-connect/avaliacao/': {
       id: '/calc-machine-connect/avaliacao/'
       path: '/calc-machine-connect/avaliacao'
@@ -576,6 +597,7 @@ const rootRouteChildren: RootRouteChildren = {
   SuiteplusPromo1010IndexRoute: SuiteplusPromo1010IndexRoute,
   CalcMachineConnectAssinarIndexRoute: CalcMachineConnectAssinarIndexRoute,
   CalcMachineConnectAvaliacaoIndexRoute: CalcMachineConnectAvaliacaoIndexRoute,
+  CalcMachineConnectDashboardIndexRoute: CalcMachineConnectDashboardIndexRoute,
   CalcMachineConnectAvaliacaoPainelIndexRoute:
     CalcMachineConnectAvaliacaoPainelIndexRoute,
 }

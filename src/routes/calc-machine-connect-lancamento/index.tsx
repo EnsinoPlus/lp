@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { trackMetaCustomEvent } from "@/lib/meta-pixel";
+import { trackCmcEvent } from "@/lib/cmc-events";
 import {
   BadgeCheck,
   Check,
@@ -115,9 +116,14 @@ function Lancamento() {
   const [tab, setTab] = useState<"claude" | "gpt" | "gemini">("claude");
   const ativo = CONECTORES.find((c) => c.aba === tab) ?? CONECTORES[0];
 
+  useEffect(() => {
+    trackCmcEvent("PageView");
+  }, []);
+
   // Evento Meta ao iniciar o checkout (clique em "Garantir na 1ª onda").
   const initiateCheckout = () => {
     trackMetaCustomEvent("InitiateCheckoutLancamento");
+    trackCmcEvent("CMC_Assinar", { local: "lancamento" });
     if (typeof window !== "undefined" && window.fbq) {
       window.fbq("track", "InitiateCheckout", { value: 997, currency: "BRL" });
     }
@@ -126,7 +132,12 @@ function Lancamento() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Botão flutuante de WhatsApp (tirar dúvidas) */}
-      <WhatsAppFloat href="https://wa.me/5585996641461" label="Tirar dúvidas" event="CMC_Whatsapp" />
+      <WhatsAppFloat
+        href="https://wa.me/5585996641461"
+        label="Tirar dúvidas"
+        event="CMC_Whatsapp"
+        onClick={() => trackCmcEvent("CMC_Whatsapp", { local: "flutuante" })}
+      />
 
       {/* Barra de lançamento */}
       <div className="bg-[#E8552B] text-white py-2.5 px-4 text-center text-sm font-bold">

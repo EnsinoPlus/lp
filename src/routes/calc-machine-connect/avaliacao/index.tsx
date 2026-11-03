@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { recordCmcAvaliacao, uploadCmcAvaliacaoMedia } from "@/lib/cmc-avaliacao-db";
+import { trackCmcEvent } from "@/lib/cmc-events";
 
 // Página de avaliação do Calc Machine Connect: quem está no teste grátis deixa um
 // depoimento (texto obrigatório, foto/vídeo opcional, nota 1–5) e ganha +1 dia.
@@ -32,6 +33,10 @@ function Avaliacao() {
   const [erro, setErro] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [pronto, setPronto] = useState(false);
+
+  useEffect(() => {
+    trackCmcEvent("PageView");
+  }, []);
 
   const onArquivo = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0] || null;
@@ -68,6 +73,7 @@ function Avaliacao() {
         mediaUrl,
         mediaTipo,
       });
+      trackCmcEvent("AvaliacaoEnviada", { nota: String(nota), midia: mediaTipo || "nenhuma" });
       setPronto(true);
     } catch (err) {
       setErro(
