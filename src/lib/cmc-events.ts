@@ -70,6 +70,7 @@ export type CmcDashboard = {
     checkouts: number;
     pagos: number;
     expirados: number;
+    parciais: number;
     valor_pago: number;
     avaliacoes: number;
     nota_media: number | null;
@@ -91,11 +92,12 @@ export type CmcDashboard = {
     updated_at: string;
     nome: string | null;
     email: string | null;
+    telefone: string | null;
     plano_label: string | null;
     forma: string | null;
     parcelas: number | null;
     valor: number | null;
-    status: "iniciado" | "pago" | "expirado";
+    status: "parcial" | "iniciado" | "pago" | "expirado";
     utm_source: string | null;
     utm_campaign: string | null;
     charge_id: string | null;
@@ -124,12 +126,13 @@ export async function fetchCmcDashboard(
   return { ok: true, data: (await resp.json()) as CmcDashboard };
 }
 
-export type CmcEtapa = "pagou" | "gerou_cobranca" | "clicou" | "visitou" | "sem_rastreio";
+export type CmcEtapa = "pagou" | "gerou_cobranca" | "preencheu" | "clicou" | "visitou" | "sem_rastreio";
 
 export type CmcContato = {
   chave: string;
   nome: string | null;
-  email: string;
+  email: string | null;
+  telefone: string | null;
   documento: string | null;
   origem: string | null;
   campanha: string | null;
@@ -145,21 +148,11 @@ export type CmcContato = {
   acoes: number;
   jornada: {
     quando: string;
-    tipo: "evento" | "checkout" | "avaliacao";
+    tipo: "evento" | "checkout" | "avaliacao" | "parcial";
     nome: string;
     pagina: string | null;
     detalhes: Record<string, unknown> | null;
   }[];
-};
-
-export type CmcFunil = {
-  visitantes: number;
-  viram_planos: number;
-  clicaram_assinar: number;
-  clicaram_teste: number;
-  chegaram_checkout: number;
-  geraram_cobranca: number;
-  pagaram: number;
 };
 
 async function rpcPainel<T>(fn: string, email: string, senha: string, desde: Date | null) {
@@ -174,6 +167,3 @@ async function rpcPainel<T>(fn: string, email: string, senha: string, desde: Dat
 
 export const fetchCmcContatos = (email: string, senha: string, desde: Date | null) =>
   rpcPainel<CmcContato[]>("cmc_dashboard_contatos", email, senha, desde);
-
-export const fetchCmcFunil = (email: string, senha: string, desde: Date | null) =>
-  rpcPainel<CmcFunil>("cmc_funil_visitantes", email, senha, desde);

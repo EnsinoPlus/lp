@@ -3,17 +3,15 @@ import { useEffect, useMemo, useState } from "react";
 import {
   fetchCmcContatos,
   fetchCmcDashboard,
-  fetchCmcFunil,
   type CmcContato,
   type CmcDashboard,
   type CmcEtapa,
-  type CmcFunil,
 } from "@/lib/cmc-events";
 import { listCmcAvaliacoes, setCmcAvaliacaoStatus, type AvaliacaoRow } from "@/lib/cmc-avaliacao-db";
 import { CmcAvaliacoesLista } from "@/components/CmcAvaliacoesLista";
 
-// Dashboard interno do Calc Machine Connect: visitas, cliques, leads do checkout,
-// vendas, avaliações e eventos. Login = mesmo e-mail/senha do painel de avaliações.
+// Dashboard interno do Calc Machine Connect: cobranças, pagamentos, listas de recuperação,
+// contatos e avaliações. Login = mesmo e-mail/senha do painel de avaliações.
 
 export const Route = createFileRoute("/calc-machine-connect/dashboard/")({
   head: () => ({
@@ -38,7 +36,7 @@ const C = {
 };
 
 type Periodo = "hoje" | "7d" | "30d" | "tudo";
-type Aba = "geral" | "contatos" | "leads" | "avaliacoes" | "eventos";
+type Aba = "geral" | "recuperacao" | "contatos" | "leads" | "avaliacoes";
 
 const NOME_EVENTO: Record<string, string> = {
   PageView: "Visita na página",
@@ -64,19 +62,24 @@ const NOME_EVENTO: Record<string, string> = {
   PagamentoConfirmado: "Pagamento confirmado",
   CobrancaExpirada: "Cobrança expirada",
   AvaliacaoRecebida: "Enviou avaliação",
+  PreencheuCheckout: "Preencheu dados no checkout",
+  ComecouAvaliacao: "Começou a avaliação",
+  CheckoutErro: "Erro ao gerar cobrança",
 };
 
 const ETAPA: Record<CmcEtapa, { txt: string; cor: string }> = {
   pagou: { txt: "Pagou", cor: C.ok },
   gerou_cobranca: { txt: "Gerou cobrança, não pagou", cor: C.signal },
+  preencheu: { txt: "Preencheu, não gerou cobrança", cor: "#b7791f" },
   clicou: { txt: "Clicou, não gerou cobrança", cor: "#b7791f" },
   visitou: { txt: "Só visitou", cor: C.muted },
   sem_rastreio: { txt: "Sem visitas rastreadas", cor: C.muted },
 };
-const ORDEM_ETAPA: CmcEtapa[] = ["pagou", "gerou_cobranca", "clicou", "visitou", "sem_rastreio"];
+const ORDEM_ETAPA: CmcEtapa[] = ["pagou", "gerou_cobranca", "preencheu", "clicou", "visitou", "sem_rastreio"];
 
 const STATUS_LEAD: Record<string, { txt: string; cor: string }> = {
-  iniciado: { txt: "Iniciado", cor: C.muted },
+  parcial: { txt: "Só preencheu", cor: "#b7791f" },
+  iniciado: { txt: "Cobrança gerada", cor: C.muted },
   pago: { txt: "Pago", cor: C.ok },
   expirado: { txt: "Expirado", cor: C.erro },
 };
@@ -129,10 +132,10 @@ function Kpi({ titulo, valor, sub }: { titulo: string; valor: string; sub?: stri
 }
 
 function baixarCsv(rows: CmcDashboard["checkouts"]) {
-  const cab = ["data", "nome", "email", "plano", "forma", "parcelas", "valor", "status", "origem", "campanha"];
+  const cab = ["data", "nome", "email", "whatsapp", "plano", "forma", "parcelas", "valor", "status", "origem", "campanha"];
   const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
   const linhas = rows.map((r) =>
-    [fmtData(r.created_at), r.nome, r.email, r.plano_label, r.forma, r.parcelas, String(r.valor ?? "").replace(".", ","), r.status, r.utm_source, r.utm_campaign]
+    [fmtData(r.created_at), r.nome, r.email, r.telefone, r.plano_label, r.forma, r.parcelas, String(r.valor ?? "").replace(".", ","), r.status, r.utm_source, r.utm_campaign]
       .map(esc)
       .join(";"),
   );
@@ -144,11 +147,11 @@ function baixarCsv(rows: CmcDashboard["checkouts"]) {
   URL.revokeObjectURL(a.href);
 }
 
-function baixarCsvContatos(rows: CmcContato[]) {
-  const cab = ["nome", "email", "cpf_cnpj", "etapa", "origem", "campanha", "plano", "forma", "cobrancas", "valor_pago", "acoes", "avaliou", "primeiro_contato", "ultima_atividade"];
+function baixarCsvContatos(rows: CmcContato[], arquivo = "contatos") {
+  const cab = ["nome", "email", "whatsapp", "cpf_cnpj", "etapa", "origem", "campanha", "plano", "forma", "cobrancas", "valor_pago", "acoes", "avaliou", "primeiro_contato", "ultima_atividade"];
   const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
   const linhas = rows.map((c) =>
-    [c.nome, c.email, c.documento, ETAPA[c.etapa].txt, c.origem, c.campanha, c.plano, c.forma, c.cobrancas,
+    [c.nome, c.email, c.telefone, c.documento, ETAPA[c.etapa].txt, c.origem, c.campanha, c.plano, c.forma, c.cobrancas,
       String(c.valor_pago ?? "").replace(".", ","), c.acoes, c.avaliou ? "sim" : "não", fmtData(c.primeiro_contato), fmtData(c.ultima_atividade)]
       .map(esc)
       .join(";"),
@@ -156,9 +159,61 @@ function baixarCsvContatos(rows: CmcContato[]) {
   const blob = new Blob(["\ufeff" + [cab.join(";"), ...linhas].join("\n")], { type: "text/csv;charset=utf-8" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = `contatos-calc-machine-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.download = `${arquivo}-calc-machine-${new Date().toISOString().slice(0, 10)}.csv`;
   a.click();
   URL.revokeObjectURL(a.href);
+}
+
+function zapDe(telefone: string | null) {
+  const d = (telefone || "").replace(/\D/g, "");
+  if (d.length < 10) return null;
+  return `https://wa.me/${d.length <= 11 ? `55${d}` : d}`;
+}
+
+function ListaRecuperacao({ titulo, ajuda, arquivo, rows }: { titulo: string; ajuda: string; arquivo: string; rows: CmcContato[] }) {
+  return (
+    <div style={card}>
+      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", marginBottom: 4 }}>
+        <h2 style={{ fontSize: "1.05rem", margin: 0, marginRight: "auto" }}>
+          {titulo} ({rows.length})
+        </h2>
+        <button onClick={() => baixarCsvContatos(rows, arquivo)} style={btn} disabled={!rows.length}>Baixar CSV</button>
+      </div>
+      <p style={{ color: C.muted, fontSize: ".85rem", margin: "0 0 10px" }}>{ajuda}</p>
+      <Tabela>
+        <thead>
+          <tr>
+            <th style={th}>Nome</th>
+            <th style={th}>E-mail</th>
+            <th style={th}>WhatsApp</th>
+            <th style={th}>Plano / forma</th>
+            <th style={th}>Origem</th>
+            <th style={th}>Última atividade</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.length === 0 && (
+            <tr><td style={td} colSpan={6}>Ninguém nesta lista no período.</td></tr>
+          )}
+          {rows.map((c) => {
+            const zap = zapDe(c.telefone);
+            return (
+              <tr key={c.chave}>
+                <td style={td}>{c.nome || "—"}</td>
+                <td style={td}>{c.email ? <a href={`mailto:${c.email}`} style={{ color: C.ink }}>{c.email}</a> : "—"}</td>
+                <td style={{ ...td, whiteSpace: "nowrap" }}>
+                  {zap ? <a href={zap} target="_blank" rel="noreferrer" style={{ color: C.ok, fontWeight: 700 }}>{c.telefone}</a> : c.telefone || "—"}
+                </td>
+                <td style={td}>{c.plano || "—"}{c.forma ? ` (${c.forma})` : ""}</td>
+                <td style={td}>{c.origem || "(direto)"}</td>
+                <td style={{ ...td, whiteSpace: "nowrap" }}>{fmtData(c.ultima_atividade)}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </Tabela>
+    </div>
+  );
 }
 
 function Dashboard() {
@@ -171,10 +226,9 @@ function Dashboard() {
   const [avaliacoes, setAvaliacoes] = useState<AvaliacaoRow[]>([]);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState("");
-  const [filtroStatus, setFiltroStatus] = useState<"todos" | "iniciado" | "pago" | "expirado">("todos");
+  const [filtroStatus, setFiltroStatus] = useState<"todos" | "parcial" | "iniciado" | "pago" | "expirado">("todos");
   const [busca, setBusca] = useState("");
   const [contatos, setContatos] = useState<CmcContato[]>([]);
-  const [funilV, setFunilV] = useState<CmcFunil | null>(null);
   const [filtroEtapa, setFiltroEtapa] = useState<CmcEtapa | "todas">("todas");
   const [buscaContato, setBuscaContato] = useState("");
   const [aberto, setAberto] = useState<string | null>(null);
@@ -183,11 +237,10 @@ function Dashboard() {
     setCarregando(true);
     setErro("");
     const desde = desdeDe(p);
-    const [r, av, ct, fu] = await Promise.all([
+    const [r, av, ct] = await Promise.all([
       fetchCmcDashboard(em, se, desde),
       listCmcAvaliacoes(em, se),
       fetchCmcContatos(em, se, desde),
-      fetchCmcFunil(em, se, desde),
     ]);
     setCarregando(false);
     if (!r.ok) {
@@ -203,7 +256,6 @@ function Dashboard() {
     setDados(r.data);
     if (av.ok) setAvaliacoes(av.rows);
     if (ct.ok) setContatos(ct.data);
-    if (fu.ok) setFunilV(fu.data);
     setLogado(true);
     try {
       localStorage.setItem(CRED_KEY, JSON.stringify({ email: em, senha: se }));
@@ -251,7 +303,6 @@ function Dashboard() {
     setDados(null);
     setAvaliacoes([]);
     setContatos([]);
-    setFunilV(null);
   };
 
   const leadsFiltrados = useMemo(() => {
@@ -259,7 +310,7 @@ function Dashboard() {
     return (dados?.checkouts || []).filter(
       (r) =>
         (filtroStatus === "todos" || r.status === filtroStatus) &&
-        (!q || `${r.nome || ""} ${r.email || ""} ${r.utm_source || ""}`.toLowerCase().includes(q)),
+        (!q || `${r.nome || ""} ${r.email || ""} ${r.telefone || ""} ${r.utm_source || ""}`.toLowerCase().includes(q)),
     );
   }, [dados, filtroStatus, busca]);
 
@@ -268,7 +319,7 @@ function Dashboard() {
     return contatos.filter(
       (c) =>
         (filtroEtapa === "todas" || c.etapa === filtroEtapa) &&
-        (!q || `${c.nome || ""} ${c.email} ${c.origem || ""} ${c.documento || ""}`.toLowerCase().includes(q)),
+        (!q || `${c.nome || ""} ${c.email || ""} ${c.telefone || ""} ${c.origem || ""} ${c.documento || ""}`.toLowerCase().includes(q)),
     );
   }, [contatos, filtroEtapa, buscaContato]);
 
@@ -304,24 +355,30 @@ function Dashboard() {
 
   const r = dados?.resumo;
   const pendentes = avaliacoes.filter((a) => a.status === "recebida").length;
-  const maxDia = Math.max(1, ...(dados?.por_dia || []).map((d) => d.visitantes));
-  const funil = funilV
-    ? [
-        { nome: "Visitaram a página", v: funilV.visitantes },
-        { nome: "Viram os planos", v: funilV.viram_planos },
-        { nome: "Clicaram em Assinar", v: funilV.clicaram_assinar },
-        { nome: "Chegaram no checkout", v: funilV.chegaram_checkout },
-        { nome: "Geraram cobrança", v: funilV.geraram_cobranca },
-        { nome: "Pagaram", v: funilV.pagaram },
-      ]
-    : [];
+  const comCobranca = contatos.filter((c) => c.cobrancas > 0);
+  const recCobranca = contatos.filter((c) => c.etapa === "gerou_cobranca");
+  const recForm = contatos.filter(
+    (c) => c.etapa === "preencheu" && c.jornada.some((j) => j.nome === "PreencheuCheckout"),
+  );
+  const pagos = (dados?.checkouts || []).filter((c) => c.status === "pago");
+  const pagosPix = pagos.filter((c) => (c.forma || "").startsWith("pix"));
+  const pagosCartao = pagos.filter((c) => c.forma === "card");
+  const somaValor = (l: typeof pagos) => l.reduce((t, c) => t + Number(c.valor || 0), 0);
+  const origensCk = (dados?.origens || []).filter((o) => o.checkouts > 0);
+  const diasCk = [...(dados?.por_dia || [])].reverse().filter((d) => d.checkouts > 0 || d.pagos > 0);
+  const pagaram = contatos.filter((c) => c.etapa === "pagou").length;
+  const funil = [
+    { nome: "Preencheram os dados", v: comCobranca.length + recForm.length },
+    { nome: "Geraram cobrança", v: comCobranca.length },
+    { nome: "Pagaram", v: pagaram },
+  ];
 
   const abas: { id: Aba; txt: string }[] = [
     { id: "geral", txt: "Visão geral" },
+    { id: "recuperacao", txt: `Recuperação (${recCobranca.length + recForm.length})` },
     { id: "contatos", txt: `Contatos (${contatos.length})` },
     { id: "leads", txt: `Leads do checkout (${dados?.checkouts.length ?? 0})` },
     { id: "avaliacoes", txt: `Avaliações${pendentes ? ` (${pendentes} pendente${pendentes > 1 ? "s" : ""})` : ""}` },
-    { id: "eventos", txt: "Eventos" },
   ];
 
   return (
@@ -355,30 +412,25 @@ function Dashboard() {
         {aba === "geral" && r && dados && (
           <div style={{ display: "grid", gap: 16 }}>
             <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}>
-              <Kpi titulo="Visitantes únicos" valor={num(r.visitantes)} sub={`${num(r.pageviews)} visitas`} />
-              <Kpi titulo="Cliques em Assinar" valor={num(r.cliques_assinar)} sub={`${pct(r.cliques_assinar, r.visitantes)} dos visitantes`} />
-              <Kpi titulo="Cobranças geradas" valor={num(r.checkouts)} sub="leads no checkout" />
-              <Kpi titulo="Vendas pagas" valor={num(r.pagos)} sub={`${pct(r.pagos, r.checkouts)} das cobranças`} />
-              <Kpi titulo="Faturamento" valor={brl(r.valor_pago)} sub="vendas confirmadas" />
-              <Kpi titulo="Testar grátis" valor={num(r.cliques_teste)} sub="cliques" />
-              <Kpi titulo="WhatsApp" valor={num(r.cliques_whatsapp)} sub="cliques" />
-              <Kpi titulo="Avaliações" valor={num(r.avaliacoes)} sub={r.nota_media ? `nota média ${String(r.nota_media).replace(".", ",")}` : "sem nota ainda"} />
+              <Kpi titulo="Cobranças geradas" valor={num(r.checkouts)} sub={`${num(comCobranca.length)} pessoas`} />
+              <Kpi titulo="Pix pagos" valor={num(pagosPix.length)} sub={brl(somaValor(pagosPix))} />
+              <Kpi titulo="Cartão pagos" valor={num(pagosCartao.length)} sub={brl(somaValor(pagosCartao))} />
+              <Kpi titulo="Faturamento" valor={brl(r.valor_pago)} sub={`${num(r.pagos)} pagamentos`} />
+              <Kpi titulo="Para recuperar" valor={num(recCobranca.length + recForm.length)} sub="pessoas que não pagaram" />
             </div>
 
             <div style={card}>
-              <h2 style={{ fontSize: "1.05rem", margin: "0 0 12px" }}>Funil</h2>
+              <h2 style={{ fontSize: "1.05rem", margin: "0 0 12px" }}>Funil de pessoas</h2>
               <div style={{ display: "grid", gap: 10 }}>
                 {funil.map((f, i) => {
-                  const base = Math.max(1, ...funil.map((x) => x.v));
+                  const base = Math.max(1, funil[0].v);
                   return (
                     <div key={f.nome}>
                       <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".9rem" }}>
                         <span>{f.nome}</span>
                         <span>
                           <strong>{num(f.v)}</strong>
-                          {i > 0 && f.v <= funil[i - 1].v && (
-                            <span style={{ color: C.muted }}> · {pct(f.v, funil[i - 1].v)} da etapa anterior</span>
-                          )}
+                          {i > 0 && <span style={{ color: C.muted }}> · {pct(f.v, funil[i - 1].v)} da etapa anterior</span>}
                         </span>
                       </div>
                       <div style={{ height: 10, background: C.paper, borderRadius: 999, marginTop: 4 }}>
@@ -388,39 +440,6 @@ function Dashboard() {
                   );
                 })}
               </div>
-              <p style={{ color: C.muted, fontSize: ".8rem", margin: "12px 0 0" }}>
-                Cada etapa conta pessoas, não cliques. Visitas e cliques começam a contar a partir do deploy do rastreamento;
-                cobranças e vendas vêm do checkout desde 26/10, então no começo podem aparecer maiores que as etapas de cima.
-              </p>
-            </div>
-
-            <div style={card}>
-              <h2 style={{ fontSize: "1.05rem", margin: "0 0 12px" }}>Por dia</h2>
-              <Tabela>
-                <thead>
-                  <tr>
-                    <th style={th}>Dia</th>
-                    <th style={{ ...th, width: "50%" }}>Visitantes</th>
-                    <th style={th}>Cobranças</th>
-                    <th style={th}>Pagas</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[...dados.por_dia].reverse().map((d) => (
-                    <tr key={d.dia}>
-                      <td style={td}>{fmtDia(d.dia)}</td>
-                      <td style={td}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          <div style={{ height: 8, borderRadius: 999, background: C.signal, width: `${(d.visitantes / maxDia) * 100}%`, minWidth: d.visitantes ? 4 : 0 }} />
-                          <span>{num(d.visitantes)}</span>
-                        </div>
-                      </td>
-                      <td style={td}>{num(d.checkouts)}</td>
-                      <td style={{ ...td, color: d.pagos ? C.ok : undefined, fontWeight: d.pagos ? 700 : 400 }}>{num(d.pagos)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Tabela>
             </div>
 
             <div style={card}>
@@ -429,22 +448,18 @@ function Dashboard() {
                 <thead>
                   <tr>
                     <th style={th}>Origem</th>
-                    <th style={th}>Visitantes</th>
-                    <th style={th}>Cliques Assinar</th>
                     <th style={th}>Cobranças</th>
                     <th style={th}>Pagas</th>
                     <th style={th}>Faturamento</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {dados.origens.length === 0 && (
-                    <tr><td style={td} colSpan={6}>Sem dados no período.</td></tr>
+                  {origensCk.length === 0 && (
+                    <tr><td style={td} colSpan={4}>Sem cobranças no período.</td></tr>
                   )}
-                  {dados.origens.map((o) => (
+                  {origensCk.map((o) => (
                     <tr key={o.origem}>
                       <td style={{ ...td, fontWeight: 600 }}>{o.origem}</td>
-                      <td style={td}>{num(o.visitantes)}</td>
-                      <td style={td}>{num(o.cliques_assinar)}</td>
                       <td style={td}>{num(o.checkouts)}</td>
                       <td style={td}>{num(o.pagos)}</td>
                       <td style={td}>{brl(o.valor_pago)}</td>
@@ -455,29 +470,46 @@ function Dashboard() {
             </div>
 
             <div style={card}>
-              <h2 style={{ fontSize: "1.05rem", margin: "0 0 12px" }}>Por página</h2>
+              <h2 style={{ fontSize: "1.05rem", margin: "0 0 12px" }}>Por dia</h2>
               <Tabela>
                 <thead>
                   <tr>
-                    <th style={th}>Página</th>
-                    <th style={th}>Visitas</th>
-                    <th style={th}>Visitantes</th>
+                    <th style={th}>Dia</th>
+                    <th style={th}>Cobranças</th>
+                    <th style={th}>Pagas</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {dados.paginas.length === 0 && (
-                    <tr><td style={td} colSpan={3}>Sem visitas registradas no período.</td></tr>
+                  {diasCk.length === 0 && (
+                    <tr><td style={td} colSpan={3}>Sem cobranças no período.</td></tr>
                   )}
-                  {dados.paginas.map((p) => (
-                    <tr key={p.page}>
-                      <td style={td}>{p.page}</td>
-                      <td style={td}>{num(p.pageviews)}</td>
-                      <td style={td}>{num(p.visitantes)}</td>
+                  {diasCk.map((d) => (
+                    <tr key={d.dia}>
+                      <td style={td}>{fmtDia(d.dia)}</td>
+                      <td style={td}>{num(d.checkouts)}</td>
+                      <td style={{ ...td, color: d.pagos ? C.ok : undefined, fontWeight: d.pagos ? 700 : 400 }}>{num(d.pagos)}</td>
                     </tr>
                   ))}
                 </tbody>
               </Tabela>
             </div>
+          </div>
+        )}
+
+        {aba === "recuperacao" && (
+          <div style={{ display: "grid", gap: 16 }}>
+            <ListaRecuperacao
+              titulo="Gerou cobrança e não pagou"
+              ajuda="Confira no Asaas antes de chamar: quem pagou o Pix depois de fechar a página pode aparecer aqui."
+              arquivo="cobranca-nao-paga"
+              rows={recCobranca}
+            />
+            <ListaRecuperacao
+              titulo="Preencheu os dados e não gerou cobrança"
+              ajuda="Salvo enquanto a pessoa digita no checkout. Esta lista começa a contar agora."
+              arquivo="abandono-checkout"
+              rows={recForm}
+            />
           </div>
         )}
 
@@ -497,7 +529,7 @@ function Dashboard() {
               })}
             </div>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", marginBottom: 12 }}>
-              <input value={buscaContato} onChange={(e) => setBuscaContato(e.target.value)} placeholder="Buscar nome, e-mail, CPF ou origem"
+              <input value={buscaContato} onChange={(e) => setBuscaContato(e.target.value)} placeholder="Buscar nome, e-mail, WhatsApp, CPF ou origem"
                 style={{ ...btn, flex: "1 1 240px", cursor: "text" }} />
               <span style={{ color: C.muted, fontSize: ".9rem" }}>{contatosFiltrados.length} contatos</span>
               <button onClick={() => baixarCsvContatos(contatosFiltrados)} style={btn} disabled={!contatosFiltrados.length}>Baixar CSV</button>
@@ -512,12 +544,12 @@ function Dashboard() {
                     <button onClick={() => setAberto(abre ? null : c.chave)} aria-expanded={abre}
                       style={{ width: "100%", textAlign: "left", background: abre ? C.paper : "#fff", border: 0, padding: "12px 14px", cursor: "pointer", font: "inherit", color: C.ink }}>
                       <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "baseline" }}>
-                        <strong style={{ marginRight: "auto" }}>{c.nome || "Sem nome"}</strong>
+                        <strong style={{ marginRight: "auto" }}>{c.nome || c.email || c.telefone || "Sem nome"}</strong>
                         <span style={{ color: ETAPA[c.etapa].cor, fontWeight: 700, fontSize: ".85rem" }}>{ETAPA[c.etapa].txt}</span>
                         {c.avaliou && <span style={{ fontSize: ".75rem", border: `1px solid ${C.line}`, borderRadius: 999, padding: "1px 8px" }}>Avaliou</span>}
                       </div>
                       <div style={{ color: C.muted, fontSize: ".85rem", marginTop: 2 }}>
-                        {c.email} · {c.origem || "(direto)"}{c.campanha ? ` / ${c.campanha}` : ""} · {num(c.acoes)} ações
+                        {[c.email, c.telefone].filter(Boolean).join(" · ") || "sem contato"} · {c.origem || "(direto)"}{c.campanha ? ` / ${c.campanha}` : ""}
                         {c.cobrancas ? ` · ${c.cobrancas} cobrança${c.cobrancas > 1 ? "s" : ""}` : ""}
                         {c.valor_pago ? ` · ${brl(c.valor_pago)}` : ""} · última atividade {fmtData(c.ultima_atividade)}
                       </div>
@@ -535,7 +567,7 @@ function Dashboard() {
                           {c.jornada.map((j, i) => (
                             <li key={`${j.quando}-${i}`} style={{ padding: "4px 0 6px 12px", position: "relative" }}>
                               <span style={{ position: "absolute", left: -6, top: 10, width: 10, height: 10, borderRadius: 999,
-                                background: j.tipo === "checkout" ? (j.nome === "PagamentoConfirmado" ? C.ok : C.signal) : j.tipo === "avaliacao" ? "#b7791f" : C.muted }} />
+                                background: j.tipo === "checkout" ? (j.nome === "PagamentoConfirmado" ? C.ok : C.signal) : j.tipo === "evento" ? C.muted : "#b7791f" }} />
                               <span style={{ color: C.muted, fontSize: ".8rem" }}>{fmtData(j.quando)}</span>{" "}
                               <strong style={{ fontSize: ".9rem" }}>{NOME_EVENTO[j.nome] || j.nome}</strong>
                               {j.pagina && <span style={{ color: C.muted, fontSize: ".8rem" }}> · {j.pagina}</span>}
@@ -557,8 +589,7 @@ function Dashboard() {
               })}
             </div>
             <p style={{ color: C.muted, fontSize: ".8rem", margin: "12px 0 0" }}>
-              Contato = quem deixou e-mail no checkout ou na avaliação. As ações (visitas e cliques) são ligadas ao contato pelo navegador
-              que ele usou, então só aparecem a partir do deploy do rastreamento.
+              Contato = quem deixou algum dado no checkout ou na avaliação. Visitas e cliques aparecem na jornada só para quem chegou depois de 03/11.
             </p>
           </div>
         )}
@@ -568,11 +599,12 @@ function Dashboard() {
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center", marginBottom: 12 }}>
               <select value={filtroStatus} onChange={(e) => setFiltroStatus(e.target.value as typeof filtroStatus)} style={btn} aria-label="Status">
                 <option value="todos">Todos os status</option>
-                <option value="iniciado">Iniciado</option>
+                <option value="parcial">Só preencheu</option>
+                <option value="iniciado">Cobrança gerada</option>
                 <option value="pago">Pago</option>
                 <option value="expirado">Expirado</option>
               </select>
-              <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar nome, e-mail ou origem"
+              <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar nome, e-mail, WhatsApp ou origem"
                 style={{ ...btn, flex: "1 1 220px", cursor: "text" }} />
               <span style={{ color: C.muted, fontSize: ".9rem" }}>{leadsFiltrados.length} leads</span>
               <button onClick={() => baixarCsv(leadsFiltrados)} style={btn} disabled={!leadsFiltrados.length}>Baixar CSV</button>
@@ -583,6 +615,7 @@ function Dashboard() {
                   <th style={th}>Data</th>
                   <th style={th}>Nome</th>
                   <th style={th}>E-mail</th>
+                  <th style={th}>WhatsApp</th>
                   <th style={th}>Plano / forma</th>
                   <th style={th}>Valor</th>
                   <th style={th}>Status</th>
@@ -591,20 +624,21 @@ function Dashboard() {
               </thead>
               <tbody>
                 {leadsFiltrados.length === 0 && (
-                  <tr><td style={td} colSpan={7}>Nenhum lead no filtro.</td></tr>
+                  <tr><td style={td} colSpan={8}>Nenhum lead no filtro.</td></tr>
                 )}
                 {leadsFiltrados.map((l) => (
                   <tr key={`${l.charge_id}-${l.created_at}`}>
                     <td style={{ ...td, whiteSpace: "nowrap" }}>{fmtData(l.created_at)}</td>
                     <td style={td}>{l.nome || "—"}</td>
                     <td style={td}>{l.email || "—"}</td>
+                    <td style={{ ...td, whiteSpace: "nowrap" }}>{l.telefone || "—"}</td>
                     <td style={td}>
                       {l.plano_label || "—"}
                       <div style={{ color: C.muted, fontSize: ".8rem" }}>
                         {l.forma || ""}{l.parcelas ? ` · ${l.parcelas}x` : ""}
                       </div>
                     </td>
-                    <td style={{ ...td, whiteSpace: "nowrap" }}>{brl(l.valor)}</td>
+                    <td style={{ ...td, whiteSpace: "nowrap" }}>{l.valor ? brl(l.valor) : "—"}</td>
                     <td style={{ ...td, color: STATUS_LEAD[l.status]?.cor, fontWeight: 700 }}>{STATUS_LEAD[l.status]?.txt || l.status}</td>
                     <td style={td}>
                       {l.utm_source || "(direto)"}
@@ -615,7 +649,7 @@ function Dashboard() {
               </tbody>
             </Tabela>
             <p style={{ color: C.muted, fontSize: ".8rem", margin: "12px 0 0" }}>
-              &quot;Pago&quot; é marcado quando o comprador ainda está na página do checkout no momento da confirmação. Quem pagou o Pix depois de fechar a página pode aparecer como &quot;Iniciado&quot;: confira no Asaas.
+              &quot;Pago&quot; é marcado quando o comprador ainda está na página do checkout no momento da confirmação. Quem pagou o Pix depois de fechar a página pode aparecer como &quot;Cobrança gerada&quot;: confira no Asaas.
             </p>
           </div>
         )}
@@ -629,69 +663,6 @@ function Dashboard() {
           </div>
         )}
 
-        {aba === "eventos" && dados && (
-          <div style={{ display: "grid", gap: 16 }}>
-            <div style={card}>
-              <h2 style={{ fontSize: "1.05rem", margin: "0 0 12px" }}>Eventos no período</h2>
-              <Tabela>
-                <thead>
-                  <tr>
-                    <th style={th}>Evento</th>
-                    <th style={th}>Nome técnico</th>
-                    <th style={th}>Total</th>
-                    <th style={th}>Visitantes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {dados.eventos.length === 0 && (
-                    <tr><td style={td} colSpan={4}>Nenhum evento registrado no período.</td></tr>
-                  )}
-                  {dados.eventos.map((e) => (
-                    <tr key={e.event}>
-                      <td style={{ ...td, fontWeight: 600 }}>{NOME_EVENTO[e.event] || e.event}</td>
-                      <td style={{ ...td, color: C.muted, fontFamily: "monospace", fontSize: ".8rem" }}>{e.event}</td>
-                      <td style={td}>{num(e.total)}</td>
-                      <td style={td}>{num(e.visitantes)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Tabela>
-            </div>
-
-            <div style={card}>
-              <h2 style={{ fontSize: "1.05rem", margin: "0 0 12px" }}>Últimos eventos</h2>
-              <Tabela>
-                <thead>
-                  <tr>
-                    <th style={th}>Quando</th>
-                    <th style={th}>Evento</th>
-                    <th style={th}>Página</th>
-                    <th style={th}>Detalhes</th>
-                    <th style={th}>Origem</th>
-                    <th style={th}>Visitante</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {dados.eventos_recentes.length === 0 && (
-                    <tr><td style={td} colSpan={6}>Nenhum evento ainda.</td></tr>
-                  )}
-                  {dados.eventos_recentes.map((e, i) => (
-                    <tr key={`${e.created_at}-${i}`}>
-                      <td style={{ ...td, whiteSpace: "nowrap" }}>{fmtData(e.created_at)}</td>
-                      <td style={td}>{NOME_EVENTO[e.event] || e.event}</td>
-                      <td style={{ ...td, color: C.muted }}>{e.page || "—"}</td>
-                      <td style={{ ...td, color: C.muted, fontSize: ".8rem" }}>
-                        {e.params ? Object.entries(e.params).map(([k, v]) => `${k}: ${v}`).join(" · ") : "—"}
-                      </td>
-                      <td style={td}>{e.utm_source || "(direto)"}</td>
-                      <td style={{ ...td, fontFamily: "monospace", fontSize: ".8rem", color: C.muted }}>{e.visitante || "—"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Tabela>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

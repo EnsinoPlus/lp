@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { recordCmcCheckout } from "@/lib/cmc-checkout-db";
+import { recordCmcCheckout, saveCmcPartial } from "@/lib/cmc-checkout-db";
 import { trackCmcEvent } from "@/lib/cmc-events";
 
 // Página de assinatura do Calc Machine Connect (checkout): cópia da página assinaturas.ensinoplus.com.br/assinar.
@@ -144,6 +144,39 @@ function Assinar() {
       }
     })();
 
+    // Captura parcial: salva o que a pessoa digita antes de clicar em Continuar,
+    // para termos pelo menos e-mail ou telefone de quem passa pelo checkout.
+    let capturaAtiva = true;
+    let ultimoParcial = "";
+    let timerParcial: ReturnType<typeof setTimeout> | null = null;
+    const salvarParcial = () => {
+      if (timerParcial) clearTimeout(timerParcial);
+      if (!capturaAtiva || raiz.querySelector<HTMLInputElement>("[name=website]")?.value) return;
+      const nome = $<HTMLInputElement>("nome").value.trim();
+      const email = $<HTMLInputElement>("email").value.trim().toLowerCase();
+      const telefone = $<HTMLInputElement>("telefone").value.replace(/\D/g, "");
+      const cpf = $<HTMLInputElement>("cpf").value.replace(/\D/g, "");
+      const contato = {
+        nome: nome.length >= 3 ? nome : undefined,
+        email: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) ? email : undefined,
+        telefone: telefone.length >= 10 ? telefone : undefined,
+        cpfCnpj: cpf.length >= 11 ? cpf : undefined,
+      };
+      if (!contato.nome && !contato.email && !contato.telefone && !contato.cpfCnpj) return;
+      const dados = { ...contato, productId: plano?.id, planoLabel: plano?.label, forma };
+      const chave = JSON.stringify(dados);
+      if (chave === ultimoParcial) return;
+      ultimoParcial = chave;
+      saveCmcPartial(dados);
+    };
+    const agendarParcial = () => {
+      if (timerParcial) clearTimeout(timerParcial);
+      timerParcial = setTimeout(salvarParcial, 800);
+    };
+    const aoEsconder = () => {
+      if (document.visibilityState === "hidden") salvarParcial();
+    };
+
     const acompanhar = () => {
       timer = setInterval(async () => {
         try {
@@ -179,6 +212,8 @@ function Assinar() {
       if (!plano || !forma) return mostrarErro("Escolha o plano e a forma de pagamento.");
       const enviar = $<HTMLButtonElement>("enviar");
       enviar.disabled = true;
+      salvarParcial();
+      capturaAtiva = false; // daqui em diante quem grava é a cobrança
       try {
         emailCobranca = $<HTMLInputElement>("email").value.trim().toLowerCase();
         const r = await fetch(`${API}/subscribe`, {
@@ -206,6 +241,7 @@ function Assinar() {
           chargeId,
           nome: $<HTMLInputElement>("nome").value,
           email: emailCobranca,
+          telefone: $<HTMLInputElement>("telefone").value,
           cpfCnpj: $<HTMLInputElement>("cpf").value.replace(/\D/g, ""),
           productId: plano.id,
           planoLabel: plano.label,
@@ -233,6 +269,8 @@ function Assinar() {
         }
         acompanhar();
       } catch (err) {
+        capturaAtiva = true;
+        trackCmcEvent("CheckoutErro", { erro: err instanceof Error ? err.message.slice(0, 120) : "desconhecido" });
         mostrarErro(err instanceof Error ? err.message : "Não foi possível gerar o pagamento.");
       } finally {
         enviar.disabled = false;
@@ -249,12 +287,23 @@ function Assinar() {
     };
 
     $("form").addEventListener("submit", aoEnviar);
+    $("form").addEventListener("input", agendarParcial);
+    $("form").addEventListener("change", salvarParcial);
+    $("form").addEventListener("focusout", salvarParcial);
+    document.addEventListener("visibilitychange", aoEsconder);
+    window.addEventListener("pagehide", salvarParcial);
     $("copiar").addEventListener("click", aoCopiar);
 
     return () => {
       cancelado = true;
       if (timer) clearInterval(timer);
+      if (timerParcial) clearTimeout(timerParcial);
       $("form").removeEventListener("submit", aoEnviar);
+      $("form").removeEventListener("input", agendarParcial);
+      $("form").removeEventListener("change", salvarParcial);
+      $("form").removeEventListener("focusout", salvarParcial);
+      document.removeEventListener("visibilitychange", aoEsconder);
+      window.removeEventListener("pagehide", salvarParcial);
       $("copiar").removeEventListener("click", aoCopiar);
     };
   }, []);
@@ -275,7 +324,7 @@ const CSS = String.raw`.asn { --ink:#0F1F1A; --paper:#F3EFE6; --signal:#E8552B; 
 .asn h1 { font-size:1.6rem; margin:0 0 4px; } .asn p.sub { color:var(--muted); margin:0 0 24px; }
 .asn .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px; margin-bottom:16px; }
 .asn label { display:block; font-weight:600; margin:14px 0 6px; font-size:.92rem; }
-.asn input[type=text], .asn input[type=email], .asn select { width:100%; padding:12px; border:1px solid var(--line); border-radius:10px; background:var(--paper); color:var(--ink); font:inherit; }
+.asn input[type=text], .asn input[type=email], .asn input[type=tel], .asn select { width:100%; padding:12px; border:1px solid var(--line); border-radius:10px; background:var(--paper); color:var(--ink); font:inherit; }
 .asn .opcao { display:flex; gap:10px; align-items:center; padding:12px; border:1px solid var(--line); border-radius:10px; margin:0 0 8px; cursor:pointer; font-weight:400; font-size:1rem; }
 .asn .opcao:has(input:checked) { border-color:var(--signal); box-shadow:0 0 0 1px var(--signal); }
 .asn .opcao span.v { margin-left:auto; font-weight:700; }
@@ -312,9 +361,12 @@ const HTML = String.raw`<div class="faixa-promo" role="note">🎁 Lançamento: 1
     <input id="nome" type="text" required minlength="3" autocomplete="name">
     <label for="email">E-mail <small style="font-weight:400;color:var(--muted)">(use o mesmo e-mail da sua conta da Suite, ou crie a conta depois com ele)</small></label>
     <input id="email" type="email" required autocomplete="email">
+    <label for="telefone">WhatsApp <small style="font-weight:400;color:var(--muted)">(com DDD, para falarmos com você se precisar)</small></label>
+    <input id="telefone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(85) 99999-9999">
     <label for="cpf">CPF ou CNPJ</label>
     <input id="cpf" type="text" required inputmode="numeric" autocomplete="off">
     <button id="enviar" type="submit">Continuar</button>
+    <p class="nota">Os dados preenchidos aqui são salvos para podermos falar com você sobre a assinatura.</p>
     <div id="erro" class="erro" role="alert" hidden></div>
   </form>
 

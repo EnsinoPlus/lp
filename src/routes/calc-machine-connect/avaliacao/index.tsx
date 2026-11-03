@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { recordCmcAvaliacao, uploadCmcAvaliacaoMedia } from "@/lib/cmc-avaliacao-db";
+import { saveCmcPartial } from "@/lib/cmc-checkout-db";
 import { trackCmcEvent } from "@/lib/cmc-events";
 
 // Página de avaliação do Calc Machine Connect: quem está no teste grátis deixa um
@@ -36,6 +37,34 @@ function Avaliacao() {
 
   useEffect(() => {
     trackCmcEvent("PageView");
+  }, []);
+
+  // Captura parcial: salva o que a pessoa digita antes de enviar a avaliação.
+  const ultimoParcial = useRef("");
+  const salvarParcial = useRef<() => void>(() => {});
+  salvarParcial.current = () => {
+    if (enviando || pronto) return;
+    const em = email.trim().toLowerCase();
+    const dados = {
+      form: "avaliacao" as const,
+      nome: nome.trim().length >= 3 ? nome.trim() : undefined,
+      email: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em) ? em : undefined,
+      dados: nota || depoimento.trim() ? { nota, depoimento: depoimento.trim() } : undefined,
+    };
+    if (!dados.nome && !dados.email && !dados.dados) return;
+    const chave = JSON.stringify(dados);
+    if (chave === ultimoParcial.current) return;
+    ultimoParcial.current = chave;
+    saveCmcPartial(dados);
+  };
+  useEffect(() => {
+    const t = setTimeout(() => salvarParcial.current(), 800);
+    return () => clearTimeout(t);
+  }, [nome, email, depoimento, nota]);
+  useEffect(() => {
+    const aoSair = () => salvarParcial.current();
+    window.addEventListener("pagehide", aoSair);
+    return () => window.removeEventListener("pagehide", aoSair);
   }, []);
 
   const onArquivo = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -225,7 +254,8 @@ function Avaliacao() {
               {enviando ? "Enviando…" : "Enviar avaliação e ganhar +1 dia"}
             </button>
             <p className="text-xs text-[#5C6B64] text-center">
-              Use o mesmo e-mail da sua conta de teste para a gente liberar o dia certo.
+              Use o mesmo e-mail da sua conta de teste para a gente liberar o dia certo. Os dados preenchidos
+              aqui são salvos para podermos falar com você.
             </p>
           </form>
         )}

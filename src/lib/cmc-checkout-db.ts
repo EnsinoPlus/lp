@@ -52,6 +52,7 @@ export type CmcCheckoutInput = {
   chargeId?: string | null;
   nome?: string;
   email?: string;
+  telefone?: string;
   cpfCnpj?: string;
   productId?: string | number;
   planoLabel?: string;
@@ -60,6 +61,53 @@ export type CmcCheckoutInput = {
   valor?: number | null;
   status?: "iniciado" | "pago" | "expirado";
 };
+
+export type CmcParcialInput = {
+  form?: "checkout" | "avaliacao";
+  nome?: string;
+  email?: string;
+  telefone?: string;
+  cpfCnpj?: string;
+  productId?: string | number;
+  planoLabel?: string;
+  forma?: string | null;
+  dados?: Record<string, unknown>;
+};
+
+/**
+ * Salva o que a pessoa já digitou, antes do envio (status "parcial").
+ * keepalive para sobreviver ao fechamento da página. Best-effort: nunca lança.
+ */
+export function saveCmcPartial(input: CmcParcialInput): void {
+  if (typeof window === "undefined") return;
+  const params = readUrlParams();
+  try {
+    void fetch(`${LEADS_URL}/rest/v1/rpc/cmc_save_partial`, {
+      method: "POST",
+      keepalive: true,
+      headers: headers(),
+      body: JSON.stringify({
+        p_visitor_id: getVisitorId(),
+        p_form: input.form ?? "checkout",
+        p_nome: input.nome ?? null,
+        p_email: input.email ?? null,
+        p_telefone: input.telefone ?? null,
+        p_cpf_cnpj: input.cpfCnpj ?? null,
+        p_product_id: input.productId != null ? String(input.productId) : null,
+        p_plano_label: input.planoLabel ?? null,
+        p_forma: input.forma ?? null,
+        p_dados: input.dados ?? null,
+        p_utm_source: params.utm_source || null,
+        p_utm_medium: params.utm_medium || null,
+        p_utm_campaign: params.utm_campaign || null,
+        p_url_params: Object.keys(params).length ? params : null,
+        p_landing_page: `${window.location.pathname}${window.location.search}`.slice(0, 300),
+      }),
+    }).catch(() => {});
+  } catch {
+    // best-effort
+  }
+}
 
 /** Grava/atualiza o lead do checkout. Best-effort: não lança. */
 export async function recordCmcCheckout(input: CmcCheckoutInput): Promise<void> {
@@ -87,6 +135,7 @@ export async function recordCmcCheckout(input: CmcCheckoutInput): Promise<void> 
         p_gclid: params.gclid || params.fbclid || null,
         p_url_params: Object.keys(params).length ? params : null,
         p_landing_page: `${window.location.pathname}${window.location.search}`.slice(0, 300),
+        p_telefone: input.telefone || null,
       }),
     });
   } catch {
