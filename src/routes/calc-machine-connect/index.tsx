@@ -213,18 +213,19 @@ function CalcMachineConnect() {
           lista.innerHTML = d.plans
             .filter((p) => !/mensal/i.test(`${p.label} ${p.name}`))
             .map((p) => {
-              const menor = Math.min(...Object.values(p.prices));
               const rs = p.renovam_sozinhas || [];
               const renova = rs.length
                 ? `Renova sozinho ${rs.includes("pix_recorrente") && rs.includes("card") ? "no Pix Automático ou cartão" : rs.includes("card") ? "no cartão" : "no Pix Automático"}.`
                 : "Pagamento único, sem renovação automática.";
-              // cartao parcelado (plano anual): destaca a parcela sem juros
+              // Destaca a parcela no cartão; o Pix aparece só como valor à vista.
               const max = Number(p.cartao_parcelas_max) || 1;
-              const nx =
-                max > 1 && p.prices.card
-                  ? `<p style="margin:0 0 6px;font-weight:600">ou ${max}x de ${brl(p.prices.card / max)} sem juros no cartão</p>`
-                  : "";
-              return `<div class="plano" style="color:var(--ink)"><h3>${esc(p.label)}</h3><div class="preco">${brl(menor)}<small> a partir de</small></div>${nx}<p style="margin:6px 0 0;color:var(--signal);font-weight:800">🎁 + 2 meses grátis no lançamento</p><p>${p.description ? esc(p.description) + " " : ""}${renova}</p><a class="btn" href="/calc-machine-connect/assinar?plano=${encodeURIComponent(String(p.id))}">Assinar ${esc(p.label.toLowerCase())}</a></div>`;
+              const parcelado = max > 1 && p.prices.card;
+              const pix = p.prices.pix_recorrente ?? p.prices.pix;
+              const preco = parcelado
+                ? `<div class="preco">${brl(p.prices.card / max)}<small> em ${max}x</small></div><p style="margin:0 0 6px;font-weight:600">Qualquer cartão</p>`
+                : `<div class="preco">${brl(Math.min(...Object.values(p.prices)))}</div>`;
+              const aVista = parcelado && pix ? `<p style="margin:0 0 6px;font-weight:600">À vista no Pix: ${brl(pix)}</p>` : "";
+              return `<div class="plano" style="color:var(--ink)"><h3>${esc(p.label)}</h3>${preco}${aVista}<p style="margin:6px 0 0;color:var(--signal);font-weight:800">🎁 + 2 meses grátis no lançamento</p><p>${p.description ? esc(p.description) + " " : ""}${renova}</p><a class="btn" href="/calc-machine-connect/assinar?plano=${encodeURIComponent(String(p.id))}">Assinar ${esc(p.label.toLowerCase())}</a></div>`;
             })
             .join("");
           forwardUtm(); // botões de plano recém-criados

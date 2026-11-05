@@ -32,14 +32,9 @@ type Plano = {
   name: string;
   prices: Record<string, number>;
   formas_disponiveis?: string[];
-  cartao_parcelas_max?: number; // > 1 = cartao em ate N vezes sem juros (cobranca unica, nao renova)
+  cartao_parcelas_max?: number; // > 1 = cartao em ate N vezes (cobranca unica, nao renova)
 };
 
-const ROTULO: Record<string, string> = {
-  pix: "Pix (pagamento único)",
-  pix_recorrente: "Pix Automático (renova sozinho)",
-  card: "Cartão (renova sozinho)",
-};
 const brl = (v: number) => Number(v).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const esc = (s: unknown) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string);
@@ -76,43 +71,36 @@ function Assinar() {
 
     const maxParcelas = () => Number(plano?.cartao_parcelas_max) || 1;
     const parcelado = () => forma === "card" && maxParcelas() > 1;
-    const rotulo = (f: string) => (f === "card" && maxParcelas() > 1 ? `Cartão em até ${maxParcelas()}x sem juros` : ROTULO[f] || f);
 
-    const renderParcelas = () => {
-      $("boxParcelas").hidden = !parcelado();
-      if (!parcelado()) return;
-      const total = plano!.prices.card;
-      const max = maxParcelas();
-      $("parcelas").innerHTML = Array.from({ length: max }, (_, i) => i + 1)
-        .map((n) => `<option value="${n}" ${n === max ? "selected" : ""}>${n === 1 ? `À vista: ${brl(total)}` : `${n}x de ${brl(total / n)} sem juros`}</option>`)
-        .join("");
-    };
-
-    const renderFormas = () => {
-      const el = $("formas");
-      el.innerHTML = "";
-      (plano?.formas_disponiveis || []).forEach((f, i) => {
-        const l = document.createElement("label");
-        l.className = "opcao";
-        l.innerHTML = `<input type="radio" name="forma" value="${esc(f)}" ${i === 0 ? "checked" : ""}><div>${esc(rotulo(f))}</div><span class="v">${brl(plano!.prices[f])}</span>`;
-        el.appendChild(l);
-      });
-      forma = plano?.formas_disponiveis?.[0] || null;
-      el.onchange = (e) => {
-        forma = (e.target as HTMLInputElement).value;
-        renderParcelas();
-      };
-      renderParcelas();
+    // A forma de pagamento não é uma etapa: a pessoa escolhe no botão do fim do formulário.
+    const formaPix = () => plano?.formas_disponiveis?.find((f) => f !== "card") || null;
+    const configurarBotoes = () => {
+      const formas = plano?.formas_disponiveis || [];
+      const temCartao = formas.includes("card");
+      const pix = formaPix();
+      forma = temCartao ? "card" : pix;
+      const principal = $<HTMLButtonElement>("enviar");
+      principal.dataset.forma = forma || "";
+      principal.textContent = temCartao ? "Continuar no cartão" : "Continuar no Pix";
+      $("enviarPix").hidden = !(temCartao && pix);
+      $("enviarPix").dataset.forma = pix || "";
+      $("notaPix").hidden = !pix;
     };
 
     const renderPlanos = (preferido: string | null) => {
       const el = $("planos");
       el.innerHTML = "";
       planos.forEach((p) => {
-        const menor = Math.min(...Object.values(p.prices));
+        const max = Number(p.cartao_parcelas_max) || 1;
+        const pix = p.formas_disponiveis?.find((f) => f !== "card");
+        const principal =
+          max > 1 && p.prices.card
+            ? `${brl(p.prices.card / max)} em ${max}x<small>Qualquer cartão</small>`
+            : brl(Math.min(...Object.values(p.prices)));
+        const aVista = pix && p.prices[pix] ? `<small>À vista no Pix: ${brl(p.prices[pix])}</small>` : "";
         const l = document.createElement("label");
         l.className = "opcao";
-        l.innerHTML = `<input type="radio" name="plano" value="${esc(p.id)}"><div>${esc(p.label)}<small>${esc(p.description || p.name)}</small></div><span class="v">a partir de ${brl(menor)}${(p.cartao_parcelas_max || 1) > 1 && p.prices.card ? `<small>ou ${p.cartao_parcelas_max}x de ${brl(p.prices.card / p.cartao_parcelas_max!)} sem juros</small>` : ""}</span>`;
+        l.innerHTML = `<input type="radio" name="plano" value="${esc(p.id)}"><div>${esc(p.label)}<small>${esc(p.description || p.name)}</small></div><span class="v">${principal}${aVista}</span>`;
         el.appendChild(l);
       });
       plano = planos.find((p) => String(p.id) === String(preferido)) || planos[0];
@@ -120,9 +108,9 @@ function Assinar() {
       if (radio) radio.checked = true;
       el.onchange = (e) => {
         plano = planos.find((p) => String(p.id) === (e.target as HTMLInputElement).value);
-        renderFormas();
+        configurarBotoes();
       };
-      renderFormas();
+      configurarBotoes();
     };
 
     (async () => {
@@ -221,9 +209,13 @@ function Assinar() {
     const aoEnviar = async (e: Event) => {
       e.preventDefault();
       mostrarErro("");
+      const botao = (e as SubmitEvent).submitter as HTMLButtonElement | null;
+      if (botao?.dataset.forma) forma = botao.dataset.forma;
       if (!plano || !forma) return mostrarErro("Escolha o plano e a forma de pagamento.");
       const enviar = $<HTMLButtonElement>("enviar");
+      const enviarPix = $<HTMLButtonElement>("enviarPix");
       enviar.disabled = true;
+      enviarPix.disabled = true;
       salvarParcial();
       capturaAtiva = false; // daqui em diante quem grava é a cobrança
       try {
@@ -237,7 +229,7 @@ function Assinar() {
             cpfCnpj: $<HTMLInputElement>("cpf").value.replace(/\D/g, ""),
             productId: plano.id,
             method: forma,
-            ...(parcelado() ? { parcelas: Number($<HTMLSelectElement>("parcelas").value) } : {}),
+            ...(parcelado() ? { parcelas: maxParcelas() } : {}),
             website: raiz.querySelector<HTMLInputElement>("[name=website]")?.value ?? "",
           }),
         });
@@ -258,7 +250,7 @@ function Assinar() {
           productId: plano.id,
           planoLabel: plano.label,
           forma,
-          parcelas: parcelado() ? Number($<HTMLSelectElement>("parcelas").value) : null,
+          parcelas: parcelado() ? maxParcelas() : null,
           valor: valorCompra,
           status: "iniciado",
         });
@@ -277,7 +269,7 @@ function Assinar() {
           $("cartao").hidden = false;
           ($("linkCartao") as HTMLAnchorElement).href = d.checkoutUrl;
           if (d.parcelas)
-            $("txtCartao").textContent = `Total de ${brl(d.valor)} em ${d.parcelas}x de ${brl(d.valorParcela)} sem juros. Abra a página segura de pagamento para informar o cartão. Pagamento único: não renova sozinho.`;
+            $("txtCartao").textContent = `Total de ${brl(d.valor)} em ${d.parcelas}x de ${brl(d.valorParcela)}. Abra a página segura de pagamento para informar o cartão. Pagamento único: não renova sozinho.`;
         }
         acompanhar();
       } catch (err) {
@@ -286,6 +278,7 @@ function Assinar() {
         mostrarErro(err instanceof Error ? err.message : "Não foi possível gerar o pagamento.");
       } finally {
         enviar.disabled = false;
+        enviarPix.disabled = false;
       }
     };
 
@@ -343,6 +336,7 @@ const CSS = String.raw`.asn { --ink:#0F1F1A; --paper:#F3EFE6; --signal:#E8552B; 
 .asn .opcao small { color:var(--muted); display:block; }
 .asn button { width:100%; margin-top:20px; padding:14px; border:0; border-radius:10px; background:var(--signal); color:#fff; font:inherit; font-weight:700; cursor:pointer; }
 .asn button:disabled { opacity:.6; cursor:wait; }
+.asn button.sec { margin-top:10px; background:transparent; color:var(--ink); border:1px solid var(--line); }
 .asn .erro { color:#c0361a; margin-top:12px; } .asn .ok { color:#1b7a46; }
 .asn .hp { position:absolute; left:-9999px; }
 .asn textarea { width:100%; height:90px; padding:10px; border:1px solid var(--line); border-radius:10px; background:var(--paper); color:var(--ink); font:12px monospace; }
@@ -354,7 +348,7 @@ const CSS = String.raw`.asn { --ink:#0F1F1A; --paper:#F3EFE6; --signal:#E8552B; 
 const HTML = String.raw`<div class="faixa-promo" role="note">🎁 Lançamento: 10× R$ 99,70 + 2 MESES GRÁTIS · por tempo limitado</div>
 <main>
   <h1>Assinar Calc Machine Connect</h1>
-  <p class="sub">Informe seus dados e escolha o plano. Não precisa de login para assinar.</p>
+  <p class="sub">Informe seus dados para assinar. Não precisa de login.</p>
 
   <div id="carregando" class="card">Carregando planos…</div>
 
@@ -362,13 +356,7 @@ const HTML = String.raw`<div class="faixa-promo" role="note">🎁 Lançamento: 1
     <div class="hp" aria-hidden="true"><label>Site <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
     <strong>1. Plano</strong>
     <div id="planos" style="margin-top:10px"></div>
-    <strong>2. Forma de pagamento</strong>
-    <div id="formas" style="margin-top:10px"></div>
-    <div id="boxParcelas" hidden>
-      <label for="parcelas">Parcelas no cartão (sem juros)</label>
-      <select id="parcelas"></select>
-    </div>
-    <strong>3. Seus dados</strong>
+    <strong>2. Seus dados</strong>
     <label for="nome">Nome completo</label>
     <input id="nome" type="text" required minlength="3" autocomplete="name">
     <label for="email">E-mail <small style="font-weight:400;color:var(--muted)">(use o mesmo e-mail da sua conta da Suite, ou crie a conta depois com ele)</small></label>
@@ -378,6 +366,8 @@ const HTML = String.raw`<div class="faixa-promo" role="note">🎁 Lançamento: 1
     <label for="cpf">CPF ou CNPJ</label>
     <input id="cpf" type="text" required inputmode="numeric" autocomplete="off">
     <button id="enviar" type="submit">Continuar</button>
+    <button id="enviarPix" class="sec" type="submit" hidden>Continuar no Pix</button>
+    <p id="notaPix" class="nota" hidden>No Pix, a assinatura renova sozinha pelo Pix Automático.</p>
     <p class="nota">Os dados preenchidos aqui são salvos para podermos falar com você sobre a assinatura.</p>
     <div id="erro" class="erro" role="alert" hidden></div>
   </form>
