@@ -57,7 +57,7 @@ const FEATURES = [
 
 const STEPS = [
   { n: "1", title: "Crie sua conta", desc: "A conta da Suite é grátis e é com ela que você entra no conector. Use o mesmo e-mail da assinatura." },
-  { n: "2", title: "Garanta sua vaga", desc: "Assine na 1ª onda com Pix, cartão (até 10×) ou boleto. Dá para assinar só com o e-mail." },
+  { n: "2", title: "Garanta sua vaga", desc: "Assine na 1ª onda com Pix ou cartão (10×). Dá para assinar só com o e-mail." },
   { n: "3", title: "Conecte a sua IA", desc: "Cole o endereço do servidor no Claude, ChatGPT ou Gemini e entre com a sua conta da Suite." },
 ];
 
@@ -83,12 +83,12 @@ const CONECTORES = [
   { aba: "gemini", nome: "Gemini", video: "https://player.vimeo.com/video/1236224300?h=491ad0377f&dnt=1", passos: ["Abra Configurações → Habilidades → Conectores → Personalizado.", "Cole o endereço do servidor.", "O Google exige conta pessoal e idioma em English (United States) para liberar conectores personalizados."] },
 ];
 
-const PAGAMENTOS = ["Pix", "Cartão (até 10× no lançamento)", "Boleto"];
+const PAGAMENTOS = ["Pix", "Qualquer cartão (10× no lançamento)"];
 
 const FAQ = [
-  { q: "Como funciona a oferta de lançamento?", a: "Na 1ª onda, o acesso ilimitado (R$ 1.997) sai por metade: R$ 997 à vista ou 10× R$ 99,70, e com 2 meses grátis de bônus. As vagas são limitadas — quando a onda fecha, o preço volta a R$ 1.997 (ou 12× R$ 197)." },
+  { q: "Como funciona a oferta de lançamento?", a: "Na 1ª onda, o acesso ilimitado (R$ 1.997) sai por metade: R$ 99,70 em 10× em qualquer cartão ou R$ 970 à vista no Pix, e com 2 meses grátis de bônus. As vagas são limitadas — quando a onda fecha, o preço volta a R$ 1.997 (ou 12× R$ 197)." },
   { q: "O que está incluso no acesso?", a: "Uso ilimitado do Calc Machine pela sua IA, sem crédito por cálculo: gere quantos .pjc precisar, com cartão de ponto, FGTS, ausências, liquidação e conferência." },
-  { q: "Quais formas de pagamento?", a: "Pix, cartão de crédito (até 10× no lançamento) e boleto." },
+  { q: "Quais formas de pagamento?", a: "Pix ou qualquer cartão de crédito (10× no lançamento)." },
   { q: "Quais IAs funcionam?", a: "Claude, ChatGPT e Gemini (e qualquer ferramenta que aceite conectores MCP personalizados usando o mesmo endereço)." },
   { q: "Como funciona a garantia?", a: "Você tem 7 dias de garantia. Se não for pra você, é só pedir o reembolso dentro do prazo." },
   { q: "Preciso ter o PJe-Calc aberto para gerar o arquivo?", a: "Não. O .pjc é gerado pelo Calc Machine. Você abre no PJe-Calc para ver, ajustar ou liquidar — ou pede a liquidação direto por ele." },
@@ -182,7 +182,7 @@ function Lancamento() {
               <div className="flex flex-wrap gap-5 mt-7 text-sm text-muted-foreground justify-center lg:justify-start">
                 <span className="inline-flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-[#E8552B]" /> Garantia de 7 dias</span>
                 <span className="inline-flex items-center gap-2"><Gift className="w-5 h-5 text-[#E8552B]" /> + 2 meses grátis</span>
-                <span className="inline-flex items-center gap-2"><CreditCard className="w-5 h-5 text-[#E8552B]" /> Pix, cartão ou boleto</span>
+                <span className="inline-flex items-center gap-2"><CreditCard className="w-5 h-5 text-[#E8552B]" /> Pix ou qualquer cartão</span>
               </div>
             </div>
 
@@ -358,14 +358,15 @@ function Lancamento() {
               <p className="text-muted-foreground">
                 <span className="line-through">De R$ 1.997</span> · por metade no lançamento
               </p>
-              <p className="text-6xl md:text-7xl font-black mt-1">R$ 997</p>
-              <p className="text-lg font-bold text-[#E8552B] mt-1">ou 10× R$ 99,70 no cartão</p>
+              <p className="text-5xl md:text-6xl font-black mt-1">R$ 99,70 em 10×</p>
+              <p className="text-lg font-bold mt-1">Qualquer cartão</p>
+              <p className="text-lg font-bold text-[#E8552B] mt-1">À vista no Pix: R$ 970</p>
               <div className="inline-flex items-center gap-2 bg-[#F7E0D6] text-[#E8552B] rounded-full px-4 py-1.5 text-sm font-bold mt-4">
                 <Gift className="w-4 h-4" /> + 2 meses grátis (bônus de lançamento)
               </div>
               <ul className="text-sm text-muted-foreground mt-5 space-y-2 text-left max-w-sm mx-auto">
                 <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#E8552B] shrink-0" /> Acesso <strong className="text-foreground">ilimitado</strong>, sem crédito por uso</li>
-                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#E8552B] shrink-0" /> Pix, cartão (até 10×) ou boleto</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#E8552B] shrink-0" /> Pix ou qualquer cartão</li>
                 <li className="flex items-center gap-2"><Check className="w-4 h-4 text-[#E8552B] shrink-0" /> Garantia de 7 dias</li>
               </ul>
               <a
