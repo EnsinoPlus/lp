@@ -52,10 +52,10 @@ function zapDe(telefone: string | null) {
 }
 
 function baixarCsv(rows: CreditoLead[]) {
-  const cab = ["cadastro", "status", "promocao", "pacote", "creditos", "valor", "nome", "email", "whatsapp", "origem", "pago_em", "liberado_em", "notas"];
+  const cab = ["cadastro", "status", "etapa", "promocao", "pacote", "creditos", "valor", "nome", "email", "whatsapp", "utm_source", "utm_medium", "utm_campaign", "pago_em", "liberado_em", "notas"];
   const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
   const linhas = rows.map((l) =>
-    [fmtData(l.created_at), STATUS[l.status].txt, l.promo, l.pacote, l.creditos, String(l.valor ?? "").replace(".", ","), l.nome, l.email, l.telefone, l.utm_source,
+    [fmtData(l.created_at), STATUS[l.status].txt, l.etapa, l.promo, l.pacote, l.creditos, String(l.valor ?? "").replace(".", ","), l.nome, l.email, l.telefone, l.utm_source, l.utm_medium, l.utm_campaign,
       l.pago_em ? fmtData(l.pago_em) : "", l.liberado_em ? fmtData(l.liberado_em) : "", l.notas]
       .map(esc)
       .join(";"),
@@ -239,11 +239,17 @@ export function CmcCreditosLeads({
           <div key={l.id} style={{ ...card, padding: 14 }}>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "baseline" }}>
               <strong style={{ marginRight: "auto" }}>{l.nome || l.email || l.telefone}</strong>
+              {l.etapa === "preencheu" && l.status === "aguardando" && (
+                <span style={{ fontSize: ".75rem", border: `1px solid ${C.line}`, borderRadius: 999, padding: "1px 8px" }}>Só preencheu, não enviou</span>
+              )}
+              {l.etapa === "enviou" && l.status === "aguardando" && (
+                <span style={{ fontSize: ".75rem", border: `1px solid ${C.line}`, borderRadius: 999, padding: "1px 8px" }}>Enviou pela página</span>
+              )}
               <span style={{ color: STATUS[l.status].cor, fontWeight: 700, fontSize: ".85rem" }}>{STATUS[l.status].txt}</span>
             </div>
             <div style={{ color: C.muted, fontSize: ".85rem", marginTop: 2 }}>
               {l.pacote || l.promo}{brl(l.valor) ? ` · ${brl(l.valor)}` : ""}
-              {l.utm_source ? ` · ${l.utm_source}` : ""} · cadastrado {fmtData(l.created_at)}
+              {l.utm_source ? ` · ${l.utm_source}` : ""}{l.utm_medium ? ` / ${l.utm_medium}` : ""}{l.utm_campaign ? ` / ${l.utm_campaign}` : ""} · cadastrado {fmtData(l.created_at)}
               {l.liberado_em ? ` · liberado ${fmtData(l.liberado_em)}` : l.pago_em ? ` · pagamento confirmado ${fmtData(l.pago_em)}` : ""}
             </div>
             <div style={{ fontSize: ".9rem", marginTop: 4, display: "flex", gap: 12, flexWrap: "wrap" }}>

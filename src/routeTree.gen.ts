@@ -14,6 +14,7 @@ import { Route as SuiteplusPromo1010IndexRouteImport } from './routes/suiteplus-
 import { Route as SuiteplusPromo1010RessacaIndexRouteImport } from './routes/suiteplus-promo-1010-ressaca/index'
 import { Route as SuiteplusPromo1010OfertaIndexRouteImport } from './routes/suiteplus-promo-1010-oferta/index'
 import { Route as RelatorioPromo1010IndexRouteImport } from './routes/relatorio-promo-1010/index'
+import { Route as PrimeiraRecargaIndexRouteImport } from './routes/primeira-recarga/index'
 import { Route as PontoMagicoIndexRouteImport } from './routes/ponto-magico/index'
 import { Route as LivroPjecalcVicelmoIndexRouteImport } from './routes/livro-pjecalc-vicelmo/index'
 import { Route as ImpugnadorIndexRouteImport } from './routes/impugnador/index'
@@ -21,6 +22,7 @@ import { Route as FgtsFacilIndexRouteImport } from './routes/fgts-facil/index'
 import { Route as ExtratorDeAusenciasIndexRouteImport } from './routes/extrator-de-ausencias/index'
 import { Route as EbookPjecalcSuiteplusIndexRouteImport } from './routes/ebook-pjecalc-suiteplus/index'
 import { Route as EbookPjecalc2026IndexRouteImport } from './routes/ebook-pjecalc-2026/index'
+import { Route as Creditos1111IndexRouteImport } from './routes/creditos-11-11/index'
 import { Route as ContrachequeTransparenteIndexRouteImport } from './routes/contracheque-transparente/index'
 import { Route as ChatCctIndexRouteImport } from './routes/chat-cct/index'
 import { Route as CctIndexRouteImport } from './routes/cct/index'
@@ -63,6 +65,11 @@ const RelatorioPromo1010IndexRoute = RelatorioPromo1010IndexRouteImport.update({
   path: '/relatorio-promo-1010/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrimeiraRecargaIndexRoute = PrimeiraRecargaIndexRouteImport.update({
+  id: '/primeira-recarga/',
+  path: '/primeira-recarga/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PontoMagicoIndexRoute = PontoMagicoIndexRouteImport.update({
   id: '/ponto-magico/',
   path: '/ponto-magico/',
@@ -99,6 +106,11 @@ const EbookPjecalcSuiteplusIndexRoute =
 const EbookPjecalc2026IndexRoute = EbookPjecalc2026IndexRouteImport.update({
   id: '/ebook-pjecalc-2026/',
   path: '/ebook-pjecalc-2026/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Creditos1111IndexRoute = Creditos1111IndexRouteImport.update({
+  id: '/creditos-11-11/',
+  path: '/creditos-11-11/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContrachequeTransparenteIndexRoute =
@@ -193,6 +205,7 @@ export interface FileRoutesByFullPath {
   '/cct/': typeof CctIndexRoute
   '/chat-cct/': typeof ChatCctIndexRoute
   '/contracheque-transparente/': typeof ContrachequeTransparenteIndexRoute
+  '/creditos-11-11/': typeof Creditos1111IndexRoute
   '/ebook-pjecalc-2026/': typeof EbookPjecalc2026IndexRoute
   '/ebook-pjecalc-suiteplus/': typeof EbookPjecalcSuiteplusIndexRoute
   '/extrator-de-ausencias/': typeof ExtratorDeAusenciasIndexRoute
@@ -200,6 +213,7 @@ export interface FileRoutesByFullPath {
   '/impugnador/': typeof ImpugnadorIndexRoute
   '/livro-pjecalc-vicelmo/': typeof LivroPjecalcVicelmoIndexRoute
   '/ponto-magico/': typeof PontoMagicoIndexRoute
+  '/primeira-recarga/': typeof PrimeiraRecargaIndexRoute
   '/relatorio-promo-1010/': typeof RelatorioPromo1010IndexRoute
   '/suiteplus-promo-1010-oferta/': typeof SuiteplusPromo1010OfertaIndexRoute
   '/suiteplus-promo-1010-ressaca/': typeof SuiteplusPromo1010RessacaIndexRoute
@@ -221,6 +235,7 @@ export interface FileRoutesByTo {
   '/cct': typeof CctIndexRoute
   '/chat-cct': typeof ChatCctIndexRoute
   '/contracheque-transparente': typeof ContrachequeTransparenteIndexRoute
+  '/creditos-11-11': typeof Creditos1111IndexRoute
   '/ebook-pjecalc-2026': typeof EbookPjecalc2026IndexRoute
   '/ebook-pjecalc-suiteplus': typeof EbookPjecalcSuiteplusIndexRoute
   '/extrator-de-ausencias': typeof ExtratorDeAusenciasIndexRoute
@@ -228,6 +243,7 @@ export interface FileRoutesByTo {
   '/impugnador': typeof ImpugnadorIndexRoute
   '/livro-pjecalc-vicelmo': typeof LivroPjecalcVicelmoIndexRoute
   '/ponto-magico': typeof PontoMagicoIndexRoute
+  '/primeira-recarga': typeof PrimeiraRecargaIndexRoute
   '/relatorio-promo-1010': typeof RelatorioPromo1010IndexRoute
   '/suiteplus-promo-1010-oferta': typeof SuiteplusPromo1010OfertaIndexRoute
   '/suiteplus-promo-1010-ressaca': typeof SuiteplusPromo1010RessacaIndexRoute
@@ -250,6 +266,7 @@ export interface FileRoutesById {
   '/cct/': typeof CctIndexRoute
   '/chat-cct/': typeof ChatCctIndexRoute
   '/contracheque-transparente/': typeof ContrachequeTransparenteIndexRoute
+  '/creditos-11-11/': typeof Creditos1111IndexRoute
   '/ebook-pjecalc-2026/': typeof EbookPjecalc2026IndexRoute
   '/ebook-pjecalc-suiteplus/': typeof EbookPjecalcSuiteplusIndexRoute
   '/extrator-de-ausencias/': typeof ExtratorDeAusenciasIndexRoute
@@ -257,6 +274,7 @@ export interface FileRoutesById {
   '/impugnador/': typeof ImpugnadorIndexRoute
   '/livro-pjecalc-vicelmo/': typeof LivroPjecalcVicelmoIndexRoute
   '/ponto-magico/': typeof PontoMagicoIndexRoute
+  '/primeira-recarga/': typeof PrimeiraRecargaIndexRoute
   '/relatorio-promo-1010/': typeof RelatorioPromo1010IndexRoute
   '/suiteplus-promo-1010-oferta/': typeof SuiteplusPromo1010OfertaIndexRoute
   '/suiteplus-promo-1010-ressaca/': typeof SuiteplusPromo1010RessacaIndexRoute
@@ -280,6 +298,7 @@ export interface FileRouteTypes {
     | '/cct/'
     | '/chat-cct/'
     | '/contracheque-transparente/'
+    | '/creditos-11-11/'
     | '/ebook-pjecalc-2026/'
     | '/ebook-pjecalc-suiteplus/'
     | '/extrator-de-ausencias/'
@@ -287,6 +306,7 @@ export interface FileRouteTypes {
     | '/impugnador/'
     | '/livro-pjecalc-vicelmo/'
     | '/ponto-magico/'
+    | '/primeira-recarga/'
     | '/relatorio-promo-1010/'
     | '/suiteplus-promo-1010-oferta/'
     | '/suiteplus-promo-1010-ressaca/'
@@ -308,6 +328,7 @@ export interface FileRouteTypes {
     | '/cct'
     | '/chat-cct'
     | '/contracheque-transparente'
+    | '/creditos-11-11'
     | '/ebook-pjecalc-2026'
     | '/ebook-pjecalc-suiteplus'
     | '/extrator-de-ausencias'
@@ -315,6 +336,7 @@ export interface FileRouteTypes {
     | '/impugnador'
     | '/livro-pjecalc-vicelmo'
     | '/ponto-magico'
+    | '/primeira-recarga'
     | '/relatorio-promo-1010'
     | '/suiteplus-promo-1010-oferta'
     | '/suiteplus-promo-1010-ressaca'
@@ -336,6 +358,7 @@ export interface FileRouteTypes {
     | '/cct/'
     | '/chat-cct/'
     | '/contracheque-transparente/'
+    | '/creditos-11-11/'
     | '/ebook-pjecalc-2026/'
     | '/ebook-pjecalc-suiteplus/'
     | '/extrator-de-ausencias/'
@@ -343,6 +366,7 @@ export interface FileRouteTypes {
     | '/impugnador/'
     | '/livro-pjecalc-vicelmo/'
     | '/ponto-magico/'
+    | '/primeira-recarga/'
     | '/relatorio-promo-1010/'
     | '/suiteplus-promo-1010-oferta/'
     | '/suiteplus-promo-1010-ressaca/'
@@ -365,6 +389,7 @@ export interface RootRouteChildren {
   CctIndexRoute: typeof CctIndexRoute
   ChatCctIndexRoute: typeof ChatCctIndexRoute
   ContrachequeTransparenteIndexRoute: typeof ContrachequeTransparenteIndexRoute
+  Creditos1111IndexRoute: typeof Creditos1111IndexRoute
   EbookPjecalc2026IndexRoute: typeof EbookPjecalc2026IndexRoute
   EbookPjecalcSuiteplusIndexRoute: typeof EbookPjecalcSuiteplusIndexRoute
   ExtratorDeAusenciasIndexRoute: typeof ExtratorDeAusenciasIndexRoute
@@ -372,6 +397,7 @@ export interface RootRouteChildren {
   ImpugnadorIndexRoute: typeof ImpugnadorIndexRoute
   LivroPjecalcVicelmoIndexRoute: typeof LivroPjecalcVicelmoIndexRoute
   PontoMagicoIndexRoute: typeof PontoMagicoIndexRoute
+  PrimeiraRecargaIndexRoute: typeof PrimeiraRecargaIndexRoute
   RelatorioPromo1010IndexRoute: typeof RelatorioPromo1010IndexRoute
   SuiteplusPromo1010OfertaIndexRoute: typeof SuiteplusPromo1010OfertaIndexRoute
   SuiteplusPromo1010RessacaIndexRoute: typeof SuiteplusPromo1010RessacaIndexRoute
@@ -417,6 +443,13 @@ declare module '@tanstack/react-router' {
       path: '/relatorio-promo-1010'
       fullPath: '/relatorio-promo-1010/'
       preLoaderRoute: typeof RelatorioPromo1010IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/primeira-recarga/': {
+      id: '/primeira-recarga/'
+      path: '/primeira-recarga'
+      fullPath: '/primeira-recarga/'
+      preLoaderRoute: typeof PrimeiraRecargaIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ponto-magico/': {
@@ -466,6 +499,13 @@ declare module '@tanstack/react-router' {
       path: '/ebook-pjecalc-2026'
       fullPath: '/ebook-pjecalc-2026/'
       preLoaderRoute: typeof EbookPjecalc2026IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/creditos-11-11/': {
+      id: '/creditos-11-11/'
+      path: '/creditos-11-11'
+      fullPath: '/creditos-11-11/'
+      preLoaderRoute: typeof Creditos1111IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contracheque-transparente/': {
@@ -584,6 +624,7 @@ const rootRouteChildren: RootRouteChildren = {
   CctIndexRoute: CctIndexRoute,
   ChatCctIndexRoute: ChatCctIndexRoute,
   ContrachequeTransparenteIndexRoute: ContrachequeTransparenteIndexRoute,
+  Creditos1111IndexRoute: Creditos1111IndexRoute,
   EbookPjecalc2026IndexRoute: EbookPjecalc2026IndexRoute,
   EbookPjecalcSuiteplusIndexRoute: EbookPjecalcSuiteplusIndexRoute,
   ExtratorDeAusenciasIndexRoute: ExtratorDeAusenciasIndexRoute,
@@ -591,6 +632,7 @@ const rootRouteChildren: RootRouteChildren = {
   ImpugnadorIndexRoute: ImpugnadorIndexRoute,
   LivroPjecalcVicelmoIndexRoute: LivroPjecalcVicelmoIndexRoute,
   PontoMagicoIndexRoute: PontoMagicoIndexRoute,
+  PrimeiraRecargaIndexRoute: PrimeiraRecargaIndexRoute,
   RelatorioPromo1010IndexRoute: RelatorioPromo1010IndexRoute,
   SuiteplusPromo1010OfertaIndexRoute: SuiteplusPromo1010OfertaIndexRoute,
   SuiteplusPromo1010RessacaIndexRoute: SuiteplusPromo1010RessacaIndexRoute,
