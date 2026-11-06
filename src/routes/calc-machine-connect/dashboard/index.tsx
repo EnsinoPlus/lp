@@ -11,6 +11,8 @@ import {
 } from "@/lib/cmc-events";
 import { listCmcAvaliacoes, setCmcAvaliacaoStatus, type AvaliacaoRow } from "@/lib/cmc-avaliacao-db";
 import { CmcAvaliacoesLista } from "@/components/CmcAvaliacoesLista";
+import { CmcCreditosLeads } from "@/components/CmcCreditosLeads";
+import { listCreditos, type CreditoLead } from "@/lib/cmc-creditos";
 
 // Dashboard interno do Calc Machine Connect: cobranças, pagamentos, listas de recuperação,
 // contatos e avaliações. Login = mesmo e-mail/senha do painel de avaliações.
@@ -38,7 +40,7 @@ const C = {
 };
 
 type Periodo = "hoje" | "7d" | "30d" | "tudo";
-type Aba = "geral" | "recuperacao" | "contatos" | "leads" | "avaliacoes";
+type Aba = "geral" | "recuperacao" | "creditos" | "contatos" | "leads" | "avaliacoes";
 
 const NOME_EVENTO: Record<string, string> = {
   PageView: "Visita na página",
@@ -233,6 +235,7 @@ function Dashboard() {
   const [busca, setBusca] = useState("");
   const [contatos, setContatos] = useState<CmcContato[]>([]);
   const [leads, setLeads] = useState<CmcLead[]>([]);
+  const [creditos, setCreditos] = useState<CreditoLead[]>([]);
   const [filtroEtapa, setFiltroEtapa] = useState<CmcEtapa | "todas">("todas");
   const [buscaContato, setBuscaContato] = useState("");
   const [aberto, setAberto] = useState<string | null>(null);
@@ -241,11 +244,12 @@ function Dashboard() {
     setCarregando(true);
     setErro("");
     const desde = desdeDe(p);
-    const [r, av, ct, ld] = await Promise.all([
+    const [r, av, ct, ld, cr] = await Promise.all([
       fetchCmcDashboard(em, se, desde),
       listCmcAvaliacoes(em, se),
       fetchCmcContatos(em, se, desde),
       fetchCmcLeads(em, se, desde),
+      listCreditos(em, se),
     ]);
     setCarregando(false);
     if (!r.ok) {
@@ -262,6 +266,7 @@ function Dashboard() {
     if (av.ok) setAvaliacoes(av.rows);
     if (ct.ok) setContatos(ct.data);
     if (ld.ok) setLeads(ld.data);
+    if (cr) setCreditos(cr);
     setLogado(true);
     try {
       localStorage.setItem(CRED_KEY, JSON.stringify({ email: em, senha: se }));
@@ -310,6 +315,7 @@ function Dashboard() {
     setAvaliacoes([]);
     setContatos([]);
     setLeads([]);
+    setCreditos([]);
   };
 
   const leadsFiltrados = useMemo(() => {
@@ -380,9 +386,11 @@ function Dashboard() {
     { nome: "Pagaram", v: pagaram },
   ];
 
+  const paraLiberar = creditos.filter((c) => c.status === "pago").length;
   const abas: { id: Aba; txt: string }[] = [
     { id: "geral", txt: "Visão geral" },
     { id: "recuperacao", txt: `Recuperação (${recCobranca.length + recForm.length})` },
+    { id: "creditos", txt: `Créditos${paraLiberar ? ` (${paraLiberar} para liberar)` : ""}` },
     { id: "contatos", txt: `Contatos (${contatos.length})` },
     { id: "leads", txt: `Leads do checkout (${leads.length})` },
     { id: "avaliacoes", txt: `Avaliações${pendentes ? ` (${pendentes} pendente${pendentes > 1 ? "s" : ""})` : ""}` },
@@ -519,6 +527,8 @@ function Dashboard() {
             />
           </div>
         )}
+
+        {aba === "creditos" && <CmcCreditosLeads email={email} senha={senha} rows={creditos} onRows={setCreditos} />}
 
         {aba === "contatos" && (
           <div style={card}>
