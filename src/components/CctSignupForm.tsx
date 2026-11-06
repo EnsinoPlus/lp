@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Eye, EyeOff, Loader2, UserPlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,7 @@ import { isSupabaseConfigured } from "@/lib/supabase";
 import { signupSuitePlus } from "@/lib/suiteplus-signup";
 import { trackMetaCustomEvent, trackMetaLead } from "@/lib/meta-pixel";
 import { sendMetaLead } from "@/lib/meta-conversions";
+import { saveCctLead } from "@/lib/leads-central";
 
 const QUALIFIED_PROFESSIONS = [
   "Advogado(a)",
@@ -89,6 +90,31 @@ export function CctSignupForm({ variant = "card", className = "" }: CctSignupFor
     trackMetaCustomEvent(eventName);
   };
 
+  // Salva nome, e-mail, WhatsApp e profissão para o dashboard. A senha nunca entra aqui.
+  const dadosLead = () => {
+    const em = email.trim().toLowerCase();
+    const tel = phone.replace(/\D/g, "");
+    return {
+      nome: fullName.trim() || undefined,
+      email: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em) ? em : undefined,
+      telefone: tel.length >= 10 ? tel : undefined,
+      profissao: (profession === OTHER_PROFESSION ? otherProfession.trim() : profession) || undefined,
+    };
+  };
+  const ultimoLead = useRef("");
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const d = dadosLead();
+      if (!d.email && !d.telefone) return;
+      const chave = JSON.stringify(d);
+      if (chave === ultimoLead.current) return;
+      ultimoLead.current = chave;
+      saveCctLead({ ...d, etapa: "preencheu" });
+    }, 800);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fullName, email, phone, profession, otherProfession]);
+
   const passwordsMatch = password === confirmPassword;
   const canSubmit =
     isSupabaseConfigured() &&
@@ -117,6 +143,7 @@ export function CctSignupForm({ variant = "card", className = "" }: CctSignupFor
 
     setIsSubmitting(true);
     trackMetaCustomEvent("CriarConta");
+    saveCctLead({ ...dadosLead(), etapa: "enviou" });
     try {
       await signupSuitePlus({
         email,
@@ -127,6 +154,7 @@ export function CctSignupForm({ variant = "card", className = "" }: CctSignupFor
         defaultOrigin: "cct",
         emailRedirectTo: `${window.location.origin}/cct/obrigado`,
       });
+      saveCctLead({ ...dadosLead(), etapa: "cadastrou" });
       const metaLead = trackMetaLead();
       if (metaLead) {
         void sendMetaLead({ data: { email, ...metaLead } });
@@ -309,7 +337,8 @@ export function CctSignupForm({ variant = "card", className = "" }: CctSignupFor
       </button>
 
       <p className={`text-center text-xs ${dark ? "text-white/50" : "text-muted-foreground"}`}>
-        Ao criar a conta você receberá um e-mail para confirmar o cadastro.
+        Ao criar a conta você receberá um e-mail para confirmar o cadastro. Os dados preenchidos aqui
+        são salvos para podermos falar com você.
       </p>
     </form>
   );

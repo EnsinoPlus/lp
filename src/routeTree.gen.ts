@@ -22,6 +22,7 @@ import { Route as FgtsFacilIndexRouteImport } from './routes/fgts-facil/index'
 import { Route as ExtratorDeAusenciasIndexRouteImport } from './routes/extrator-de-ausencias/index'
 import { Route as EbookPjecalcSuiteplusIndexRouteImport } from './routes/ebook-pjecalc-suiteplus/index'
 import { Route as EbookPjecalc2026IndexRouteImport } from './routes/ebook-pjecalc-2026/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as Creditos1111IndexRouteImport } from './routes/creditos-11-11/index'
 import { Route as ContrachequeTransparenteIndexRouteImport } from './routes/contracheque-transparente/index'
 import { Route as ChatCctIndexRouteImport } from './routes/chat-cct/index'
@@ -106,6 +107,11 @@ const EbookPjecalcSuiteplusIndexRoute =
 const EbookPjecalc2026IndexRoute = EbookPjecalc2026IndexRouteImport.update({
   id: '/ebook-pjecalc-2026/',
   path: '/ebook-pjecalc-2026/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Creditos1111IndexRoute = Creditos1111IndexRouteImport.update({
@@ -206,6 +212,7 @@ export interface FileRoutesByFullPath {
   '/chat-cct/': typeof ChatCctIndexRoute
   '/contracheque-transparente/': typeof ContrachequeTransparenteIndexRoute
   '/creditos-11-11/': typeof Creditos1111IndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/ebook-pjecalc-2026/': typeof EbookPjecalc2026IndexRoute
   '/ebook-pjecalc-suiteplus/': typeof EbookPjecalcSuiteplusIndexRoute
   '/extrator-de-ausencias/': typeof ExtratorDeAusenciasIndexRoute
@@ -236,6 +243,7 @@ export interface FileRoutesByTo {
   '/chat-cct': typeof ChatCctIndexRoute
   '/contracheque-transparente': typeof ContrachequeTransparenteIndexRoute
   '/creditos-11-11': typeof Creditos1111IndexRoute
+  '/dashboard': typeof DashboardIndexRoute
   '/ebook-pjecalc-2026': typeof EbookPjecalc2026IndexRoute
   '/ebook-pjecalc-suiteplus': typeof EbookPjecalcSuiteplusIndexRoute
   '/extrator-de-ausencias': typeof ExtratorDeAusenciasIndexRoute
@@ -267,6 +275,7 @@ export interface FileRoutesById {
   '/chat-cct/': typeof ChatCctIndexRoute
   '/contracheque-transparente/': typeof ContrachequeTransparenteIndexRoute
   '/creditos-11-11/': typeof Creditos1111IndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/ebook-pjecalc-2026/': typeof EbookPjecalc2026IndexRoute
   '/ebook-pjecalc-suiteplus/': typeof EbookPjecalcSuiteplusIndexRoute
   '/extrator-de-ausencias/': typeof ExtratorDeAusenciasIndexRoute
@@ -299,6 +308,7 @@ export interface FileRouteTypes {
     | '/chat-cct/'
     | '/contracheque-transparente/'
     | '/creditos-11-11/'
+    | '/dashboard/'
     | '/ebook-pjecalc-2026/'
     | '/ebook-pjecalc-suiteplus/'
     | '/extrator-de-ausencias/'
@@ -329,6 +339,7 @@ export interface FileRouteTypes {
     | '/chat-cct'
     | '/contracheque-transparente'
     | '/creditos-11-11'
+    | '/dashboard'
     | '/ebook-pjecalc-2026'
     | '/ebook-pjecalc-suiteplus'
     | '/extrator-de-ausencias'
@@ -359,6 +370,7 @@ export interface FileRouteTypes {
     | '/chat-cct/'
     | '/contracheque-transparente/'
     | '/creditos-11-11/'
+    | '/dashboard/'
     | '/ebook-pjecalc-2026/'
     | '/ebook-pjecalc-suiteplus/'
     | '/extrator-de-ausencias/'
@@ -390,6 +402,7 @@ export interface RootRouteChildren {
   ChatCctIndexRoute: typeof ChatCctIndexRoute
   ContrachequeTransparenteIndexRoute: typeof ContrachequeTransparenteIndexRoute
   Creditos1111IndexRoute: typeof Creditos1111IndexRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
   EbookPjecalc2026IndexRoute: typeof EbookPjecalc2026IndexRoute
   EbookPjecalcSuiteplusIndexRoute: typeof EbookPjecalcSuiteplusIndexRoute
   ExtratorDeAusenciasIndexRoute: typeof ExtratorDeAusenciasIndexRoute
@@ -499,6 +512,13 @@ declare module '@tanstack/react-router' {
       path: '/ebook-pjecalc-2026'
       fullPath: '/ebook-pjecalc-2026/'
       preLoaderRoute: typeof EbookPjecalc2026IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/creditos-11-11/': {
@@ -625,6 +645,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChatCctIndexRoute: ChatCctIndexRoute,
   ContrachequeTransparenteIndexRoute: ContrachequeTransparenteIndexRoute,
   Creditos1111IndexRoute: Creditos1111IndexRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
   EbookPjecalc2026IndexRoute: EbookPjecalc2026IndexRoute,
   EbookPjecalcSuiteplusIndexRoute: EbookPjecalcSuiteplusIndexRoute,
   ExtratorDeAusenciasIndexRoute: ExtratorDeAusenciasIndexRoute,
