@@ -136,7 +136,8 @@ export function PromoCreditos({
 
     let url: string;
     if (oferta.checkoutUrl) {
-      url = `${oferta.checkoutUrl}${oferta.checkoutUrl.includes("?") ? "&" : "?"}email=${encodeURIComponent(em)}`;
+      const query = new URLSearchParams({ ...cmcAtribuicao(), email: em });
+      url = `${oferta.checkoutUrl}${oferta.checkoutUrl.includes("?") ? "&" : "?"}${query}`;
     } else {
       const origem = cmcAtribuicao().utm_source;
       const msg = [
@@ -275,7 +276,7 @@ export function PromoCreditos({
           <div className="grid md:grid-cols-3 gap-5">
             {[
               { n: "1", t: "Preencha seus dados", d: "Use o mesmo e-mail da sua conta na Suite." },
-              { n: "2", t: "Finalize a compra", d: "Você continua no nosso atendimento para concluir o pagamento." },
+              { n: "2", t: "Finalize a compra", d: ofertas.some((o) => o.checkoutUrl) ? "Você segue para a página de pagamento, com Pix ou cartão." : "Você continua no nosso atendimento para concluir o pagamento." },
               { n: "3", t: "Receba os créditos", d: "Depois da confirmação do pagamento, os créditos entram na sua conta." },
             ].map((p) => (
               <div key={p.n} className="bg-card border-2 border-border rounded-2xl p-6">

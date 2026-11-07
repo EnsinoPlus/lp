@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PromoCreditos, type OfertaCreditos } from "@/components/PromoCreditos";
 
-// Campanha Primeira Recarga. Quando a Suite criar o checkout de R$ 29, preencher checkoutUrl.
-const OFERTAS: OfertaCreditos[] = [{ id: "Primeira Recarga", titulo: "100 créditos", creditos: 100, valor: 29, descricao: "Ideal para primeira recarga." }];
+// Campanha Primeira Recarga: o botão leva ao checkout de R$ 29 na Suite, que credita sozinho.
+const OFERTAS: OfertaCreditos[] = [{ id: "Primeira Recarga", titulo: "100 créditos", creditos: 100, valor: 29, descricao: "Ideal para primeira recarga.", checkoutUrl: "https://suiteplus.ensinoplus.com.br/primeira-recarga" }];
 
 export const Route = createFileRoute("/primeira-recarga/")({
   head: () => ({
