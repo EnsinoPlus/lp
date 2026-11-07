@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PromoCreditos, type OfertaCreditos } from "@/components/PromoCreditos";
 
-// Campanha 11.11 Mais Créditos. Quando a Suite criar os checkouts, preencher checkoutUrl de cada pacote.
+// Campanha 11.11 Mais Créditos: cada pacote leva ao checkout da Suite, que credita sozinho.
+const CHECKOUT = "https://suiteplus.ensinoplus.com.br/creditos-11-11";
 const OFERTAS: OfertaCreditos[] = [
-  { id: "350 créditos", titulo: "350 créditos", creditos: 350, valor: 97, descricao: "Para quem está começando." },
-  { id: "850 créditos", titulo: "850 créditos", creditos: 850, valor: 197, descricao: "Para quem utiliza as ferramentas com frequência." },
-  { id: "1.300 créditos", titulo: "1.300 créditos", creditos: 1300, valor: 297, descricao: "Para profissionais com maior demanda." },
+  { id: "350 créditos", titulo: "350 créditos", creditos: 350, valor: 97, descricao: "Para quem está começando.", checkoutUrl: `${CHECKOUT}?pacote=350` },
+  { id: "850 créditos", titulo: "850 créditos", creditos: 850, valor: 197, descricao: "Para quem utiliza as ferramentas com frequência.", checkoutUrl: `${CHECKOUT}?pacote=850` },
+  { id: "1.300 créditos", titulo: "1.300 créditos", creditos: 1300, valor: 297, descricao: "Para profissionais com maior demanda.", checkoutUrl: `${CHECKOUT}?pacote=1300` },
 ];
 
 export const Route = createFileRoute("/creditos-11-11/")({
