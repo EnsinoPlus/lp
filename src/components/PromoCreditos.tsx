@@ -16,6 +16,7 @@ export type OfertaCreditos = {
   titulo: string;
   creditos: number | null;
   valor: number | null; // null = valor informado no WhatsApp
+  descricao?: string;
   checkoutUrl?: string;
 };
 
@@ -219,7 +220,10 @@ export function PromoCreditos({
                         >
                           <input type="radio" name="oferta" checked={ativo} onChange={() => setOfertaId(o.id)} className="accent-red-500" />
                           <Coins className="w-5 h-5 shrink-0 text-amber-300" />
-                          <span className="font-bold flex-1">{o.titulo}</span>
+                          <span className="flex-1">
+                            <span className="font-bold block">{o.titulo}</span>
+                            {o.descricao && <span className="text-xs text-white/60 block">{o.descricao}</span>}
+                          </span>
                           <span className="font-black text-amber-300 whitespace-nowrap">{o.valor != null ? brl(o.valor) : ""}</span>
                         </label>
                       );

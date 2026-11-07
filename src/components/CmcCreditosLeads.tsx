@@ -23,9 +23,9 @@ const ORDEM: CreditoStatus[] = ["pago", "aguardando", "liberado", "nao_pagou"];
 
 const PACOTES: { id: string; txt: string; promo: CreditoLead["promo"]; creditos: number | null; valor: number | null }[] = [
   { id: "Primeira Recarga", txt: "Primeira Recarga (R$ 29)", promo: "primeira-recarga", creditos: null, valor: 29 },
-  { id: "350 créditos", txt: "11.11: 350 créditos", promo: "11-11", creditos: 350, valor: null },
-  { id: "850 créditos", txt: "11.11: 850 créditos", promo: "11-11", creditos: 850, valor: null },
-  { id: "1.300 créditos", txt: "11.11: 1.300 créditos", promo: "11-11", creditos: 1300, valor: null },
+  { id: "350 créditos", txt: "11.11: 350 créditos (R$ 97)", promo: "11-11", creditos: 350, valor: 97 },
+  { id: "850 créditos", txt: "11.11: 850 créditos (R$ 197)", promo: "11-11", creditos: 850, valor: 197 },
+  { id: "1.300 créditos", txt: "11.11: 1.300 créditos (R$ 297)", promo: "11-11", creditos: 1300, valor: 297 },
 ];
 const ORIGENS = ["Grupo de WhatsApp", "Link da bio", "Story", "E-mail", "Outro"];
 
