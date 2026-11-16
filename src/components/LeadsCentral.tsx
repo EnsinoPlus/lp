@@ -325,7 +325,11 @@ function LeadsMetricas({ rows }: { rows: LeadCentral[] }) {
 
   const origens = porCampo(rows, (r) => r.utm_source || "(direto / sem UTM)");
   const campanhas = porCampo(rows, (r) => r.utm_campaign || "(sem campanha)");
-  const paginas = porCampo(rows, (r) => r.pagina);
+  const produtos = porCampo(rows, produtoDe);
+  const planos = porCampo(
+    rows.filter((r) => planoDe(r)),
+    (r) => `${produtoDe(r)} · ${planoDe(r)}`,
+  );
 
   return (
     <div style={{ display: "grid", gap: 16, marginBottom: 16 }}>
@@ -450,22 +454,58 @@ function LeadsMetricas({ rows }: { rows: LeadCentral[] }) {
         </div>
       </div>
 
-      <TabelaQuebra titulo="Por página" coluna="Página" linhas={paginas} />
+      <TabelaQuebra titulo="Por produto" coluna="Produto" linhas={produtos} />
+      {planos.length > 0 && (
+        <TabelaQuebra titulo="Por plano / pacote" coluna="Plano / pacote" linhas={planos} />
+      )}
       <TabelaQuebra titulo="Por origem (utm_source)" coluna="Origem" linhas={origens} />
       <TabelaQuebra titulo="Por campanha (utm_campaign)" coluna="Campanha" linhas={campanhas} />
     </div>
   );
 }
 
+/** Produto de cada cadastro: junta as páginas do mesmo produto. */
+function produtoDe(r: LeadCentral): string {
+  if (r.pagina.startsWith("Calc Machine")) return "Calc Machine";
+  if (r.pagina === "Primeira Recarga" || r.pagina === "11.11 Mais Créditos")
+    return `Créditos: ${r.pagina}`;
+  return r.pagina;
+}
+
+/** Plano ou pacote comprado (só faz sentido onde há oferta com preço). */
+function planoDe(r: LeadCentral): string | null {
+  if (r.pagina === "Calc Machine: checkout" || produtoDe(r).startsWith("Créditos"))
+    return r.oferta || null;
+  return null;
+}
+
 export function LeadsCentralLista({ rows }: { rows: LeadCentral[] }) {
-  const [pagina, setPagina] = useState("todas");
+  const [produto, setProduto] = useState("todos");
+  const [plano, setPlano] = useState("todos");
   const [etapa, setEtapa] = useState<LeadEtapa | "todas">("todas");
   const [busca, setBusca] = useState("");
 
-  const paginas = useMemo(() => [...new Set(rows.map((r) => r.pagina))].sort(), [rows]);
+  const produtos = useMemo(() => {
+    const n = new Map<string, Set<string>>();
+    rows.forEach((r, i) => {
+      const k = produtoDe(r);
+      const x = n.get(k) ?? new Set<string>();
+      x.add(chaveDe(r, i));
+      n.set(k, x);
+    });
+    return [...n.entries()].map(([nome, x]) => ({ nome, n: x.size })).sort((a, b) => b.n - a.n);
+  }, [rows]);
+  const doProduto = useMemo(
+    () => rows.filter((r) => produto === "todos" || produtoDe(r) === produto),
+    [rows, produto],
+  );
+  const planos = useMemo(
+    () => [...new Set(doProduto.map(planoDe).filter((x): x is string => !!x))].sort(),
+    [doProduto],
+  );
   const daPagina = useMemo(
-    () => rows.filter((r) => pagina === "todas" || r.pagina === pagina),
-    [rows, pagina],
+    () => doProduto.filter((r) => plano === "todos" || planoDe(r) === plano),
+    [doProduto, plano],
   );
   const pessoas = useMemo(() => agrupar(daPagina), [daPagina]);
   const q = busca.trim().toLowerCase();
@@ -490,21 +530,63 @@ export function LeadsCentralLista({ rows }: { rows: LeadCentral[] }) {
           marginBottom: 12,
         }}
       >
-        <select
-          aria-label="Página"
-          value={pagina}
-          onChange={(e) => setPagina(e.target.value)}
-          style={btn}
-        >
-          <option value="todas">Todas as páginas</option>
-          {paginas.map((p) => (
-            <option key={p} value={p}>
-              {p}
-            </option>
-          ))}
-        </select>
+        <span style={{ fontWeight: 700, fontSize: ".9rem" }}>Produto:</span>
+        {[{ nome: "todos", n: new Set(rows.map((r, i) => chaveDe(r, i))).size }, ...produtos].map(
+          (pr) => {
+            const ativo = produto === pr.nome;
+            return (
+              <button
+                key={pr.nome}
+                onClick={() => {
+                  setProduto(pr.nome);
+                  setPlano("todos");
+                }}
+                style={{
+                  ...btn,
+                  borderRadius: 999,
+                  fontSize: ".85rem",
+                  fontWeight: 600,
+                  background: ativo ? C.signal : "#fff",
+                  color: ativo ? "#fff" : C.ink,
+                  borderColor: ativo ? C.signal : C.line,
+                }}
+              >
+                {pr.nome === "todos" ? "Todos os produtos" : pr.nome} ({pr.n})
+              </button>
+            );
+          },
+        )}
+      </div>
+      <div
+        style={{
+          display: "flex",
+          gap: 10,
+          alignItems: "center",
+          flexWrap: "wrap",
+          marginBottom: 12,
+        }}
+      >
+        {planos.length > 0 && (
+          <select
+            aria-label="Plano ou pacote"
+            value={plano}
+            onChange={(e) => setPlano(e.target.value)}
+            style={btn}
+          >
+            <option value="todos">Todos os planos / pacotes</option>
+            {planos.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+          </select>
+        )}
         <span style={{ color: C.muted, fontSize: ".85rem" }}>
-          Os números seguem a página e o período escolhidos.
+          Mostrando:{" "}
+          <strong style={{ color: C.ink }}>
+            {produto === "todos" ? "todos os produtos" : produto}
+          </strong>
+          {plano !== "todos" && <> · {plano}</>} · período escolhido no topo.
         </span>
       </div>
       <LeadsMetricas rows={daPagina} />
