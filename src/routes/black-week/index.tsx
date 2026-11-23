@@ -13,25 +13,61 @@ import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { saveCreditoLead } from "@/lib/cmc-creditos";
 import { trackCmcEvent } from "@/lib/cmc-events";
 
-// Black Week: combo Calc Machine Connect + CCT (12 meses) por R$ 942,50, com order bump do ebook.
+// Black Week: combo Calc Machine Connect + CCT (12 meses) por R$ 942,50 ou só o Connect anual
+// por R$ 897, ambos com order bump do ebook (+ R$ 45).
 // O pagamento é feito nos links do Asaas abaixo. A liberação é manual: o lead cai na aba
 // Créditos do dashboard (promo "black-week") e a equipe libera depois de conferir o pagamento.
 // Quando os links ficarem vinculados ao produto no Assinaturas, basta trocar as URLs aqui.
 
 const FIM = new Date("2026-11-30T23:59:59-03:00");
 const WHATSAPP = "5585996641461";
-const PRECO = 942.5;
-const PRECO_DE = 1450;
 const EBOOK = 45;
 
-const LINKS = {
+type PlanoId = "combo" | "connect";
+const PLANOS: Record<
+  PlanoId,
+  {
+    nome: string;
+    curto: string;
+    preco: number;
+    de: number;
+    selo: string;
+    desc: string;
+    links: { pix: string; card: string };
+    comEbook: { pix: string; card: string };
+  }
+> = {
   combo: {
-    pix: "https://www.asaas.com/000/c/8enoyq1io4pksgjm",
-    card: "https://www.asaas.com/000/c/wcfp8rhwbq6q6cas",
+    nome: "Calc Machine Connect + CCT",
+    curto: "Connect + CCT",
+    preco: 942.5,
+    de: 1450,
+    selo: "35% OFF · Mais completo",
+    desc: "Connect + Clube do Cálculo Trabalhista por 12 meses.",
+    links: {
+      pix: "https://www.asaas.com/000/c/8enoyq1io4pksgjm",
+      card: "https://www.asaas.com/000/c/wcfp8rhwbq6q6cas",
+    },
+    comEbook: {
+      pix: "https://www.asaas.com/000/c/nv7f07e2lb5ld5tc",
+      card: "https://www.asaas.com/000/c/42xheemg7l4nv1u5",
+    },
   },
-  comEbook: {
-    pix: "https://www.asaas.com/000/c/nv7f07e2lb5ld5tc",
-    card: "https://www.asaas.com/000/c/42xheemg7l4nv1u5",
+  connect: {
+    nome: "Calc Machine Connect",
+    curto: "Connect",
+    preco: 897,
+    de: 997,
+    selo: "R$ 100 OFF",
+    desc: "Só o Calc Machine Connect por 12 meses.",
+    links: {
+      pix: "https://www.asaas.com/000/c/xfcb8ek7hr1lwkfn",
+      card: "https://www.asaas.com/000/c/ff96gdlq7n8tytm7",
+    },
+    comEbook: {
+      pix: "https://www.asaas.com/000/c/z9kvkajsqlicq166",
+      card: "https://www.asaas.com/000/c/h0zlkxbeitv8fdy4",
+    },
   },
 };
 
@@ -104,7 +140,7 @@ const INCLUSO = [
 const FAQ = [
   {
     p: "Como recebo o acesso?",
-    r: "Depois que o pagamento é confirmado, nossa equipe libera o Connect + CCT na sua conta da Suite Plus, no e-mail que você informar aqui. A liberação é feita em até 24 horas.",
+    r: "Depois que o pagamento é confirmado, nossa equipe libera o plano escolhido na sua conta da Suite Plus, no e-mail que você informar aqui. A liberação é feita em até 24 horas.",
   },
   {
     p: "Preciso ter conta na Suite Plus?",
@@ -112,7 +148,7 @@ const FAQ = [
   },
   {
     p: "Quais as formas de pagamento?",
-    r: "Pix à vista (R$ 942,50) ou cartão de crédito em até 10x. O pagamento é único: não renova sozinho.",
+    r: "Pix à vista ou cartão de crédito em até 10x. O pagamento é único: não renova sozinho.",
   },
   {
     p: "Até quando vale a oferta?",
@@ -130,8 +166,10 @@ function BlackWeek() {
   const [destino, setDestino] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
 
-  const total = PRECO + (bump ? EBOOK : 0);
-  const pacote = bump ? "Black Week: Connect + CCT + Ebook" : "Black Week: Connect + CCT";
+  const [planoId, setPlanoId] = useState<PlanoId>("combo");
+  const plano = PLANOS[planoId];
+  const total = plano.preco + (bump ? EBOOK : 0);
+  const pacote = `Black Week: ${plano.curto}${bump ? " + Ebook" : ""}`;
 
   useEffect(() => {
     trackCmcEvent("PageView", { promo: "black-week" });
@@ -163,7 +201,7 @@ function BlackWeek() {
   useEffect(() => {
     const t = setTimeout(() => salvar.current(), 800);
     return () => clearTimeout(t);
-  }, [nome, email, telefone, bump]);
+  }, [nome, email, telefone, bump, planoId]);
   useEffect(() => {
     const aoSair = () => salvar.current();
     window.addEventListener("pagehide", aoSair);
@@ -193,7 +231,7 @@ function BlackWeek() {
     fbq("track", "InitiateCheckout", { content_name: pacote, value: total, currency: "BRL" });
     trackCmcEvent("BlackWeekCheckout", { pacote, forma });
 
-    const url = (bump ? LINKS.comEbook : LINKS.combo)[forma];
+    const url = (bump ? plano.comEbook : plano.links)[forma];
     setDestino(url);
     setEnviando(false);
     window.location.href = url;
@@ -213,7 +251,8 @@ function BlackWeek() {
           "A Black Week terminou."
         ) : (
           <span className="inline-flex items-center gap-2">
-            <Clock className="w-4 h-4" /> Oferta válida até segunda, 30/11 · termina em {texto || "…"}
+            <Clock className="w-4 h-4" /> Oferta válida até segunda, 30/11 · termina em{" "}
+            {texto || "…"}
           </span>
         )}
       </div>
@@ -255,7 +294,8 @@ function BlackWeek() {
               </h1>
               <p className="text-lg text-white/75 mb-6">
                 Garanta o combo <strong className="text-white">Calc Machine Connect + CCT</strong>{" "}
-                por 12 meses com 35% OFF.
+                por 12 meses com 35% OFF, ou só o{" "}
+                <strong className="text-white">Connect anual por R$ 897</strong>.
               </p>
 
               <div className="bg-white/5 border-2 border-red-500/50 rounded-2xl p-6 md:p-7 shadow-2xl">
@@ -289,17 +329,47 @@ function BlackWeek() {
                   </div>
                 ) : (
                   <form onSubmit={(e) => e.preventDefault()} noValidate>
-                    <div className="text-center mb-5">
-                      <p className="text-white/50 line-through">De {brl(PRECO_DE)}</p>
-                      <p className="text-5xl font-black text-red-500 leading-none my-1">
-                        {brl(PRECO)}
-                      </p>
-                      <p className="text-white/70 text-sm">
-                        no Pix à vista ou em até 10x de {brl(PRECO / 10)} no cartão
-                      </p>
-                      <span className="inline-block mt-2 bg-red-600 rounded-full px-3 py-1 text-xs font-black uppercase">
-                        35% OFF
-                      </span>
+                    <div
+                      role="radiogroup"
+                      aria-label="Escolha seu plano"
+                      className="space-y-3 mb-5"
+                    >
+                      {(Object.keys(PLANOS) as PlanoId[]).map((id) => {
+                        const pl = PLANOS[id];
+                        const ativo = id === planoId;
+                        return (
+                          <label
+                            key={id}
+                            className={`relative flex items-center gap-3 rounded-xl border-2 px-4 py-4 cursor-pointer transition ${ativo ? "border-red-500 bg-red-500/15" : "border-white/15 hover:border-white/35"}`}
+                          >
+                            <input
+                              type="radio"
+                              name="plano"
+                              checked={ativo}
+                              onChange={() => setPlanoId(id)}
+                              className="accent-red-500 w-5 h-5 shrink-0"
+                            />
+                            <span className="flex-1">
+                              <span className="font-black block leading-tight">{pl.nome}</span>
+                              <span className="text-xs text-white/60 block">{pl.desc}</span>
+                              <span className="inline-block mt-1 bg-red-600 rounded-full px-2 py-0.5 text-[10px] font-black uppercase">
+                                {pl.selo}
+                              </span>
+                            </span>
+                            <span className="text-right whitespace-nowrap">
+                              <span className="block text-xs text-white/50 line-through">
+                                {brl(pl.de)}
+                              </span>
+                              <span className="block font-black text-xl text-red-400">
+                                {brl(pl.preco)}
+                              </span>
+                              <span className="block text-[11px] text-white/60">
+                                ou 10x {brl(pl.preco / 10)}
+                              </span>
+                            </span>
+                          </label>
+                        );
+                      })}
                     </div>
 
                     <div className="space-y-3">
@@ -437,7 +507,7 @@ function BlackWeek() {
               {
                 n: "3",
                 t: "Receba o acesso",
-                d: "Liberamos o Connect + CCT (e o ebook, se escolheu) em até 24h.",
+                d: "Liberamos o seu plano (e o ebook, se escolheu) em até 24h.",
               },
             ].map((p) => (
               <div key={p.n} className="bg-white/5 border border-white/10 rounded-2xl p-6">

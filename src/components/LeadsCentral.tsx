@@ -466,7 +466,7 @@ function LeadsMetricas({ rows }: { rows: LeadCentral[] }) {
 
 /** Produto de cada cadastro: junta as páginas do mesmo produto. */
 function produtoDe(r: LeadCentral): string {
-  if (r.oferta?.startsWith("Black Week")) return "Black Week: Connect + CCT";
+  if (r.oferta?.startsWith("Black Week")) return "Black Week";
   if (r.pagina.startsWith("Calc Machine")) return "Calc Machine";
   if (r.pagina === "Primeira Recarga" || r.pagina === "11.11 Mais Créditos")
     return `Créditos: ${r.pagina}`;

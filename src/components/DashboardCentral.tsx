@@ -11,6 +11,7 @@ import {
 import { listCmcAvaliacoes, setCmcAvaliacaoStatus, type AvaliacaoRow } from "@/lib/cmc-avaliacao-db";
 import { CmcAvaliacoesLista } from "@/components/CmcAvaliacoesLista";
 import { CmcCreditosLeads } from "@/components/CmcCreditosLeads";
+import { BlackWeekPainel } from "@/components/BlackWeekPainel";
 import { LeadsCentralLista } from "@/components/LeadsCentral";
 import { fetchLeadsCentral, type LeadCentral } from "@/lib/leads-central";
 import { listCreditos, type CreditoLead } from "@/lib/cmc-creditos";
@@ -31,7 +32,7 @@ const C = {
 };
 
 type Periodo = "hoje" | "7d" | "30d" | "tudo";
-type Aba = "todos" | "geral" | "recuperacao" | "creditos" | "contatos" | "leads" | "avaliacoes";
+type Aba = "todos" | "blackweek" | "geral" | "recuperacao" | "creditos" | "contatos" | "leads" | "avaliacoes";
 
 const NOME_EVENTO: Record<string, string> = {
   PageView: "Visita na página",
@@ -385,6 +386,7 @@ export function DashboardCentral() {
   const paraLiberar = creditos.filter((c) => c.status === "pago").length;
   const abas: { id: Aba; txt: string }[] = [
     { id: "todos", txt: `Todos os leads (${pessoasCentral})` },
+    { id: "blackweek", txt: `Black Week (${creditos.filter((c) => c.promo === "black-week" && !c.email?.endsWith(".invalid")).length})` },
     { id: "creditos", txt: `Créditos${paraLiberar ? ` (${paraLiberar} para liberar)` : ""}` },
     { id: "geral", txt: "Calc Machine: visão geral" },
     { id: "recuperacao", txt: `Calc Machine: recuperação (${recCobranca.length + recForm.length})` },
@@ -526,6 +528,8 @@ export function DashboardCentral() {
         )}
 
         {aba === "todos" && <LeadsCentralLista rows={central} />}
+
+        {aba === "blackweek" && <BlackWeekPainel dados={dados} creditos={creditos} />}
 
         {aba === "creditos" && <CmcCreditosLeads email={email} senha={senha} rows={creditos} onRows={setCreditos} />}
 

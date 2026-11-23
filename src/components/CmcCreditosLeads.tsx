@@ -28,6 +28,8 @@ const PACOTES: { id: string; txt: string; promo: CreditoLead["promo"]; creditos:
   { id: "1.300 créditos", txt: "11.11: 1.300 créditos (R$ 297)", promo: "11-11", creditos: 1300, valor: 297 },
   { id: "Black Week: Connect + CCT", txt: "Black Week: Connect + CCT (R$ 942,50)", promo: "black-week", creditos: null, valor: 942.5 },
   { id: "Black Week: Connect + CCT + Ebook", txt: "Black Week: Connect + CCT + Ebook (R$ 987,50)", promo: "black-week", creditos: null, valor: 987.5 },
+  { id: "Black Week: Connect", txt: "Black Week: só Connect (R$ 897)", promo: "black-week", creditos: null, valor: 897 },
+  { id: "Black Week: Connect + Ebook", txt: "Black Week: só Connect + Ebook (R$ 942)", promo: "black-week", creditos: null, valor: 942 },
 ];
 const ORIGENS = ["Grupo de WhatsApp", "Link da bio", "Story", "E-mail", "Outro"];
 
@@ -222,7 +224,7 @@ export function CmcCreditosLeads({
             <option value="todas">Todas as promoções</option>
             <option value="primeira-recarga">Primeira Recarga</option>
             <option value="11-11">11.11 Mais Créditos</option>
-            <option value="black-week">Black Week: Connect + CCT</option>
+            <option value="black-week">Black Week</option>
           </select>
           <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar nome, e-mail, WhatsApp ou origem"
             style={{ ...btn, flex: "1 1 220px", cursor: "text" }} />
