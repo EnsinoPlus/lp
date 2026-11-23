@@ -18,7 +18,7 @@ import { trackCmcEvent } from "@/lib/cmc-events";
 // Créditos do dashboard (promo "black-week") e a equipe libera depois de conferir o pagamento.
 // Quando os links ficarem vinculados ao produto no Assinaturas, basta trocar as URLs aqui.
 
-const FIM = new Date("2026-12-01T23:59:59-03:00");
+const FIM = new Date("2026-11-30T23:59:59-03:00");
 const WHATSAPP = "5585996641461";
 const PRECO = 942.5;
 const PRECO_DE = 1450;
@@ -47,7 +47,7 @@ export const Route = createFileRoute("/black-week/")({
       { property: "og:title", content: "Black Week Ensino Plus: Connect + CCT com 35% OFF" },
       {
         property: "og:description",
-        content: "R$ 942,50 no Pix ou em até 10x no cartão. Válido até 01/12.",
+        content: "R$ 942,50 no Pix ou em até 10x no cartão. Válido até segunda, 30/11.",
       },
       { property: "og:image", content: "/black-week/arte.jpg" },
     ],
@@ -116,7 +116,7 @@ const FAQ = [
   },
   {
     p: "Até quando vale a oferta?",
-    r: "Até 01/12/2026 às 23h59. Depois disso o combo volta ao preço normal.",
+    r: "Até segunda-feira, 30/11/2026, às 23h59. Depois disso o combo volta ao preço normal.",
   },
 ];
 
@@ -213,7 +213,7 @@ function BlackWeek() {
           "A Black Week terminou."
         ) : (
           <span className="inline-flex items-center gap-2">
-            <Clock className="w-4 h-4" /> Oferta válida até 01/12 · termina em {texto || "…"}
+            <Clock className="w-4 h-4" /> Oferta válida até segunda, 30/11 · termina em {texto || "…"}
           </span>
         )}
       </div>
@@ -263,7 +263,7 @@ function BlackWeek() {
                   <div className="text-center py-6">
                     <h2 className="text-2xl font-black mb-2">Oferta encerrada</h2>
                     <p className="text-white/70 mb-5">
-                      A condição da Black Week terminou em 01/12. Fale com a gente para ver as
+                      A condição da Black Week terminou em 30/11. Fale com a gente para ver as
                       condições atuais.
                     </p>
                     <a
