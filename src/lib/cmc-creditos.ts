@@ -16,7 +16,7 @@ export type CreditoLead = {
   id: string;
   created_at: string;
   updated_at: string;
-  promo: "primeira-recarga" | "11-11";
+  promo: "primeira-recarga" | "11-11" | "black-week";
   pacote: string | null;
   creditos: number | null;
   valor: number | null;

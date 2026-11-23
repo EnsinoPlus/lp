@@ -14,9 +14,9 @@ import {
 const C = { ink: "#0F1F1A", paper: "#F3EFE6", signal: "#E8552B", muted: "#5C6B64", line: "#d9d3c4", ok: "#1b7a46", erro: "#c0361a", alerta: "#b7791f" };
 
 const STATUS: Record<CreditoStatus, { txt: string; cor: string }> = {
-  pago: { txt: "Pagou: liberar créditos", cor: C.signal },
+  pago: { txt: "Pagou: liberar", cor: C.signal },
   aguardando: { txt: "Aguardando pagamento", cor: C.alerta },
-  liberado: { txt: "Créditos liberados", cor: C.ok },
+  liberado: { txt: "Liberado", cor: C.ok },
   nao_pagou: { txt: "Não pagou", cor: C.muted },
 };
 const ORDEM: CreditoStatus[] = ["pago", "aguardando", "liberado", "nao_pagou"];
@@ -26,6 +26,8 @@ const PACOTES: { id: string; txt: string; promo: CreditoLead["promo"]; creditos:
   { id: "350 créditos", txt: "11.11: 350 créditos (R$ 97)", promo: "11-11", creditos: 350, valor: 97 },
   { id: "850 créditos", txt: "11.11: 850 créditos (R$ 197)", promo: "11-11", creditos: 850, valor: 197 },
   { id: "1.300 créditos", txt: "11.11: 1.300 créditos (R$ 297)", promo: "11-11", creditos: 1300, valor: 297 },
+  { id: "Black Week: Connect + CCT", txt: "Black Week: Connect + CCT (R$ 942,50)", promo: "black-week", creditos: null, valor: 942.5 },
+  { id: "Black Week: Connect + CCT + Ebook", txt: "Black Week: Connect + CCT + Ebook (R$ 987,50)", promo: "black-week", creditos: null, valor: 987.5 },
 ];
 const ORIGENS = ["Grupo de WhatsApp", "Link da bio", "Story", "E-mail", "Outro"];
 
@@ -139,7 +141,7 @@ export function CmcCreditosLeads({
     return s;
   }, [rows]);
 
-  const daPromo = rows.filter((l) => promo === "todas" || l.promo === promo);
+  const daPromo = rows.filter((l) => !l.email?.endsWith(".invalid") && (promo === "todas" || l.promo === promo));
   const q = busca.trim().toLowerCase();
   const lista = daPromo
     .filter((l) => filtro === "todos" || l.status === filtro)
@@ -220,6 +222,7 @@ export function CmcCreditosLeads({
             <option value="todas">Todas as promoções</option>
             <option value="primeira-recarga">Primeira Recarga</option>
             <option value="11-11">11.11 Mais Créditos</option>
+            <option value="black-week">Black Week: Connect + CCT</option>
           </select>
           <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar nome, e-mail, WhatsApp ou origem"
             style={{ ...btn, flex: "1 1 220px", cursor: "text" }} />

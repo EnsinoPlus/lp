@@ -466,6 +466,7 @@ function LeadsMetricas({ rows }: { rows: LeadCentral[] }) {
 
 /** Produto de cada cadastro: junta as páginas do mesmo produto. */
 function produtoDe(r: LeadCentral): string {
+  if (r.oferta?.startsWith("Black Week")) return "Black Week: Connect + CCT";
   if (r.pagina.startsWith("Calc Machine")) return "Calc Machine";
   if (r.pagina === "Primeira Recarga" || r.pagina === "11.11 Mais Créditos")
     return `Créditos: ${r.pagina}`;
@@ -474,12 +475,18 @@ function produtoDe(r: LeadCentral): string {
 
 /** Plano ou pacote comprado (só faz sentido onde há oferta com preço). */
 function planoDe(r: LeadCentral): string | null {
-  if (r.pagina === "Calc Machine: checkout" || produtoDe(r).startsWith("Créditos"))
+  const pr = produtoDe(r);
+  if (
+    r.pagina === "Calc Machine: checkout" ||
+    pr.startsWith("Créditos") ||
+    pr.startsWith("Black Week")
+  )
     return r.oferta || null;
   return null;
 }
 
-export function LeadsCentralLista({ rows }: { rows: LeadCentral[] }) {
+export function LeadsCentralLista({ rows: todas }: { rows: LeadCentral[] }) {
+  const rows = useMemo(() => todas.filter((r) => !r.email?.endsWith(".invalid")), [todas]);
   const [produto, setProduto] = useState("todos");
   const [plano, setPlano] = useState("todos");
   const [etapa, setEtapa] = useState<LeadEtapa | "todas">("todas");

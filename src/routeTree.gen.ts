@@ -30,6 +30,7 @@ import { Route as CctIndexRouteImport } from './routes/cct/index'
 import { Route as CalcMachineIndexRouteImport } from './routes/calc-machine/index'
 import { Route as CalcMachineConnectIndexRouteImport } from './routes/calc-machine-connect/index'
 import { Route as CalcMachineConnectLancamentoIndexRouteImport } from './routes/calc-machine-connect-lancamento/index'
+import { Route as BlackWeekIndexRouteImport } from './routes/black-week/index'
 import { Route as EbookPjecalc2026ObrigadoAnaliseCreditoRouteImport } from './routes/ebook-pjecalc-2026/obrigado-analise-credito'
 import { Route as EbookPjecalc2026ObrigadoAguardandoPagamentoRouteImport } from './routes/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
 import { Route as EbookPjecalc2026ObrigadoRouteImport } from './routes/ebook-pjecalc-2026/obrigado'
@@ -151,6 +152,11 @@ const CalcMachineConnectLancamentoIndexRoute =
     path: '/calc-machine-connect-lancamento/',
     getParentRoute: () => rootRouteImport,
   } as any)
+const BlackWeekIndexRoute = BlackWeekIndexRouteImport.update({
+  id: '/black-week/',
+  path: '/black-week/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EbookPjecalc2026ObrigadoAnaliseCreditoRoute =
   EbookPjecalc2026ObrigadoAnaliseCreditoRouteImport.update({
     id: '/ebook-pjecalc-2026/obrigado-analise-credito',
@@ -205,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/ebook-pjecalc-2026/obrigado': typeof EbookPjecalc2026ObrigadoRoute
   '/ebook-pjecalc-2026/obrigado-aguardando-pagamento': typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
   '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
+  '/black-week/': typeof BlackWeekIndexRoute
   '/calc-machine-connect-lancamento/': typeof CalcMachineConnectLancamentoIndexRoute
   '/calc-machine-connect/': typeof CalcMachineConnectIndexRoute
   '/calc-machine/': typeof CalcMachineIndexRoute
@@ -236,6 +243,7 @@ export interface FileRoutesByTo {
   '/ebook-pjecalc-2026/obrigado': typeof EbookPjecalc2026ObrigadoRoute
   '/ebook-pjecalc-2026/obrigado-aguardando-pagamento': typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
   '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
+  '/black-week': typeof BlackWeekIndexRoute
   '/calc-machine-connect-lancamento': typeof CalcMachineConnectLancamentoIndexRoute
   '/calc-machine-connect': typeof CalcMachineConnectIndexRoute
   '/calc-machine': typeof CalcMachineIndexRoute
@@ -268,6 +276,7 @@ export interface FileRoutesById {
   '/ebook-pjecalc-2026/obrigado': typeof EbookPjecalc2026ObrigadoRoute
   '/ebook-pjecalc-2026/obrigado-aguardando-pagamento': typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
   '/ebook-pjecalc-2026/obrigado-analise-credito': typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
+  '/black-week/': typeof BlackWeekIndexRoute
   '/calc-machine-connect-lancamento/': typeof CalcMachineConnectLancamentoIndexRoute
   '/calc-machine-connect/': typeof CalcMachineConnectIndexRoute
   '/calc-machine/': typeof CalcMachineIndexRoute
@@ -301,6 +310,7 @@ export interface FileRouteTypes {
     | '/ebook-pjecalc-2026/obrigado'
     | '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
     | '/ebook-pjecalc-2026/obrigado-analise-credito'
+    | '/black-week/'
     | '/calc-machine-connect-lancamento/'
     | '/calc-machine-connect/'
     | '/calc-machine/'
@@ -332,6 +342,7 @@ export interface FileRouteTypes {
     | '/ebook-pjecalc-2026/obrigado'
     | '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
     | '/ebook-pjecalc-2026/obrigado-analise-credito'
+    | '/black-week'
     | '/calc-machine-connect-lancamento'
     | '/calc-machine-connect'
     | '/calc-machine'
@@ -363,6 +374,7 @@ export interface FileRouteTypes {
     | '/ebook-pjecalc-2026/obrigado'
     | '/ebook-pjecalc-2026/obrigado-aguardando-pagamento'
     | '/ebook-pjecalc-2026/obrigado-analise-credito'
+    | '/black-week/'
     | '/calc-machine-connect-lancamento/'
     | '/calc-machine-connect/'
     | '/calc-machine/'
@@ -395,6 +407,7 @@ export interface RootRouteChildren {
   EbookPjecalc2026ObrigadoRoute: typeof EbookPjecalc2026ObrigadoRoute
   EbookPjecalc2026ObrigadoAguardandoPagamentoRoute: typeof EbookPjecalc2026ObrigadoAguardandoPagamentoRoute
   EbookPjecalc2026ObrigadoAnaliseCreditoRoute: typeof EbookPjecalc2026ObrigadoAnaliseCreditoRoute
+  BlackWeekIndexRoute: typeof BlackWeekIndexRoute
   CalcMachineConnectLancamentoIndexRoute: typeof CalcMachineConnectLancamentoIndexRoute
   CalcMachineConnectIndexRoute: typeof CalcMachineConnectIndexRoute
   CalcMachineIndexRoute: typeof CalcMachineIndexRoute
@@ -570,6 +583,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalcMachineConnectLancamentoIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/black-week/': {
+      id: '/black-week/'
+      path: '/black-week'
+      fullPath: '/black-week/'
+      preLoaderRoute: typeof BlackWeekIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ebook-pjecalc-2026/obrigado-analise-credito': {
       id: '/ebook-pjecalc-2026/obrigado-analise-credito'
       path: '/ebook-pjecalc-2026/obrigado-analise-credito'
@@ -637,6 +657,7 @@ const rootRouteChildren: RootRouteChildren = {
     EbookPjecalc2026ObrigadoAguardandoPagamentoRoute,
   EbookPjecalc2026ObrigadoAnaliseCreditoRoute:
     EbookPjecalc2026ObrigadoAnaliseCreditoRoute,
+  BlackWeekIndexRoute: BlackWeekIndexRoute,
   CalcMachineConnectLancamentoIndexRoute:
     CalcMachineConnectLancamentoIndexRoute,
   CalcMachineConnectIndexRoute: CalcMachineConnectIndexRoute,
