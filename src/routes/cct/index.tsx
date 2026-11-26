@@ -6,6 +6,7 @@ import {
   BookOpen,
   CheckCircle2,
   GraduationCap,
+  LogIn,
   PlayCircle,
   Search,
   Sparkles,
@@ -109,6 +110,22 @@ function ScrollToSignup({
   );
 }
 
+// Login de quem ja' e' aluno: abre a Suite direto na tela de login do CCT
+// (o shell trata ?app=cct mesmo sem sessao na Suite — TARZAP #132).
+const CCT_LOGIN_URL = "https://suite.ensinoplus.com.br/?app=cct";
+
+function LoginButton({ className = "" }: { className?: string }) {
+  return (
+    <a
+      href={CCT_LOGIN_URL}
+      className={`inline-flex items-center justify-center gap-2 rounded-xl border-2 border-white/40 text-white font-bold px-5 py-2.5 hover:bg-white/10 hover:border-white/70 transition-all ${className}`}
+    >
+      <LogIn className="w-4 h-4" />
+      Já sou aluno · Entrar
+    </a>
+  );
+}
+
 function Landing() {
   return (
     <div className="min-h-screen bg-background">
@@ -122,6 +139,9 @@ function Landing() {
           }}
         />
         <div className="container mx-auto px-4 py-14 md:py-24 relative">
+          <div className="max-w-5xl mx-auto flex justify-end -mt-6 md:-mt-12 mb-8">
+            <LoginButton className="text-sm" />
+          </div>
           <div className="max-w-5xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
             <div className="text-center lg:text-left">
               <div className="inline-flex items-center gap-2 bg-primary/20 text-primary border border-primary/40 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider mb-6">
@@ -165,6 +185,12 @@ function Landing() {
                 <p className="text-sm text-white/60 mt-1">Preencha e comece em minutos</p>
               </div>
               <CctSignupForm variant="hero" />
+              <p className="text-sm text-white/70 text-center mt-5">
+                Já tem conta?{" "}
+                <a href={CCT_LOGIN_URL} className="font-bold text-primary hover:underline">
+                  Entrar
+                </a>
+              </p>
             </div>
           </div>
         </div>
@@ -275,7 +301,10 @@ function Landing() {
           <p className="text-lg md:text-xl text-white/80 mb-10">
             Cadastre-se agora, confirme o e-mail e acesse a plataforma do Clube do Cálculo Trabalhista.
           </p>
-          <ScrollToSignup large>Quero me cadastrar</ScrollToSignup>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <ScrollToSignup large>Quero me cadastrar</ScrollToSignup>
+            <LoginButton />
+          </div>
           <div className="mt-8 flex flex-wrap gap-4 justify-center text-sm text-white/60">
             {["Cadastro em minutos", "Confirmação por e-mail", "Acesso à plataforma"].map((t) => (
               <span key={t} className="inline-flex items-center gap-2">
