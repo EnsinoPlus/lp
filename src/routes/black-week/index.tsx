@@ -65,7 +65,7 @@ const PLANOS: Record<
       card: "https://www.asaas.com/000/c/ff96gdlq7n8tytm7",
     },
     comEbook: {
-      pix: "https://www.asaas.com/000/c/z9kvkajsqlicq166",
+      pix: "https://www.asaas.com/000/c/z310f6x4b1zxtizx",
       card: "https://www.asaas.com/000/c/h0zlkxbeitv8fdy4",
     },
   },
